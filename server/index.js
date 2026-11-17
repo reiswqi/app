@@ -18,6 +18,35 @@ if (PASS.length < 8) console.error('⚠️ ADMIN_PASSWORD (8+ caractères) manqu
 const pool = new Pool({ connectionString: process.env.DATABASE_URL, max: 5,
   ssl: process.env.PGSSL === '1' ? { rejectUnauthorized: false } : undefined });
 const ADMIN_HTML = path.join(__dirname, '..', 'admin.html');
+// ---------- l'app elle-même (domaine app-parcoursdefoi.online) : seulement la page, img/ et video/ ----------
+const ROOT = path.join(__dirname, '..');
+const APP_HTML = path.join(ROOT, 'temps-abondance.html');
+const MIME = { '.html': 'text/html; charset=utf-8', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.mp4': 'video/mp4', '.ico': 'image/x-icon' };
+function serveFile(req, res, file, cache) {
+  fs.stat(file, (err, st) => {
+    if (err || !st.isFile()) return send(res, 404, 'introuvable');
+    const type = MIME[path.extname(file).toLowerCase()] || 'application/octet-stream';
+    const h = { 'Content-Type': type, 'Cache-Control': cache, 'Accept-Ranges': 'bytes', 'Last-Modified': st.mtime.toUTCString() };
+    const m = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range || '');
+    if (m && (m[1] || m[2])) {   // vidéos : lecture par morceaux (avancer / reculer)
+      let start = m[1] ? +m[1] : st.size - +m[2], end = m[1] && m[2] ? +m[2] : st.size - 1;
+      if (start >= st.size || start > end) { res.writeHead(416, { 'Content-Range': 'bytes */' + st.size }); return res.end(); }
+      end = Math.min(end, st.size - 1);
+      res.writeHead(206, { ...h, 'Content-Range': `bytes ${start}-${end}/${st.size}`, 'Content-Length': end - start + 1 });
+      if (req.method === 'HEAD') return res.end();
+      return fs.createReadStream(file, { start, end }).pipe(res);
+    }
+    res.writeHead(200, { ...h, 'Content-Length': st.size });
+    if (req.method === 'HEAD') return res.end();
+    fs.createReadStream(file).pipe(res);
+  });
+}
+function serveStatic(req, res, url) {
+  let p; try { p = decodeURIComponent(url.pathname); } catch (e) { return false; }
+  if (p === '/' || p === '/index.html' || p === '/temps-abondance.html') { serveFile(req, res, APP_HTML, 'no-cache'); return true; }
+  if (!/^\/(img|video)\/[\w.-]+$/.test(p)) return false;      // rien d'autre du dépôt n'est servi
+  serveFile(req, res, path.join(ROOT, p), 'public, max-age=86400'); return true;
+}
 
 // ---------- utilitaires ----------
 const str = (v, n) => (v == null ? null : String(v).slice(0, n));
@@ -123,7 +152,7 @@ const server = http.createServer(async (req, res) => {
     if (url.pathname === '/admin' || url.pathname === '/admin/' || url.pathname === '/admin.html') {
       return send(res, 200, fs.readFileSync(ADMIN_HTML, 'utf8'), { 'Content-Type': 'text/html; charset=utf-8', 'X-Robots-Tag': 'noindex, nofollow', 'X-Frame-Options': 'DENY', 'Referrer-Policy': 'no-referrer' });
     }
-    if (url.pathname === '/') { res.writeHead(302, { Location: '/admin' }); return res.end(); }
+    if ((req.method === 'GET' || req.method === 'HEAD') && serveStatic(req, res, url)) return;
     send(res, 404, 'introuvable');
   } catch (e) { console.error(e); send(res, 500, { error: 'erreur' }); }
 });
