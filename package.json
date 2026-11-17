@@ -1,0 +1,11 @@
+{
+  "name": "temps-abondance-api",
+  "private": true,
+  "description": "Serveur Railway : journal d'activité des clients et panneau admin.",
+  "engines": { "node": ">=18" },
+  "scripts": { "start": "node server/index.js" },
+  "dependencies": {
+    "geoip-lite": "^1.4.10",
+    "pg": "^8.13.1"
+  }
+}

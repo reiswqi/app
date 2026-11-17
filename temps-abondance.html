@@ -587,11 +587,10 @@ S.nm=S.nm||{o:[],c:false,n:null,g:false};S.fc=S.fc||{last:'',streak:0,days:[],f:
 const save=()=>{try{localStorage.setItem('ta10',JSON.stringify(S))}catch(e){}};
 const fresh=()=>({tab:'home',prog:null,cur:0,mood:null,chat:[],busy:false,play:false,pos:0,saI:0,saBack:'home',off:null,offBack:'shop',ep:null,day:false,menu:false,rform:false,fresh:false,t0:'',nt:'o',nsel:null,fm:false,fsel:-1,fown:''});
 let V=fresh(),timer=null,sample=null,D=DAILY[0];
-/* ---------- journal d'activité (Supabase) ----------
-   Chaque action est envoyée dans la table `events` (voir supabase/setup.sql). Les clients peuvent seulement AJOUTER des lignes :
-   ni lire, ni modifier, ni effacer. Seul l'admin (admin.html) peut lire. Clé « publishable/anon » : publique par conception. */
-const SB_URL='';   // ex. https://xxxx.supabase.co
-const SB_KEY='';   // clé publique « anon » / « publishable » (jamais la clé secrète service_role)
+/* ---------- journal d'activité (serveur Railway + Postgres) ----------
+   Chaque action est envoyée à API_URL/api/events (voir server/index.js). Le serveur ajoute l'heure, l'IP et le pays.
+   Les clients peuvent seulement ajouter ; seul le panneau admin (mot de passe) peut lire. */
+const API_URL='';  // ex. https://app-production-xxxx.up.railway.app (sans / à la fin)
 const CONSENT_V='2026-11-v1';
 const TK=(()=>{const rid=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36);
  let dev;try{dev=localStorage.getItem('ta_dev');if(!dev){dev=rid();localStorage.setItem('ta_dev',dev)}}catch(e){dev=rid()}
@@ -604,9 +603,10 @@ function track(type,detail={}){
   detail,page:(V&&V.tab)||'',ua:navigator.userAgent.slice(0,300),lang:navigator.language,tz:Intl.DateTimeFormat().resolvedOptions().timeZone||'',
   screen:screen.width+'x'+screen.height});
  TK.keep();clearTimeout(track.t);track.t=setTimeout(()=>tkFlush(),1500)}
-function tkFlush(final){if(!SB_URL||!SB_KEY||!TK.q.length||(TK.busy&&!final))return;
+function tkFlush(final){if(!API_URL||!TK.q.length||(TK.busy&&!final))return;
  const batch=TK.q.slice(0,50);TK.busy=true;
- fetch(SB_URL+'/rest/v1/events',{method:'POST',keepalive:!!final,headers:{apikey:SB_KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(batch)})
+ // text/plain = requête « simple » (pas de pré-vérification CORS), fiable même quand la page se ferme
+ fetch(API_URL+'/api/events',{method:'POST',keepalive:!!final,headers:{'Content-Type':'text/plain'},body:JSON.stringify(batch)})
   .then(r=>{if(r.ok){TK.q.splice(0,batch.length);TK.keep();if(TK.q.length)setTimeout(tkFlush,300)}})
   .catch(()=>{}).finally(()=>{TK.busy=false})}
 // clics : on garde l'action et ses paramètres (id, numéro…), jamais de texte écrit par le client
