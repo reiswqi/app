@@ -3,16 +3,17 @@
 //  GET  /admin             → panneau admin (admin.html)
 //  POST /api/admin/login   → mot de passe admin (variable ADMIN_PASSWORD) → jeton de 12 h
 //  GET  /api/admin/...     → lecture des données (jeton obligatoire)
-// Variables Railway : DATABASE_URL (référence au service Postgres), ADMIN_PASSWORD, ADMIN_SECRET (texte aléatoire).
+// Variables Railway : DATABASE_URL (référence au service Postgres), ADMIN_PASSWORD (choisi par Lucas). ADMIN_SECRET facultatif.
 const http = require('http'), crypto = require('crypto'), fs = require('fs'), path = require('path');
 const { Pool } = require('pg');
 let geoip = null; try { geoip = require('geoip-lite'); } catch (e) { console.warn('geoip-lite indisponible : pays non renseigné'); }
 
 const PORT = process.env.PORT || 8080;
 const PASS = process.env.ADMIN_PASSWORD || '';
-const SECRET = process.env.ADMIN_SECRET || '';
+// clé de signature des jetons : ADMIN_SECRET si défini, sinon dérivée du mot de passe de la base (secret, jamais affiché)
+const SECRET = process.env.ADMIN_SECRET || (process.env.DATABASE_URL ? crypto.createHash('sha256').update('ta-admin:' + process.env.DATABASE_URL).digest('hex') : '');
 if (!process.env.DATABASE_URL) console.error('⚠️ DATABASE_URL manquante : ajoutez la variable (référence au Postgres).');
-if (PASS.length < 8 || SECRET.length < 16) console.error('⚠️ ADMIN_PASSWORD (8+ caractères) et ADMIN_SECRET (16+) sont obligatoires pour le panneau admin.');
+if (PASS.length < 8) console.error('⚠️ ADMIN_PASSWORD (8+ caractères) manquant : le panneau admin reste fermé.');
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL, max: 5,
   ssl: process.env.PGSSL === '1' ? { rejectUnauthorized: false } : undefined });
@@ -81,7 +82,7 @@ async function adminLogin(req, res) {
   const { ip } = clientIp(req);
   if (limited('login:' + ip, 8, 15 * 60e3)) return send(res, 429, { error: 'Muitas tentativas. Espere 15 minutos.' });
   let b = {}; try { b = JSON.parse(await readBody(req, 4096)); } catch (e) {}
-  if (!PASS || !SECRET) return send(res, 503, { error: 'ADMIN_PASSWORD / ADMIN_SECRET não configurados no Railway.' });
+  if (PASS.length < 8 || !SECRET) return send(res, 503, { error: 'Falta a variável ADMIN_PASSWORD (8+ caracteres) no serviço app do Railway.' });
   if (!crypto.timingSafeEqual(sha(b.password || ''), sha(PASS))) return send(res, 401, { error: 'Senha incorreta.' });
   send(res, 200, { token: makeToken() });
 }
