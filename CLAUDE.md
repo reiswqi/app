@@ -12,11 +12,11 @@ Lucas (Brésil, parle portugais avec Claude) reconstruit l'app française « Tem
 - État `S` dans localStorage clé `ta10` ; état de vue `V` ; `render()` reconstruit `#app` ; délégation de clics sur `[data-a]` ; routeur par hash (`#programmes`, `#priere`, `#bonus`, `#guide`, `#nombres`, `#focus`, `#saint-antoine`) ; overlays `#unlock` (bravo/débloqué) et `.scrim.low .sheet` (modales).
 - Onglets : Accueil, Programmes (rails : Mes programmes, Prières de Saint Antoine, **Pratiques divines** = Nombres Puissants + Focus du Jour, À découvrir), Prières Quotidiennes, Bonus (thème du mois), Père Michel (chat ; sur GitHub il n'y a que des réponses de secours).
 - Tokens : fond #0a1426, accent doré #dcc084, émeraude #149364/#07583a, carte #1d3252, polices Cormorant Garamond + Lato.
-- Thème du mois (Bonus) : change tout seul selon le mois du visiteur (`THEMES[NOW.getMonth()]`). `THEME_PAGE` a le contenu complet de novembre (mois 10) : sous-titre, intro, « ce que vous apprendrez », 5 épisodes « Écritures Vivantes », et `vid` = lecteur `<video>` natif (`video/aulaN.mp4`, poster `img/aulaN.jpg`). Les autres mois affichent « Bientôt » tant que le contenu n'est pas ajouté ; une entrée `vid` qui n'est pas `video/...` est lue comme ID Google Drive (ancien iframe, déconseillé : barre noire + bouton Drive).
+- Thème du mois (Bonus) : change tout seul selon le mois du visiteur (`THEMES[NOW.getMonth()]`). `THEME_PAGE` a le contenu complet de novembre (mois 10) : sous-titre, intro, « ce que vous apprendrez », 5 épisodes « Écritures Vivantes », et `vid` = lecteur `<video>` natif (`video/aulaN.mp4`, poster `img/aulaN.jpg` = image tirée de la vidéo, sans sous-titres), `hero` (couverture `img/theme-nov.jpg`), `dur` (durées). Design « chamativo » : grande couverture + bouton doré Commencer/Continuer, barre de progression, cartes de leçons avec miniature, durée et badge « Vue » ; leçon vue à 90 % (`S.tw[année-mois]`, `epTick`) ; carte image dans Bonus (`themeCard`). Les autres mois affichent « Bientôt » tant que le contenu n'est pas ajouté ; une entrée `vid` qui n'est pas `video/...` est lue comme ID Google Drive (ancien iframe, déconseillé : barre noire + bouton Drive).
 - Nombres Puissants (S.nm) : Oracle / Horloge / Mon nombre ; 3 étapes → pop-up « Cadeau débloqué ». Focus du Jour (S.fc) : un thème par jour, 3 intentions ou la sienne, pop-up « Bravo », série de jours. Textes originaux de Claude : **les versets sont à vérifier**.
 
 ## Fait
-Page de vente « Découvrez votre ange gardien » (https://reiswqi.github.io/a/, checkout Kiwify https://pay.kiwify.com/AL75ghK) ; la carte ange gardien de l'app y redirige ; banner Portail des Anges (généré dans ChatGPT, non téléchargé) ; Pratiques divines ; thème de novembre avec 5 vidéos natives.
+Page de vente « Découvrez votre ange gardien » (https://reiswqi.github.io/a/, checkout Kiwify https://pay.kiwify.com/AL75ghK) ; la carte ange gardien de l'app y redirige ; banner Portail des Anges (généré dans ChatGPT, non téléchargé) ; Pratiques divines ; thème de novembre avec 5 vidéos natives (aula2–4 remplacées par les originaux de Lucas) et nouveau design de la page du thème.
 
 ## À faire / idées en attente
 - Remplacer les vidéos par vturb (Lucas a dit qu'il migrera plus tard : il enverra les codes d'embed).
@@ -26,6 +26,7 @@ Page de vente « Découvrez votre ange gardien » (https://reiswqi.github.io/a/,
 - Contenu des thèmes des autres mois (décembre, janvier…) quand Lucas envoie les leçons.
 
 ## Règles de travail
+- Dans le Chromium de test, Cormorant affiche les accents décalés (coût, contrôle) : bug d'affichage de l'environnement, pas des textes (déjà en NFC).
 - Ne jamais copier le texte d'autres apps : contenu original. Tester en 400 px (Playwright) avant de publier. Vérifier les accents français.
 - Pousser sur `main` directement, sauf demande contraire. Ne jamais écrire de token dans un fichier.
 - Les fichiers > 100 Mo ne passent pas sur GitHub : compresser les vidéos (ffmpeg, 540p, crf 29).

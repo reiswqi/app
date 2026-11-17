@@ -125,6 +125,63 @@ textarea{min-height:110px;resize:vertical;line-height:1.5}
 .list li{display:flex;gap:11px;align-items:flex-start}
 .list .n{flex:none;width:22px;height:22px;border-radius:50%;border:1px solid var(--accent);color:var(--accent);font-size:12px;font-weight:900;display:grid;place-items:center}
 .list .b{flex:none;color:var(--accent)}
+/* Thème du mois : couverture, progression, cartes de leçons */
+.thero{position:relative;margin-inline:-4px;min-height:430px;border-radius:18px;overflow:hidden;display:flex;align-items:flex-end;background:#0d1a30 center 30%/cover no-repeat;border:1px solid rgba(220,192,132,.45);box-shadow:0 18px 50px rgba(0,0,0,.45),0 0 60px rgba(220,192,132,.14)}
+.thero::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,20,38,.05) 0%,rgba(10,20,38,.35) 32%,rgba(10,20,38,.92) 62%,#0a1426 100%)}
+.thero-in{position:relative;display:flex;flex-direction:column;gap:12px;padding:22px 20px 20px;width:100%}
+.tbadge{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;background:rgba(10,20,38,.72);border:1px solid rgba(220,192,132,.55);color:var(--accent);font-size:10px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.tbadge svg.ic{width:13px;height:13px}
+.thero h1{font-size:38px;line-height:1.02;color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.6)}
+.thero .tsub{font-family:var(--display);font-style:italic;font-size:19px;line-height:1.3;color:var(--accent)}
+.tmeta{display:flex;flex-wrap:wrap;gap:8px}
+.tmeta span{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:8px;background:rgba(8,16,32,.55);border:1px solid var(--line);font-size:12px;font-weight:700}
+.tmeta svg.ic{width:14px;height:14px;color:var(--accent)}
+.tprog{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:900;color:var(--soft)}
+.tprog .bar{flex:1;height:6px;background:rgba(255,255,255,.14)}
+.tprog .bar i{background:linear-gradient(90deg,#b98f3c,#ecd28a)}
+.thero .btn.gold{gap:10px}
+.thero .btn.gold svg.ic{width:18px;height:18px;fill:currentColor;stroke:none}
+.tquote{font-family:var(--display);font-size:22px;line-height:1.35;text-align:center;padding:4px 8px;color:#fff}
+.tquote::before,.tquote::after{content:"";display:block;width:44px;height:1px;background:var(--accent);margin:0 auto 14px}
+.tquote::after{margin:14px auto 0}
+.tlearn{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tlearn li{list-style:none;display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:12px;background:var(--panel);border:1px solid var(--line);font-size:13px;line-height:1.35;font-weight:700}
+.tlearn .k{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:rgba(220,192,132,.15);color:var(--accent)}
+.tlearn .k svg.ic{width:16px;height:16px;stroke-width:2.2}
+.tsec{display:flex;flex-direction:column;gap:4px;margin-top:8px}
+.tsec h2{font-size:30px}
+.eps{display:flex;flex-direction:column;gap:18px}
+.epc{border-radius:16px;overflow:hidden;background:linear-gradient(180deg,#1d3252,#13233d);border:1px solid var(--card-line);box-shadow:0 12px 34px rgba(0,0,0,.35);scroll-margin-top:16px}
+.epc.on{border-color:var(--accent);box-shadow:0 0 0 1px rgba(220,192,132,.35),0 0 44px rgba(220,192,132,.22)}
+.epthumb{position:relative;display:block;width:100%;aspect-ratio:16/9;background:#000 center/cover no-repeat}
+.epthumb::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05) 40%,rgba(0,0,0,.6))}
+.epnum{position:absolute;top:12px;left:12px;padding:5px 10px;border-radius:999px;background:rgba(10,20,38,.75);color:var(--accent);font-size:10px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.epseen{position:absolute;top:12px;right:12px;display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:999px;background:var(--go1);color:#fff;font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.epseen svg.ic{width:12px;height:12px;stroke-width:3}
+.epdur{position:absolute;right:12px;bottom:12px;padding:4px 8px;border-radius:6px;background:rgba(0,0,0,.7);font-size:12px;font-weight:700;color:#fff}
+.epplay{position:absolute;left:50%;top:50%;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#ecd28a,#b98f3c);color:var(--on-btn);box-shadow:0 0 0 8px rgba(220,192,132,.22),0 10px 30px rgba(0,0,0,.5);animation:pulse 2.4s ease-in-out infinite}
+.epplay svg.ic{width:26px;height:26px;fill:currentColor;stroke:none;margin-left:4px}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 6px rgba(220,192,132,.25),0 10px 30px rgba(0,0,0,.5)}50%{box-shadow:0 0 0 14px rgba(220,192,132,.06),0 10px 30px rgba(0,0,0,.5)}}
+.epc:not(.seen) .epseen{display:none}
+.epc.seen .epplay{animation:none;background:rgba(10,20,38,.75);color:var(--accent);box-shadow:0 0 0 1.5px var(--accent)}
+.epv{position:relative;aspect-ratio:16/9;background:#000}
+.epv video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+.epbody{display:flex;flex-direction:column;gap:6px;width:100%;padding:16px 18px 18px;text-align:left}
+.epbody .ept{font-family:var(--display);font-size:24px;font-weight:600;line-height:1.1;color:#fff}
+.epbody .epd{font-size:13px;color:var(--soft)}
+.epnext{display:flex;gap:10px;padding:0 18px 18px}
+.epnext .btn{flex:1;padding:12px;font-size:12px}
+.tdone{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:22px 18px;border-radius:16px;background:linear-gradient(135deg,var(--go1),var(--go2));border:1px solid rgba(116,211,160,.5)}
+.tdone h3{font-size:26px}
+.tcard{position:relative;display:flex;align-items:flex-end;width:100%;min-height:250px;border-radius:14px;overflow:hidden;text-align:left;background:#0d1a30 center 30%/cover no-repeat;border:1px solid rgba(111,227,193,.55);box-shadow:0 0 36px rgba(111,227,193,.14)}
+.tcard::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,44,51,.0) 10%,rgba(11,44,51,.75) 55%,#0b2c33 100%)}
+.tcard-in{position:relative;display:flex;flex-direction:column;gap:6px;padding:18px;width:100%}
+.tcard .eyebrow{color:var(--bo)}
+.tcard .t{font-family:var(--display);font-size:27px;font-weight:600;line-height:1.05;color:#fff}
+.tcard .s{font-size:13px;color:var(--on-card-soft)}
+.tcard-cta{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;margin-top:6px;padding:10px 16px;border-radius:999px;background:linear-gradient(90deg,#ecd28a,#b98f3c);color:var(--on-btn);font-size:12px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.tcard-cta svg.ic{width:14px;height:14px;fill:currentColor;stroke:none}
+.tcard .new{position:absolute;top:14px;right:14px;padding:5px 10px;border-radius:999px;background:var(--accent);color:var(--on-btn);font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;z-index:1}
 .ep{display:flex;flex-direction:column;gap:10px}
 .ep .mc{background:rgba(8,16,32,.45)}
 .ep .video{background:var(--bg);border:1px solid var(--line)}
@@ -404,7 +461,7 @@ const pm=(cls='')=>`<span class="pm ${cls}" ${PERE_IMG?`style="background-image:
 // Bonus offerts : chaque entrée apparaît dans l'onglet Bonus comme « Bonus N · Débloqué ». Le suivant reste annoncé « Bientôt ».
 const BONUS=[
  {t:()=>'Votre Script Divin',s:()=>'Votre lecture et vos décrets personnels.',i:'scroll',a:'data-a="tab" data-t="script"'},
- {t:()=>THEMES[NOW.getMonth()],s:()=>THEME_LABEL,i:'spark',a:'data-a="tab" data-t="theme"'}
+ {t:()=>THEMES[NOW.getMonth()],s:()=>THEME_LABEL,i:'spark',a:'data-a="tab" data-t="theme"',theme:1}
 ]; // programme offert quand un membre hésite à demander un remboursement
 const THEMES=["Nouveaux commencements","Amour et pardon","Renouveau intérieur","Espérance vivante","Gratitude","Paix du cœur","Force et courage","Repos en Dieu","Sagesse et discernement","Foi persévérante","Confiance et stabilité intérieure","Lumière et joie"];
 // Page du thème : contenu complet pour novembre ; les autres mois reprennent la structure avec une introduction générique.
@@ -412,6 +469,8 @@ const THEME_PAGE={
  sub:{10:"Une base plus solide pour une foi calme et résiliente."},
  intro:{10:["Rester spirituellement stable quand la vie, elle, ne l'est pas.","Ce mois-ci, vous découvrirez comment la confiance en Dieu devient le socle de l'équilibre, de la clarté et de la résilience."]},
  learn:{10:["Garder l'équilibre au milieu de l'incertitude","Apaiser l'anxiété et lâcher le contrôle","Bâtir une paix qui ne dépend pas des circonstances","Fortifier vos racines par la prière quotidienne"]},
+ hero:{10:"img/theme-nov.jpg"},
+ dur:{10:["5:07","4:00","3:51","3:27","3:29"]},
  vid:{10:["video/aula1.mp4","video/aula2.mp4","video/aula3.mp4","video/aula4.mp4","video/aula5.mp4"]},
  eps:{10:[["La vérité qui blesse avant de libérer","Comment la vérité bouscule avant d'apporter clarté et liberté."],["Le coût invisible de vouloir tout contrôler","Ce que le contrôle fait à la paix, et pourquoi l'abandon fait grandir."],["Temps, attente et maturité","Comment l'attente façonne le caractère."],["Peur, contrôle et confiance","Comment la confiance rétablit l'équilibre."],["Identité, valeur et comparaison","La liberté de ne plus se comparer."]]}
 };
@@ -577,20 +636,50 @@ function vJournal(){const today=S.journal.find(e=>e.d===TODAY);return `${back('p
   <button class="btn" data-a="savej">Enregistrer</button>`}</section>
  ${S.journal.filter(e=>e!==today).sort((a,b)=>a.d<b.d?1:-1).map(e=>`<div class="entry"><p class="small soft">${esc(fdate(e.d))}${e.mood?' · '+esc(e.mood):''}</p><p>${esc(e.x)}</p></div>`).join('')}`}
 
-function vTheme(){const m=NOW.getMonth(),T=THEME_PAGE,t=THEMES[m],eps=T.eps[m]||[];
+// Leçons vues du thème du mois (par année + mois, pour repartir à zéro chaque mois).
+const twKey=()=>NOW.getFullYear()+'-'+NOW.getMonth();
+const twSeen=()=>{S.tw=S.tw||{};return S.tw[twKey()]=S.tw[twKey()]||[]};
+const twMin=d=>Math.round(d.reduce((a,x)=>{const[m,s]=x.split(':');return a+ +m*60+ +s},0)/60);
+// Une leçon compte comme vue à 90 % ou à la fin ; on met la page à jour sans tout reconstruire (la vidéo continue).
+function epTick(v,i,end){if(!end&&!(v.duration&&v.currentTime/v.duration>.9))return;const w=twSeen();if(w.includes(i))return;w.push(i);save();
+ const n=(THEME_PAGE.eps[NOW.getMonth()]||[]).length,c=$('#ep'+i);if(c)c.classList.add('seen');
+ const bi=$('.tprog .bar i'),bt=$('.tprog b');if(bi)bi.style.width=w.length/n*100+'%';if(bt)bt.textContent=w.length+'/'+n;
+ toast(w.length===n?'Thème complété ✦ Bravo !':'Leçon '+(i+1)+' vue ✓')}
+function vTheme(){const m=NOW.getMonth(),T=THEME_PAGE,t=THEMES[m],eps=T.eps[m]||[],vids=T.vid[m]||[],dur=T.dur[m]||[],w=twSeen(),
+  nx=eps.findIndex((_,i)=>!w.includes(i)),done=eps.length>0&&nx<0,intro=T.intro[m]||[`Ce mois-ci, nous avançons ensemble sur ce thème, jour après jour, par la prière et la réflexion.`];
+ const player=(i,e)=>{const v=vids[i];
+  if(v&&v.startsWith('video/'))return `<div class="epv"><video controls autoplay playsinline preload="metadata" poster="img/aula${i+1}.jpg" src="${v}" controlsList="nodownload noplaybackrate" disablePictureInPicture oncontextmenu="return false" ontimeupdate="epTick(this,${i})" onended="epTick(this,${i},1)"></video></div>`;
+  if(v)return `<div class="video" style="border-radius:0"><iframe src="https://drive.google.com/file/d/${v}/preview" allow="autoplay;fullscreen" allowfullscreen title="${esc(e[0])}"></iframe><span class="shield" aria-hidden="true"></span></div>`;
+  return `<div class="video" style="border-radius:0"><span class="small soft" style="position:relative">Vidéo de la leçon ${i+1} à ajouter</span></div>`};
  return `${back('shop')}
- <div class="brand"><span class="eyebrow">${esc(THEME_LABEL)}</span><h1>${esc(t)}</h1>${T.sub[m]?`<span class="soft" style="font-style:italic">${esc(T.sub[m])}</span>`:''}</div>
- <div class="sa">${(T.intro[m]||[`Ce mois-ci, nous avançons ensemble sur ce thème, jour après jour, par la prière et la réflexion.`]).map(p=>`<p>${esc(p)}</p>`).join('')}</div>
- ${T.learn[m]?`<details class="panel"><summary>Ce que vous apprendrez</summary><ol class="list">${T.learn[m].map((x,i)=>`<li><span class="n">${i+1}</span><span>${esc(x)}</span></li>`).join('')}</ol></details>`:''}
+ <section class="thero" ${T.hero[m]?`style="background-image:url(${T.hero[m]})"`:''}><div class="thero-in">
+  <span class="tbadge">${ic('spark')}${esc(THEME_LABEL)}${eps.length?' · Nouveau':''}</span>
+  <h1>${esc(t)}</h1>
+  ${T.sub[m]?`<span class="tsub">${esc(T.sub[m])}</span>`:''}
+  ${eps.length?`<div class="tmeta"><span>${ic('play')}${eps.length} leçons vidéo</span>${dur.length?`<span>${ic('pray')}${twMin(dur)} min au total</span>`:''}<span>${ic('book')}Écritures Vivantes</span></div>
+  <div class="tprog"><span class="bar"><i style="width:${w.length/eps.length*100}%"></i></span><b>${w.length}/${eps.length}</b></div>
+  <button class="btn gold" data-a="epgo" data-i="${done?0:nx}">${ic('play')}${done?'Revoir la leçon 1':w.length?`Continuer · Leçon ${nx+1}`:'Commencer la leçon 1'}</button>`:''}
+ </div></section>
+ <p class="tquote">${esc(intro[0])}</p>
+ ${intro.slice(1).map(p=>`<p class="soft" style="text-align:center;font-size:15px">${esc(p)}</p>`).join('')}
+ ${T.learn[m]?`<div class="tsec"><span class="eyebrow">Ce que vous apprendrez</span></div>
+  <ul class="tlearn" style="margin:0;padding:0">${T.learn[m].map(x=>`<li><span class="k">${ic('check')}</span>${esc(x)}</li>`).join('')}</ul>`:''}
  ${!eps.length?`<div class="panel soon"><span class="eyebrow">Bientôt</span><p class="small soft">Les vidéos du thème de ${esc(MONTH)} seront ajoutées ici. Le thème change automatiquement chaque mois.</p></div>`:''}
- ${eps.length?`<span class="eyebrow" style="margin-top:6px">Écritures Vivantes · ${eps.length} vidéos</span>
-  <div class="ep">${eps.map((e,i)=>`<button class="mc" data-a="ep" data-i="${i}" aria-expanded="${V.ep===i}">${tile(V.ep===i?'pause':'play')}<span class="grow"><span class="t">${esc(e[0])}</span>${V.ep===i?`<span class="s">${esc(e[1])}</span>`:''}</span></button>
-   ${V.ep===i?((T.vid[m]||[])[i]&&T.vid[m][i].startsWith('video/')?`<div class="video"><video controls playsinline preload="metadata" poster="img/aula${i+1}.jpg" src="${T.vid[m][i]}" controlsList="nodownload noplaybackrate" disablePictureInPicture oncontextmenu="return false"></video></div>`:(T.vid[m]||[])[i]?`<div class="video"><iframe src="https://drive.google.com/file/d/${T.vid[m][i]}/preview" allow="autoplay;fullscreen" allowfullscreen title="${esc(e[0])}"></iframe><span class="shield" aria-hidden="true"></span></div>`:`<div class="video"><span class="small soft" style="position:relative">Vidéo de l'épisode ${i+1} à ajouter</span></div>`):''}`).join('')}</div>`:''}`}
+ ${eps.length?`<div class="tsec"><span class="eyebrow">Écritures Vivantes</span><h2>Les ${eps.length} leçons</h2></div>
+ <div class="eps">${eps.map((e,i)=>{const on=V.ep===i,seen=w.includes(i);return `<article class="epc ${on?'on':''} ${seen?'seen':''}" id="ep${i}">
+  ${on?player(i,e):`<button class="epthumb" data-a="ep" data-i="${i}" style="background-image:url(img/aula${i+1}.jpg)" aria-label="Regarder la leçon ${i+1} : ${esc(e[0])}"><span class="epnum">Leçon ${i+1}</span><span class="epseen">${ic('check')}Vue</span><span class="epplay">${ic('play')}</span>${dur[i]?`<span class="epdur">${dur[i]}</span>`:''}</button>`}
+  <button class="epbody" data-a="ep" data-i="${i}" aria-expanded="${on}"><span class="eyebrow">Leçon ${i+1}${dur[i]?' · '+dur[i]:''}</span><span class="ept">${esc(e[0])}</span><span class="epd">${esc(e[1])}</span></button>
+  ${on&&i<eps.length-1?`<div class="epnext"><button class="btn line" data-a="epgo" data-i="${i+1}">Leçon suivante ${ic('arrow')}</button></div>`:''}
+ </article>`}).join('')}</div>
+ ${done?`<div class="tdone">${ic('spark')}<h3>Thème complété</h3><p class="small">Vous avez regardé les ${eps.length} leçons. Revenez quand vous voulez : elles restent ici tout le mois.</p></div>`:''}`:''}`}
 
+// Carte du thème du mois en grand format, avec image et bouton « Regarder ».
+function themeCard(i){const m=NOW.getMonth(),n=(THEME_PAGE.eps[m]||[]).length,w=twSeen().length;
+ return `<button class="tcard" data-a="tab" data-t="theme" style="background-image:url(${THEME_PAGE.hero[m]})">${w<n?'<span class="new">Nouveau</span>':''}<span class="tcard-in"><span class="eyebrow">Bonus ${i+1} · ${esc(THEME_LABEL)}</span><span class="t">${esc(THEMES[m])}</span><span class="s">${n} leçons vidéo · ${w?`${w}/${n} regardées`:'Écritures Vivantes'}</span><span class="tcard-cta">${ic('play')}${w&&w<n?'Continuer':w===n?'Revoir':'Regarder'}</span></span></button>`}
 function vShop(){const total=BONUS.length+1;
  return `<div class="bhead"><span class="gbox">${GIFT}</span><div class="grow"><h1>Bonus</h1><p class="soft">${BONUS.length} bonus débloqués sur ${total}</p></div></div>
  <div class="bar jade"><i style="width:${BONUS.length/total*100}%"></i></div>
- ${BONUS.map((x,i)=>mc(x.a,tile(x.i),x.t(),x.s(),'bonus','chev',`Bonus ${i+1} · Débloqué ✓`)).join('')}
+ ${BONUS.map((x,i)=>x.theme&&THEME_PAGE.hero[NOW.getMonth()]?themeCard(i):mc(x.a,tile(x.i),x.t(),x.s(),'bonus','chev',`Bonus ${i+1} · Débloqué ✓`)).join('')}
  <div class="mc bonus soon">${tile('lock')}<span class="grow"><span class="eyebrow">Bonus ${total} · Bientôt</span><span class="t">Un nouveau bonus se prépare</span><span class="s">Il s'ouvrira ici, sans rien avoir à faire.</span></span><span class="chev">${ic('lock')}</span></div>`}
 
 // Page de vente en texte : chaque cadenas mène ici, jamais directement au paiement.
@@ -842,7 +931,7 @@ document.addEventListener('click',e=>{
    if(!txt){toast('Choisissez une intention ou écrivez la vôtre');return}
    const wasYest=S.fc.last===dstr(-1);S.fc.streak=wasYest?S.fc.streak+1:1;S.fc.last=TODAY;S.fc.f[TODAY]=txt;
    if(!S.fc.days.includes(TODAY))S.fc.days.push(TODAY);S.fc.days=S.fc.days.slice(-60);save();V.fm=false;render();setTimeout(focusDoneShow,300);return}
- else if(a==='ep'){const i=+b.dataset.i;V.ep=V.ep===i?null:i}
+ else if(a==='ep'||a==='epgo'){const i=+b.dataset.i;V.ep=a==='ep'&&V.ep===i?null:i;render();if(V.ep!==null)$('#ep'+i+' video')?.play().catch(()=>{});if(V.ep!==null)setTimeout(()=>$('#ep'+i)?.scrollIntoView({behavior:'smooth',block:'start'}),60);return}
  else if(a==='rstart'){V.tab='home';toast('Commencez par le pas affiché ici')}
  else if(a==='rgift'){S.rgift=true;if(!S.owned.includes(REFUND_GIFT))S.owned.push(REFUND_GIFT);save();V.tab='shop';toast('Votre cadeau est dans Bonus')}
  else if(a==='rform')V.rform=true;
