@@ -1,0 +1,713 @@
+<title>Temps d'Abondance v2</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Lato:wght@400;700;900&display=swap">
+<style>
+/* Layout: one slim phone-width column over a fixed starry sky. Each screen carries one main action; everything else is one tap away. */
+:root{
+  color-scheme:dark;
+  --bg:#0a1426; --ink:#ffffff; --soft:rgba(206,219,240,.82); --line:rgba(190,208,238,.2); --panel:rgba(30,51,82,.55);
+  --card:#1d3252; --card-line:rgba(190,208,238,.22); --on-card:#ffffff; --on-card-soft:rgba(206,219,240,.85);
+  --btn:#dcc084; --on-btn:#0a1426; --accent:#dcc084; --badge:rgba(8,16,32,.6);
+  --ok:#74d3a0; --go1:#149364; --go2:#07583a; --bo:#6fe3c1; --bo-deep:#0c6f63; --bo1:#15504d; --bo2:#0b2c33; --paper:#f8f5ee; --ivory:#efe9dc; --ivory-ink:#16203a; --ivory-gold:#876618;
+  --display:"Cormorant Garamond",Georgia,serif; --body:"Lato",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0;text-align:left}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
+#sky{position:fixed;inset:0;overflow:hidden;background:
+  radial-gradient(60% 38% at 100% 0%,rgba(62,92,160,.6),transparent 70%),
+  radial-gradient(55% 36% at 0% 100%,rgba(48,74,140,.5),transparent 70%),var(--bg)}
+#sky canvas{position:absolute;inset:0;width:100%;height:100%}
+#sky::after{content:"";position:absolute;inset:0;background:radial-gradient(70% 34% at 50% 104%,rgba(220,192,132,.2),transparent 70%);animation:aura 9s ease-in-out infinite alternate}
+@keyframes aura{from{opacity:.35}to{opacity:1}}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes sheen{0%,72%{transform:translateX(-130%)}100%{transform:translateX(130%)}}
+@keyframes glow{from{filter:drop-shadow(0 0 3px rgba(220,192,132,.35))}to{filter:drop-shadow(0 0 12px rgba(220,192,132,.9))}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@keyframes pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
+.enter>*{animation:rise .55s cubic-bezier(.2,.7,.2,1) both}
+.enter>*:nth-child(2){animation-delay:.07s}.enter>*:nth-child(3){animation-delay:.14s}.enter>*:nth-child(4){animation-delay:.21s}
+.enter>*:nth-child(5){animation-delay:.28s}.enter>*:nth-child(n+6){animation-delay:.35s}
+#app{position:relative;z-index:1;max-width:460px;height:100%;margin:0 auto;display:flex;flex-direction:column}
+.gut{padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+main{flex:1;min-height:0;overflow-y:auto;padding-block:24px 28px;display:flex;flex-direction:column;gap:16px;scrollbar-width:none}
+main::-webkit-scrollbar,.login::-webkit-scrollbar{display:none}
+main>*{flex-shrink:0}
+h1,h2,h3{margin:0;font-family:var(--display);font-weight:600;line-height:1.1;text-wrap:balance}
+h1{font-size:32px} h2{font-size:25px} h3{font-size:21px} p{margin:0}
+em{font-style:italic;font-weight:500;color:var(--accent)}
+.eyebrow{display:block;font-size:11px;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.soft{color:var(--soft)} .small{font-size:13px} .center{text-align:center}
+.head{display:flex;flex-direction:column;gap:6px}
+.row{display:flex;align-items:center;gap:14px} .grow{flex:1;min-width:0}
+svg.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex:none}
+/* brand */
+.brand{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;color:var(--accent)}
+.brand>svg{width:30px;height:30px;animation:glow 3.5s ease-in-out infinite alternate}
+.wordmark{font-family:var(--display);font-size:25px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;line-height:1}
+.rule{width:44px;height:1px;background:var(--accent)}
+.topbar{display:flex;align-items:center;justify-content:space-between;color:var(--accent)}
+.topbar .mark{display:flex;align-items:center;gap:8px}
+.topbar .wordmark{font-size:15px;letter-spacing:.2em}
+.avatar{width:36px;height:36px;border-radius:50%;border:1px solid var(--accent);color:var(--accent);font-weight:900;display:grid;place-items:center}
+.welcome{font-size:30px;text-align:center;text-shadow:0 0 26px rgba(190,212,255,.45);margin-block:6px 2px}
+/* cards */
+.hc{display:flex;flex-direction:column;gap:16px;width:100%;padding:18px;border-radius:10px;background:var(--card);color:var(--on-card);border:1px solid var(--card-line);box-shadow:0 0 34px rgba(170,196,255,.09)}
+.hc .s{color:var(--on-card-soft);font-size:13px;display:block}
+.hc.hero{padding:22px 18px;gap:18px;border-color:var(--accent);box-shadow:0 0 44px rgba(220,192,132,.2)}
+.hc.banner{position:relative;padding:0;gap:0;min-height:330px;justify-content:flex-end;overflow:hidden;background:var(--card) center 10%/cover no-repeat}
+.hc.banner::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,13,28,0) 28%,rgba(7,13,28,.78) 58%,rgba(7,13,28,.97) 82%)}
+.hc.banner>*{position:relative}
+.btxt{display:flex;flex-direction:column;gap:5px;padding:0 18px 14px}
+.btxt h2{font-size:27px;text-shadow:0 2px 12px rgba(0,0,0,.8)}
+.hc.banner .access{margin:0 18px 18px;padding:15px}
+.med{flex:none;width:60px;height:60px;border-radius:50%;background:var(--badge) no-repeat;box-shadow:0 0 0 1.5px var(--card-line);display:grid;place-items:center;color:var(--accent)}
+.badge{display:inline-block;align-self:flex-start;padding:3px 9px;border-radius:999px;background:var(--badge);font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}
+.access{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;border-radius:8px;background:linear-gradient(180deg,#5a8ff5 0%,#3565d6 48%,#1f43a6 100%);color:#fff;font-weight:900;font-size:13px;letter-spacing:.1em;text-transform:uppercase;border:1px solid rgba(240,216,150,.9);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -2px 0 rgba(8,20,70,.45),0 6px 20px rgba(58,110,235,.42);text-shadow:0 1px 2px rgba(6,16,60,.65);position:relative;overflow:hidden}
+.access svg{width:17px;height:17px;stroke-width:2;color:#f6dfa0}
+.access::after,.btn.gold::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,.4) 50%,transparent 62%);transform:translateX(-130%);animation:sheen 5.5s ease-in-out infinite}
+.ivory{margin:0;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;padding:22px 20px;border-radius:10px;background:var(--ivory);color:var(--ivory-ink);
+  outline:1px solid rgba(150,116,40,.45);outline-offset:-7px;box-shadow:0 0 34px rgba(170,196,255,.14),0 0 60px rgba(220,192,132,.16)}
+.ivory h2{font-size:23px;letter-spacing:.05em;text-transform:uppercase}
+.ivory .rule{background:var(--ivory-gold)}
+.ivory .ref{font-family:var(--display);font-style:italic;font-size:17px;line-height:1.3;border-top:1px solid rgba(150,116,40,.35);padding-top:12px;width:100%}
+.ivory .ref b{display:block;font-family:var(--body);font-style:normal;font-weight:900;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ivory-gold);margin-top:4px}
+.mc{display:flex;align-items:center;gap:14px;width:100%;padding:15px;border-radius:8px;background:var(--panel);border:1px solid var(--line)}
+.mc.done{opacity:.6}
+.mc .eyebrow{font-size:10px;letter-spacing:.14em}
+.mc .t{display:block;font-weight:700;font-size:15px}
+.mc .s{display:block;font-size:13px;color:var(--soft)}
+.hc,.mc,.btn,.access,.chip{transition:transform .15s,border-color .25s,box-shadow .25s}
+button.hc:hover,button.mc:hover{border-color:rgba(220,192,132,.6);box-shadow:0 0 32px rgba(220,192,132,.14)}
+button.hc:active,button.mc:active,.btn:active{transform:scale(.985)}
+.tile{flex:none;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);color:var(--accent);display:grid;place-items:center}
+.chev{flex:none;color:var(--accent);display:grid;place-items:center}
+.btn{display:flex;align-items:center;justify-content:center;width:100%;padding:14px 18px;border-radius:6px;font-weight:900;font-size:14px;background:var(--card);color:var(--on-card);border:1px solid var(--card-line)}
+.btn.line{background:transparent;border-color:var(--line);color:var(--ink)}
+.btn.gold{background:linear-gradient(90deg,#ecd28a,#b98f3c);color:var(--on-btn);border:0;letter-spacing:.14em;text-transform:uppercase;font-size:13px;padding:16px;box-shadow:0 8px 26px rgba(220,192,132,.28);position:relative;overflow:hidden}
+.btn.gold[disabled]{opacity:.75}
+.linkbtn{font-size:13px;color:var(--soft);text-decoration:underline;text-underline-offset:3px;align-self:center}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.panel h2{font-size:22px}
+details.panel summary{cursor:pointer;font-weight:700;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.panel summary::-webkit-details-marker{display:none}
+details.panel summary::after{content:"+";color:var(--accent);font-size:20px;line-height:1}
+details.panel[open] summary::after{content:"–"}
+.field{display:flex;flex-direction:column;gap:6px;font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--soft)}
+input[type=text],input[type=email],textarea,select{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 14px;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--ink)}
+textarea{min-height:110px;resize:vertical;line-height:1.5}
+.inp{position:relative;display:block}
+.inp svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--accent)}
+.field .inp input{padding-left:42px}
+.inp input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(220,192,132,.18)}
+.bar{height:4px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .3s}
+.back{display:inline-flex;align-items:center;gap:4px;align-self:flex-start;color:var(--soft);font-weight:700;font-size:14px}
+.back svg{width:18px;height:18px;transform:rotate(180deg)}
+.video{aspect-ratio:16/9;max-width:100%;border-radius:12px;background:#000 center 30%/cover no-repeat;display:grid;place-items:center;position:relative;overflow:hidden}
+.video::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,.3)}
+.playbtn{position:relative;width:60px;height:60px;border-radius:50%;background:var(--btn);color:var(--on-btn);display:grid;place-items:center}
+.playbtn svg{fill:currentColor;stroke:none}
+.lesson{display:flex;align-items:center;gap:12px;width:100%;padding:14px 0;border-top:1px solid var(--line)}
+.dot{flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--accent);display:grid;place-items:center;color:transparent}
+.dot svg{width:13px;height:13px;stroke-width:2.2}
+.ok .dot{background:var(--accent);color:var(--bg)}
+.lesson.cur{font-weight:900}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:7px 13px;border-radius:999px;border:1px solid var(--line);font-size:13px;background:var(--panel)}
+.chip.on{background:var(--card);color:var(--on-card);font-weight:700;border-color:var(--accent)}
+.entry{border-top:1px solid var(--line);padding-top:12px}
+.entry p{white-space:pre-wrap;overflow-wrap:anywhere}
+.list{display:flex;flex-direction:column;gap:11px;margin:0;padding:0;list-style:none}
+.list li{display:flex;gap:11px;align-items:flex-start}
+.list .n{flex:none;width:22px;height:22px;border-radius:50%;border:1px solid var(--accent);color:var(--accent);font-size:12px;font-weight:900;display:grid;place-items:center}
+.list .b{flex:none;color:var(--accent)}
+.ep{display:flex;flex-direction:column;gap:10px}
+.ep .mc{background:rgba(8,16,32,.45)}
+.ep .video{background:var(--bg);border:1px solid var(--line)}
+.sa{display:flex;flex-direction:column;gap:16px}
+.sa p{font-family:var(--display);font-size:20px;line-height:1.45}
+.sa.pray p::first-letter{font-size:1.7em;color:var(--accent);line-height:1}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.offer{display:flex;flex-direction:column;gap:10px;min-width:0;padding:14px;border-radius:10px;background:var(--card);border:1px solid var(--card-line)}
+.offer .pic{aspect-ratio:4/3;border-radius:8px;background:var(--badge) center 18%/cover no-repeat;display:grid;place-items:center;color:var(--accent)}
+.offer h3{font-size:18px}
+.offer .go{margin-top:auto;font-weight:900;font-size:13px;color:var(--accent)}
+/* programme rails: swipe sideways to choose a module */
+.railhead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:6px}
+.railhead h2{font-size:22px}
+.rail{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:20px;margin-inline:-20px;padding:2px 20px 6px;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.pc{flex:0 0 44%;max-width:180px;scroll-snap-align:start;display:flex;flex-direction:column;gap:8px;min-width:0}
+.pc .cv{position:relative;aspect-ratio:2/3;border-radius:10px;overflow:hidden;background:var(--card) center top/cover no-repeat;border:1px solid var(--card-line);display:grid;place-items:center;transition:border-color .25s,box-shadow .25s}
+.pc:hover .cv{border-color:var(--accent);box-shadow:0 0 30px rgba(220,192,132,.18)}
+.pc .cv .badge{position:absolute;top:8px;left:8px;margin:0;background:rgba(8,16,32,.82)}
+.pc .cv .bar{position:absolute;left:0;right:0;bottom:0;border-radius:0;background:rgba(8,16,32,.7)}
+.pc .cv.typo{background:radial-gradient(130% 80% at 50% 0%,#2f4f86,#0e1b36 72%);padding:14px;text-align:center;color:var(--accent);align-content:center;gap:10px}
+.pc .cv.typo b{font-family:var(--display);font-weight:600;font-size:19px;line-height:1.1;color:var(--ink);text-wrap:balance}
+.pc .cv.typo svg{width:30px;height:30px;margin:0 auto}
+.pc .cv.typo small{font-size:10px;font-weight:900;letter-spacing:.16em;text-transform:uppercase}
+.pc.off .cv{opacity:.55}
+.pc.off .cv.lockd,.pc.off .cv.tease{opacity:1}
+.cv.tease::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,11,24,.5),rgba(6,11,24,.12) 45%,rgba(6,11,24,.05))}
+.cv.tease{border-color:var(--accent)}
+@keyframes sealglow{0%,100%{box-shadow:0 0 0 0 rgba(220,192,132,.6),0 0 24px rgba(220,192,132,.5)}60%{box-shadow:0 0 0 12px rgba(220,192,132,0),0 0 24px rgba(220,192,132,.5)}}
+.seal{position:absolute;left:50%;top:30%;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(180deg,#f3dc98,#b98f3c);color:var(--on-btn);border:1px solid rgba(255,244,210,.8);animation:sealglow 2.800s ease-out infinite}
+.seal svg{width:24px;height:24px;stroke-width:2}
+.pc .access.dim svg{width:13px;height:13px;fill:none;stroke:currentColor}
+.cv.lockd::before{content:"";position:absolute;inset:0;background:rgba(6,11,24,.74)}
+.lk{position:relative;display:grid;gap:8px;justify-items:center;color:var(--accent);font-weight:900;font-size:10px;letter-spacing:.16em;text-transform:uppercase}
+.lk svg{width:30px;height:30px}
+.pc h3{font-size:17px}
+.pc .access{padding:10px 6px;font-size:12px;margin-top:auto}
+.pc .access svg{width:13px;height:13px;fill:currentColor;stroke:none}
+.pc .access.prem svg{width:15px;height:15px;fill:none;stroke:currentColor}
+.pc .access.dim{background:transparent;border:1px solid var(--line);color:var(--soft);box-shadow:none;text-shadow:none}
+.pc .access.dim::after{display:none}
+/* premium call to action for offers: emerald with a gold edge and a slow halo */
+@keyframes halo{0%,100%{box-shadow:0 6px 20px rgba(16,140,94,.45),0 0 0 0 rgba(40,190,130,.55)}60%{box-shadow:0 6px 20px rgba(16,140,94,.45),0 0 0 9px rgba(40,190,130,0)}}
+.access.prem{background:linear-gradient(180deg,var(--go1),var(--go2));color:#fff;border:1px solid rgba(236,210,138,.8);box-shadow:none;text-shadow:0 1px 2px rgba(0,40,24,.6);animation:halo 2.600s ease-out infinite}
+.access.prem svg{color:#f1d792}
+/* home menu: gold buttons, locked rows, chat entry */
+.mc.gold{background:linear-gradient(180deg,#c9983a,#96691f);border-color:rgba(255,236,190,.5);box-shadow:0 8px 22px rgba(10,8,0,.35),inset 0 1px 0 rgba(255,255,255,.25);padding:17px 15px}
+.mc.gold .t{font-weight:900;letter-spacing:.06em;text-transform:uppercase;text-shadow:0 1px 2px rgba(60,35,0,.4)}
+.mc.gold .s{color:rgba(255,250,240,.9);text-shadow:0 1px 2px rgba(60,35,0,.3)}
+.mc.gold .tile{border:0;border-radius:12px;background:rgba(255,255,255,.22);color:#fff}
+.mc.gold .chev{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.22);color:#fff}
+.mc.lockrow{position:relative;background:rgba(30,51,82,.35)}
+.mc.lockrow .t{font-family:var(--display);font-size:19px;font-weight:600}
+.mc.lockrow .tile{border-radius:12px}
+.mc.lockrow .chev{color:var(--soft)}
+.tag{position:absolute;top:-9px;left:12px;padding:2px 9px;border-radius:999px;background:var(--accent);color:var(--on-btn);font-size:9px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.pm{position:relative;flex:none;width:44px;height:44px;border-radius:50%;background:linear-gradient(180deg,#ecd28a,#b98f3c);color:var(--on-btn);font-family:var(--display);font-weight:600;font-size:18px;display:grid;place-items:center}
+.pm{background-size:cover;background-position:center}
+.pm::after{content:"";position:absolute;right:0;bottom:0;width:11px;height:11px;border-radius:50%;background:#35d07f;border:2px solid var(--bg)}
+@keyframes live{0%,100%{box-shadow:0 0 0 0 rgba(53,208,127,.5)}55%{box-shadow:0 0 0 9px rgba(53,208,127,0)}}
+@keyframes livedot{0%,100%{transform:scale(1)}50%{transform:scale(1.350)}}
+.pm.live{width:52px;height:52px;animation:live 3.400s ease-in-out infinite}
+.pm.live::after{width:13px;height:13px;animation:livedot 3.400s ease-in-out infinite}
+/* bonus: its own jade and mint, apart from the gold of programmes and the emerald of offers */
+.gifto{flex:none;width:26px;height:26px}
+.mc.bonus{background:linear-gradient(135deg,var(--bo1),var(--bo2));border-color:rgba(111,227,193,.45);box-shadow:0 0 30px rgba(111,227,193,.08)}
+.mc.bonus .eyebrow,.mc.bonus .chev{color:var(--bo)}
+.mc.bonus .tile{border:0;border-radius:12px;background:rgba(111,227,193,.16);color:var(--bo)}
+.mc.bonus .t{font-family:var(--display);font-size:20px;font-weight:600}
+button.mc.bonus:hover{border-color:var(--bo);box-shadow:0 0 32px rgba(111,227,193,.2)}
+.mc.bonus.soon{background:transparent;border-style:dashed;box-shadow:none}
+.mc.bonus.soon .t,.mc.bonus.soon .s{opacity:.7}
+.bhead{display:flex;align-items:center;gap:14px}
+.bhead .gbox{flex:none;width:58px;height:58px;border-radius:16px;display:grid;place-items:center;background:rgba(111,227,193,.14);border:1px solid rgba(111,227,193,.4)}
+.bhead .gifto{width:36px;height:36px}
+.bar.jade{background:rgba(111,227,193,.2)}
+.bar.jade i{background:linear-gradient(90deg,var(--bo-deep),var(--bo))}
+.mc.bhome{position:relative;overflow:hidden;padding:18px 15px;color:#fff;background:linear-gradient(120deg,#1a6a62 0%,#10464a 52%,#0a2832 100%);border-color:rgba(111,227,193,.6);
+  box-shadow:0 8px 24px rgba(4,10,24,.45),inset 0 1px 0 rgba(190,255,235,.28),0 0 36px rgba(111,227,193,.16)}
+.mc.bhome::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(200,255,238,.22) 50%,transparent 60%);transform:translateX(-130%);animation:sheen 6.500s ease-in-out infinite;pointer-events:none}
+.mc.bhome .t{font-weight:900;font-size:16px;letter-spacing:.1em;text-transform:uppercase;text-shadow:0 1px 2px rgba(0,30,26,.5)}
+.mc.bhome .s{color:rgba(222,246,239,.88)}
+.mc.bhome .tile{width:50px;height:50px;border-radius:14px;border:1px solid rgba(111,227,193,.45);background:radial-gradient(circle at 30% 25%,rgba(150,245,215,.3),rgba(111,227,193,.1))}
+.mc.bhome .gifto{width:30px;height:30px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.35))}
+.mc.bhome .chev{width:34px;height:34px;border-radius:50%;background:linear-gradient(180deg,#9af3d6,#3fbf9a);color:#06302a;box-shadow:0 0 16px rgba(111,227,193,.45)}
+.bprog{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:10px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--bo)}
+.bprog i{width:18px;height:5px;border-radius:99px;background:rgba(111,227,193,.22)}
+.bprog i.on{background:var(--bo);box-shadow:0 0 8px rgba(111,227,193,.7)}
+/* unlock celebration */
+#unlock{position:fixed;inset:0;z-index:42;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center;background:radial-gradient(90% 60% at 50% 35%,#12203d,#060b18 75%);animation:fadein .5s both;transition:opacity .5s;overflow:hidden}
+#unlock.out{opacity:0}
+#unlock .rays{position:absolute;left:50%;top:38%;width:560px;height:560px;margin:-280px 0 0 -280px;border-radius:50%;opacity:0;background:repeating-conic-gradient(from 0deg,rgba(220,192,132,.2) 0 7deg,transparent 7deg 20deg);-webkit-mask:radial-gradient(circle,#000 0,transparent 68%);mask:radial-gradient(circle,#000 0,transparent 68%);transition:opacity .8s}
+#unlock.open .rays{opacity:1;animation:spin 14s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ulock{position:relative;width:96px;height:96px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--line);color:var(--soft);animation:shake .5s .35s 2}
+.ulock svg{width:42px;height:42px;stroke-width:1.6}
+#unlock.open .ulock{border-color:var(--accent);color:var(--on-btn);background:linear-gradient(180deg,#ecd28a,#b98f3c);box-shadow:0 0 60px rgba(220,192,132,.75);animation:pop .5s both}
+@keyframes shake{0%,100%{transform:rotate(0)}25%{transform:rotate(-9deg)}75%{transform:rotate(9deg)}}
+.spark{position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px;border-radius:50%;background:#f1d792;opacity:0}
+#unlock.open .spark{animation:fly .9s ease-out both}
+@keyframes fly{from{opacity:1;transform:translate(0,0) scale(1)}to{opacity:0;transform:translate(var(--x),var(--y)) scale(.3)}}
+#unlock .rev{position:relative;opacity:0;transform:translateY(12px);transition:opacity .5s,transform .5s}
+#unlock.open .rev{opacity:1;transform:none}
+#unlock.open .rev.d2{transition-delay:.2s}#unlock.open .rev.d3{transition-delay:.45s}#unlock.open .rev.d4{transition-delay:.7s}
+#unlock h1{font-size:30px;letter-spacing:.04em;text-transform:uppercase;text-shadow:0 0 26px rgba(220,192,132,.5)}
+.ucard{display:flex;align-items:center;gap:14px;text-align:left;padding:12px 16px 12px 12px;border-radius:12px;background:var(--card);border:1px solid var(--accent);box-shadow:0 0 40px rgba(220,192,132,.25);max-width:340px}
+.ucard i{flex:none;width:54px;height:76px;border-radius:7px;background:center top/cover no-repeat;border:1px solid var(--card-line)}
+.unlockline{padding:10px 14px;border-radius:8px;border:1px solid var(--accent);background:rgba(220,192,132,.12);color:var(--accent);font-weight:700;font-size:14px;text-align:center;animation:pop .5s both}
+@keyframes ring{0%{box-shadow:0 0 0 0 rgba(220,192,132,.8)}100%{box-shadow:0 0 0 14px rgba(220,192,132,0)}}
+.pc.fresh .cv{border-color:var(--accent);animation:ring 1.400s ease-out infinite}
+.invite{display:flex;align-items:center;gap:12px;text-align:left;max-width:340px;width:100%;padding:10px 14px 10px 10px;border-radius:12px;border:1px dashed var(--accent);background:rgba(220,192,132,.08)}
+.invite i{flex:none;width:44px;height:62px;border-radius:6px;background:center top/cover no-repeat;position:relative;overflow:hidden}
+.invite i::after{content:"";position:absolute;inset:0;background:rgba(6,11,24,.6)}
+.invite b{display:block;font-family:var(--display);font-size:18px;font-weight:600;line-height:1.150}
+#unlock.bravo .ulock{animation:none}
+#unlock .count{font-family:var(--display);font-size:19px}
+/* chat with the assistant, messenger style */
+.wa{display:flex;align-items:center;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.wa h3{font-size:19px}
+.msg small{display:block;text-align:right;font-size:10px;opacity:.7;margin-top:3px}
+.typing{display:flex;gap:5px;align-items:center;padding:14px 16px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--soft);animation:blink 1.200s infinite}
+.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,60%,100%{opacity:.25}30%{opacity:1}}
+/* tabs */
+nav.tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border-top:1px solid var(--line);padding:10px 4px 12px;background:var(--bg)}
+nav.tabs button{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;line-height:1.15;font-weight:700;color:var(--soft);text-align:center}
+nav.tabs button span{display:grid;place-items:center;min-height:2.3em;width:100%;font-size:clamp(8.5px,2.55vw,11px)}
+nav.tabs button[aria-current="page"]{color:var(--accent)}
+/* guide */
+main.chat{padding-bottom:0}
+.msgs{flex:1;display:flex;flex-direction:column;gap:10px;padding-bottom:12px}
+.msg{max-width:86%;padding:11px 15px;border-radius:18px;white-space:pre-wrap;overflow-wrap:anywhere}
+.msg.a{background:var(--panel);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:5px}
+.msg.u{background:#0c5a3f;color:#fff;align-self:flex-end;border-bottom-right-radius:5px}
+.composer{position:sticky;bottom:0;display:flex;gap:8px;padding-block:10px 12px;margin-inline:-20px;padding-inline:20px;background:var(--bg);border-top:1px solid var(--line)}
+.composer input{border-radius:999px}
+.send{flex:none;width:48px;height:48px;border-radius:50%;background:linear-gradient(180deg,var(--go1),var(--go2));color:#fff;display:grid;place-items:center}
+/* login, welcome, modals */
+.login{flex:1;display:flex;flex-direction:column;justify-content:center;gap:26px;padding-block:28px;overflow-y:auto;scrollbar-width:none}
+.lhead{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.lhead h2{font-size:27px;letter-spacing:.05em;text-transform:uppercase}
+.orn{display:flex;align-items:center;gap:12px;color:var(--accent);font-size:11px}
+.orn::before,.orn::after{content:"";flex:1;height:1px;background:var(--line)}
+.verse{text-align:center;font-family:var(--display);font-style:italic;font-size:17px;line-height:1.35;color:var(--soft)}
+#welcome{position:fixed;inset:0;z-index:40;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center;background:rgba(7,13,27,.95);animation:fadein .6s both;transition:opacity .6s}
+#welcome.out{opacity:0}
+#welcome svg{width:58px;height:58px;color:var(--accent);animation:glow 1.6s ease-in-out infinite alternate,pop .7s both}
+#welcome h1{font-size:30px;letter-spacing:.06em;text-transform:uppercase;text-shadow:0 0 26px rgba(190,212,255,.45);animation:rise .7s .2s both}
+#welcome p{animation:rise .7s .35s both}
+.wbar{width:180px;height:2px;background:var(--line);border-radius:2px;overflow:hidden}
+.wbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,transparent,var(--accent));transition:width 1.9s ease}
+.scrim{position:fixed;inset:0;z-index:35;display:grid;place-items:center;padding:20px;background:rgba(5,10,22,.82);animation:fadein .4s both}
+.scrim.low{place-items:end center;padding:0}
+.modal{width:100%;max-width:380px;display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center;padding:26px 20px;border-radius:12px;background:var(--card);border:1px solid var(--card-line);box-shadow:0 0 60px rgba(170,196,255,.14);animation:pop .45s both}
+.modal h2{font-size:28px;letter-spacing:.04em;text-transform:uppercase}
+.sheet{width:100%;max-width:460px;display:flex;flex-direction:column;gap:10px;padding:22px max(20px,env(safe-area-inset-right,0px)) calc(22px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));border-radius:16px 16px 0 0;background:var(--card);border-top:1px solid var(--card-line);animation:rise .35s both}
+.days{display:flex;justify-content:center;gap:7px;flex-wrap:wrap}
+.dd{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--soft);font-variant-numeric:tabular-nums}
+.dd svg{width:15px;height:15px;stroke-width:2.2}
+.dd.ok{border-color:var(--ok);color:var(--ok)}
+.dd.open{border-color:var(--accent);color:var(--accent)}
+.dd.now{background:var(--accent);border-color:var(--accent);color:var(--on-btn);box-shadow:0 0 18px rgba(220,192,132,.6)}
+.gcover{width:120px;aspect-ratio:9/16;border-radius:10px;background:center/cover no-repeat;border:1px solid var(--accent);box-shadow:0 0 44px rgba(220,192,132,.5);animation:pop .6s .15s both}
+.toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:700;font-size:13px;z-index:45;max-width:90%}
+@media (prefers-reduced-motion:reduce){*,*::after{transition:none!important;animation:none!important}}
+</style>
+
+<div id="sky" aria-hidden="true"></div>
+<div id="app"></div>
+<div id="toast" class="toast" hidden></div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ICONS={
+ home:'<path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/>',
+ book:'<path d="M12 6c-2-1.5-5-2-8-1.5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5v-13c-3-.5-6 0-8 1.5zM12 6v13"/>',
+ spark:'<path d="M12 4l1.8 5.2L19 11l-5.2 1.8L12 18l-1.8-5.2L5 11l5.2-1.8z"/><path d="M18.5 4v3M17 5.5h3"/>',
+ pray:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M18 6l-2.5 2.5M8.5 15.5L6 18"/><circle cx="12" cy="12" r="2.5"/>',
+ gift:'<path d="M4 10h16v4H4zM6 14v6h12v-6M12 10v10M12 10c-2-4-6-3-5-1 .5 1 3 1 5 1zm0 0c2-4 6-3 5-1-.5 1-3 1-5 1z"/>',
+ chat:'<path d="M4 5h16v11H9l-5 4z"/><path d="M9 10.5h6"/>',
+ mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+ pen:'<path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"/>',scroll:'<path d="M7 4h11v13a3 3 0 0 1-3 3H6a2 2 0 0 1-2-2v-2h10M10 9h5M10 12h5"/>',
+ unlock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 7.600-1.700"/>',
+ lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+ check:'<path d="M5 12l4 4 10-10"/>',play:'<path d="M8 5l11 7-11 7z"/>',pause:'<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>',
+ send:'<path d="M4 12l16-7-6 16-3-6z"/>',chev:'<path d="M9 6l6 6-6 6"/>',arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',crown:'<path d="M4 8l4 4 4-7 4 7 4-4-2 10H6z"/>'
+};
+const GIFT='<svg class="gifto" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="9.500" rx="1.500" fill="#22a888"/><rect x="3" y="7.500" width="18" height="4.200" rx="1.200" fill="#57d6b2"/><rect x="10.600" y="7.500" width="2.800" height="13" fill="#f1d792"/><path d="M12 7.500C10 3.300 6.300 4.200 7.100 6.200 7.600 7.500 10 7.500 12 7.500zM12 7.500c2-4.200 5.700-3.300 4.900-1.300-.5 1.300-2.900 1.300-4.900 1.300z" fill="#ff8f7a"/></svg>';
+const ic=n=>`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]}</svg>`;
+const tile=n=>`<span class="tile">${ic(n)}</span>`;
+// one row component for every secondary item
+const mc=(attrs,lead,t,s,cls='',end='chev',eb='')=>`<button class="mc ${cls}" ${attrs}>${lead}<span class="grow">${eb?`<span class="eyebrow">${esc(eb)}</span>`:''}<span class="t">${esc(t)}</span>${s?`<span class="s">${esc(s)}</span>`:''}</span><span class="chev">${ic(end)}</span></button>`;
+
+/* ---------- content ---------- */
+// video: code du lecteur vturb de chaque leçon (à renseigner). gift: programme offert par le pop-up de Saint Antoine.
+const P=[
+ {id:'michel',gift:1,t:"Prières Puissantes à l'Archange Michel",img:'img/michel.jpg',med:'50% 9%/250%',poster:'img/michel-video.jpg',
+  l:["Prières Puissantes à l'Archange Michel","Invocations Sacrées à l'Archange Michel"],video:['','']},
+ {id:'chant',t:"Le Chant Sacré de l'Archange Michel",img:'img/chant.jpg',med:'50% 6%/260%',poster:'img/chant-video.jpg',
+  l:["Le Chant Sacré de l'Archange Michel","Activation de Votre Ange Gardien","Le Sceau de la Guérison Divine — La Prière de l'Archange Raphaël","Débloquer les Bénédictions Financières avec l'Archange Uriel"],video:['','','','']},
+ {id:'freq',t:"Les 7 Fréquences de l'Accélération Divine",img:'img/freq.jpg',poster:'img/freq-video.jpg',
+  l:["La Puissance des Fréquences Divines","01. L'Éveil","02. La Percée du Désert","03. Le Code d'Isaac","04. La Résonance de Jéricho","05. Le Flux de Pierre","06. La Fréquence du Trône","07. Le Sceau de la Manifestation"],video:['','','','','','','','']},
+ {id:'salomon',t:"Les Secrets Cachés de la Prospérité du Roi Salomon",img:'img/salomon.jpg',poster:'img/salomon-video.jpg',
+  l:["01. Ce Qui a Fait de Salomon l'Homme le Plus Riche du Monde","02. Les Connaissances Secrètes qui ont fait de Salomon le plus Sage"],video:['','']}
+];
+// Programme annoncé, encore verrouillé (10 vidéos à venir).
+const SOON={t:'Les 10 Promesses Oubliées de la Bible',s:'10 vidéos · Bientôt',img:'img/promesses.jpg'};
+// Vitrine : les deux premières offres non possédées sont mises en avant, les autres restent sous cadenas.
+// top: 1 place le produit en premier dans « Mes programmes » et ouvre directement sa page de vente externe (url).
+// Chaque produit ajouté ici apparaît dans Bonus : {id, t: nom, s: une ligne, img: couverture, url: page de vente ou paiement, p: [paragraphes de vente], pts: [ce que l'on reçoit]}.
+const OFFERS=[
+ {id:'ange',top:1,t:"Découvrez votre ange gardien",s:"Recevez son message personnalisé.",img:'img/ange.jpg',url:'https://reiswqi.github.io/a/',
+  p:["Quelqu'un veille sur vous depuis toujours. Ce parcours de cinq minutes vous aide à mettre un nom sur cette présence.","Répondez à quelques questions simples, et recevez un message personnel à garder près de vous."],
+  pts:["Un parcours guidé de 5 minutes","Le nom de votre ange gardien","Son message personnalisé"]}
+];
+const REFUND_GIFT=null;
+// Produits verrouillés affichés sur l'Accueil. url: page de vente (à renseigner).
+const LOCKS=[
+ {eb:'Accès Premium',t:'Prière Secrète - Illimitée',s:'Compagnon IA, prières avancées et pratiques exclusives.',url:''},
+ {tag:'Nouveau contenu',eb:'Code du Royaume',t:'Code du Royaume',s:'Cours exclusifs en audio et vidéo.',url:''}
+];
+const PERE='Père Michel Laurent';
+const PERE_IMG='img/pere.jpg'; // photo du Père (chemin de l'image). Vide : les initiales s'affichent.
+const pm=(cls='')=>`<span class="pm ${cls}" ${PERE_IMG?`style="background-image:url(${PERE_IMG})"`:''}>${PERE_IMG?'':'PM'}</span>`;
+// Bonus offerts : chaque entrée apparaît dans l'onglet Bonus comme « Bonus N · Débloqué ». Le suivant reste annoncé « Bientôt ».
+const BONUS=[
+ {t:()=>'Votre Script Divin',s:()=>'Votre lecture et vos décrets personnels.',i:'scroll',a:'data-a="tab" data-t="script"'},
+ {t:()=>THEMES[NOW.getMonth()],s:()=>THEME_LABEL,i:'spark',a:'data-a="tab" data-t="theme"'}
+]; // programme offert quand un membre hésite à demander un remboursement
+const THEMES=["Nouveaux commencements","Amour et pardon","Renouveau intérieur","Espérance vivante","Gratitude","Paix du cœur","Force et courage","Repos en Dieu","Sagesse et discernement","Foi persévérante","Confiance et stabilité intérieure","Lumière et joie"];
+// Page du thème : contenu complet pour novembre ; les autres mois reprennent la structure avec une introduction générique.
+const THEME_PAGE={
+ sub:{10:"Une base plus solide pour une foi calme et résiliente."},
+ intro:{10:["Rester spirituellement stable quand la vie, elle, ne l'est pas.","Ce mois-ci, vous découvrirez comment la confiance en Dieu devient le socle de l'équilibre, de la clarté et de la résilience."]},
+ learn:{10:["Garder l'équilibre au milieu de l'incertitude","Apaiser l'anxiété et lâcher le contrôle","Bâtir une paix qui ne dépend pas des circonstances","Fortifier vos racines par la prière quotidienne"]},
+ eps:{10:[["La vérité qui blesse avant de libérer","Comment la vérité bouscule avant d'apporter clarté et liberté."],["Le coût invisible de vouloir tout contrôler","Ce que le contrôle fait à la paix, et pourquoi l'abandon fait grandir."],["Temps, attente et maturité","Comment l'attente façonne le caractère."],["Peur, contrôle et confiance","Comment la confiance rétablit l'équilibre."],["Identité, valeur et comparaison","La liberté de ne plus se comparer."]]}
+};
+const DAILY=[["Pour votre santé : demander la guérison","Présentez à Dieu ce qui souffre dans votre corps.","Éternel, tu connais mon corps mieux que moi. Je te présente ce qui me fait souffrir. Guéris-moi, fortifie-moi, et accompagne ceux qui me soignent. Amen.","Guéris-moi, Éternel, et je serai guéri ; sauve-moi, et je serai sauvé.","Jérémie 17:14","Demander la guérison est une prière aussi ancienne que la foi. Dieu l'entend toujours, et il agit aussi par les mains qui soignent."],["Pour vos finances : Dieu pourvoit","Confiez vos besoins du mois à Celui qui pourvoit.","Père, tu vois mes comptes et mes échéances. Je te remets chaque besoin par son nom. Pourvois, ouvre des portes, et donne-moi la sagesse pour bien gérer. Amen.","Et mon Dieu pourvoira à tous vos besoins selon sa richesse, avec gloire, en Jésus-Christ.","Philippiens 4:19","Nommer ses besoins devant Dieu, c'est cesser de les porter seul. La confiance n'empêche pas d'agir : elle permet d'agir sans panique."],["Pour votre corps fatigué","Recevez des forces pour aujourd'hui.","Seigneur, mon corps est las et la douleur m'use. Toi qui guéris, renouvelle mes forces aujourd'hui. Que je sente ta main sur moi. Amen.","C'est lui qui pardonne toutes tes iniquités, qui guérit toutes tes maladies.","Psaume 103:3","Le psaume place côte à côte le pardon et la guérison : Dieu prend soin de la personne entière, cœur et corps."],["Quand l'argent inquiète","Déposez la peur de manquer.","Père céleste, la peur de manquer me serre le cœur. Tu nourris les oiseaux : tu ne m'oublieras pas. Calme mon inquiétude et montre-moi le prochain pas. Amen.","Regardez les oiseaux du ciel : ils ne sèment ni ne moissonnent, et ils n'amassent rien dans des greniers ; et votre Père céleste les nourrit.","Matthieu 6:26","L'inquiétude ne règle aucune facture. Elle ôte seulement la clarté dont on a besoin pour avancer."],["J'ai crié, et tu m'as entendu","Priez dans la maladie, sans vous cacher.","Éternel mon Dieu, je crie vers toi dans cette épreuve de santé. Entends-moi. Relève-moi. Je me confie en toi pour chaque jour du chemin. Amen.","Éternel, mon Dieu ! J'ai crié à toi, et tu m'as guéri.","Psaume 30:3","Crier vers Dieu n'est pas manquer de foi. C'est la prière la plus honnête qui soit."],["Le pain de ce jour","Demandez ce qu'il faut pour aujourd'hui.","Père, donne-moi aujourd'hui ce dont j'ai besoin : le pain, le travail, de quoi honorer ce que je dois. Et un cœur reconnaissant pour ce qui est déjà là. Amen.","Donne-nous aujourd'hui notre pain quotidien.","Matthieu 6:11","Jésus nous apprend à demander pour aujourd'hui. Un jour à la fois, le nécessaire devient moins lourd à espérer."],["Va en paix","Recevez la paix au milieu du mal.","Jésus, comme cette femme qui a touché ton vêtement, je m'approche de toi avec foi. Touche ce qui est malade en moi. Donne-moi ta paix. Amen.","Ma fille, ta foi t'a sauvée ; va en paix, et sois guérie de ton mal.","Marc 5:34","Jésus donne d'abord la paix, puis parle de guérison. La paix du cœur est déjà un commencement."],["Jamais abandonné","Souvenez-vous de la fidélité de Dieu.","Seigneur, tu n'as jamais abandonné les tiens. Dans cette période difficile pour mon foyer, sois fidèle encore. Je te fais confiance pour ma maison. Amen.","J'ai été jeune, j'ai vieilli ; et je n'ai point vu le juste abandonné, ni sa postérité mendiant son pain.","Psaume 37:25","Celui qui parle a vécu longtemps. Son témoignage est simple : dans la durée, Dieu ne lâche pas."],["Santé du corps et de l'âme","Priez pour tout votre être.","Dieu, je te demande la santé du corps et la paix de l'âme. Que l'une soutienne l'autre. Prends soin de moi tout entier. Amen.","Bien-aimé, je souhaite que tu prospères à tous égards et sois en bonne santé, comme prospère l'état de ton âme.","3 Jean 2","Ce vœu d'un apôtre pour son ami relie le corps et l'âme. Prendre soin de l'un aide l'autre."],["Une bénédiction sans chagrin","Demandez une prospérité paisible.","Éternel, bénis le travail de mes mains. Que ce que je reçois vienne de toi, sans tourment ni regret. Garde mon cœur libre de l'avidité. Amen.","C'est la bénédiction de l'Éternel qui enrichit, et il ne la fait suivre d'aucun chagrin.","Proverbes 10:22","Il existe une richesse qui inquiète et une bénédiction qui apaise. C'est la seconde que l'on demande ici."],["Guéri par ses blessures","Unissez votre souffrance à la sienne.","Seigneur Jésus, tu as porté nos douleurs. Je dépose la mienne auprès de la tienne. Que tes blessures soient ma guérison et mon réconfort. Amen.","C'est par ses meurtrissures que nous sommes guéris.","Ésaïe 53:5","Celui que l'on prie connaît la souffrance de l'intérieur. On ne lui explique rien : il sait."],["Je ne t'abandonnerai pas","Trouvez votre sécurité en Dieu.","Dieu fidèle, ma sécurité ne repose pas sur mon compte en banque mais sur ta promesse. Reste près de moi dans le besoin. Apprends-moi le contentement. Amen.","Je ne te délaisserai point, et je ne t'abandonnerai point.","Hébreux 13:5","La sécurité que donne l'argent est fragile. Celle que donne une présence fidèle tient en toute saison."],["Soutenu dans la maladie","Laissez-vous porter.","Éternel, sois près de mon lit dans les nuits difficiles. Soutiens-moi quand je n'ai plus de forces, et soutiens ceux qui veillent sur moi. Amen.","L'Éternel le soutient sur son lit de douleur.","Psaume 41:4","Dieu ne se tient pas loin de la chambre du malade. Le psaume le montre tout près, comme quelqu'un qui veille."],["Privé d'aucun bien","Cherchez Dieu d'abord dans le manque.","Seigneur, au milieu de mes besoins, c'est toi que je cherche d'abord. Tu sais ce qui me manque. Donne-le-moi en ton temps, et donne-moi la patience. Amen.","Ceux qui cherchent l'Éternel ne sont privés d'aucun bien.","Psaume 34:11","Chercher Dieu d'abord ne fait pas disparaître les besoins. Cela change l'ordre : la confiance vient avant le calcul."],["Protégez votre cœur aujourd'hui","Apaisez vos inquiétudes et recentrez-vous sur Dieu.","Seigneur, veille sur mon cœur aujourd'hui. Éloigne ce qui trouble et ce qui endurcit. Apprends-moi à garder ce qui est précieux et à laisser partir le reste. Amen.","Garde ton cœur plus que toute autre chose, car de lui viennent les sources de la vie.","Proverbes 4:23","Ce que nous laissons entrer dans notre cœur façonne nos journées. Le garder, ce n'est pas se fermer : c'est choisir ce qui mérite d'y demeurer."],["Choisir une chose à la fois","Retrouvez la simplicité, pas à pas.","Dieu, simplifie mon monde intérieur. Libère-moi du besoin de tout porter en même temps. Apprends-moi à avancer pas à pas. Que mon cœur repose sur l'essentiel. Amen.","Une seule chose est nécessaire.","Luc 10:42","La vie pousse à tout faire à la fois, mais la vie spirituelle fleurit dans la simplicité. Choisir une chose rend à l'attention sa dignité."],["Déposer le souci du lendemain","Confiez à Dieu ce qui n'est pas encore là.","Père, je dépose devant toi ce que demain me réserve. Donne-moi la grâce de vivre ce jour, seulement ce jour, avec confiance. Amen.","Ne vous inquiétez donc pas du lendemain ; car le lendemain aura soin de lui-même.","Matthieu 6:34","L'inquiétude vit toujours dans un jour qui n'existe pas encore. La paix se trouve dans celui-ci, le seul qui nous soit donné."],["Marcher sans crainte","Recevez la force pour ce jour.","Seigneur, quand la peur se lève, rappelle-moi que tu es là. Fortifie mes pas et affermis ma voix. Je ne marche pas seul. Amen.","Ne crains rien, car je suis avec toi.","Ésaïe 41:10","Le courage n'est pas l'absence de peur. C'est la certitude tranquille d'être accompagné au milieu d'elle."],["Recevoir sans manquer","Reposez-vous sur Celui qui pourvoit.","Mon Berger, tu connais mes besoins avant que je les nomme. Apprends-moi à recevoir avec gratitude et à ne plus vivre dans la peur du manque. Amen.","L'Éternel est mon berger : je ne manquerai de rien.","Psaume 23:1","La gratitude change le regard : elle fait apparaître ce qui est déjà donné, là où l'on ne voyait que ce qui manque."],["Une lumière pour le prochain pas","Demandez la clarté pour aujourd'hui.","Seigneur, je ne te demande pas de voir tout le chemin. Éclaire seulement le prochain pas, et donne-moi la foi de le faire. Amen.","Ta parole est une lampe à mes pieds, et une lumière sur mon sentier.","Psaume 119:105","Une lampe n'éclaire pas l'horizon, elle éclaire le pas suivant. C'est souvent toute la lumière dont nous avons besoin."],["Prendre courage","Avancez avec assurance.","Dieu fidèle, renouvelle mon courage. Là où je me sens faible, sois ma force. Là où j'hésite, sois mon assurance. Amen.","Fortifie-toi et prends courage.","Josué 1:9","Le courage se reçoit, puis se saisit. Chaque matin offre l'occasion de le reprendre."],["Faire silence","Arrêtez-vous un instant devant Dieu.","Seigneur, fais taire en moi le bruit et la hâte. Dans ce silence, que je te reconnaisse. Tu es Dieu, et cela me suffit. Amen.","Arrêtez, et sachez que je suis Dieu.","Psaume 46:11","S'arrêter n'est pas perdre du temps. C'est se rappeler qui tient le temps entre ses mains."],["Fort dans la faiblesse","Appuyez-vous sur une force plus grande.","Christ, je ne peux pas tout par moi-même, mais je peux tout avec toi. Porte aujourd'hui ce qui dépasse mes forces. Amen.","Je puis tout par celui qui me fortifie.","Philippiens 4:13","Cette parole ne promet pas que tout sera facile. Elle promet que nous ne serons jamais seuls à porter."],["Tout remettre dans la prière","Transformez le souci en demande.","Père, chaque inquiétude que je garde, je te la confie maintenant, une à une. Reçois-les, et donne-moi ta paix en échange. Amen.","Ne vous inquiétez de rien.","Philippiens 4:6","Un souci gardé tourne en rond. Un souci confié devient une prière, et la prière ouvre un chemin."],["Trouver le repos","Venez comme vous êtes, fatigué.","Jésus, je viens à toi avec ma fatigue. Je dépose le poids de cette semaine à tes pieds. Donne-moi ton repos. Amen.","Venez à moi, vous tous qui êtes fatigués et chargés, et je vous donnerai du repos.","Matthieu 11:28","Le repos promis n'est pas l'absence de travail. C'est une présence qui allège tout ce que l'on porte."],["Recevoir sa paix","Accueillez une paix qui ne dépend de rien.","Seigneur, donne-moi cette paix que le monde ne peut ni donner ni reprendre. Qu'elle garde mon cœur aujourd'hui. Amen.","Je vous laisse la paix, je vous donne ma paix.","Jean 14:27","La paix du monde dépend des circonstances. Celle-ci demeure quand les circonstances changent."],["Les désirs du cœur","Trouvez votre joie en Dieu d'abord.","Éternel, sois ma première joie. Purifie mes désirs et accorde-moi ceux qui viennent de toi. Amen.","Fais de l'Éternel tes délices, et il te donnera ce que ton cœur désire.","Psaume 37:4","Quand Dieu devient notre joie, nos désirs changent doucement de forme. Et ils trouvent leur réponse."],["Confier son chemin","Laissez Dieu agir dans ce que vous ne maîtrisez pas.","Seigneur, je te remets ce chemin que je ne comprends pas encore. Je choisis la confiance. Agis selon ta sagesse. Amen.","Recommande ton sort à l'Éternel, mets en lui ta confiance, et il agira.","Psaume 37:5","Confier n'est pas abandonner. C'est faire sa part, puis laisser à Dieu ce qui lui revient."],["Au-delà de ma propre sagesse","Faites confiance quand vous ne comprenez pas.","Dieu, je reconnais les limites de ce que je vois. Je m'appuie sur toi de tout mon cœur. Conduis-moi. Amen.","Confie-toi en l'Éternel de tout ton cœur, et ne t'appuie pas sur ta sagesse.","Proverbes 3:5","Notre compréhension est une fenêtre étroite. La confiance ouvre sur un paysage que nous ne voyons pas encore."],["Des sentiers aplanis","Invitez Dieu dans chaque décision.","Seigneur, je te reconnais dans mes choix d'aujourd'hui, les grands comme les petits. Aplanis le chemin devant moi. Amen.","Reconnais-le dans toutes tes voies, et il aplanira tes sentiers.","Proverbes 3:6","Reconnaître Dieu dans ses voies, c'est lui demander son avis avant, pas seulement son secours après."],["Des forces nouvelles","Attendez-vous à Dieu pour repartir.","Éternel, mes forces s'épuisent. Je m'attends à toi. Renouvelle-moi, pour que je me relève et que j'avance encore. Amen.","Ceux qui se confient en l'Éternel renouvellent leur force.","Ésaïe 40:31","Les forces renouvelées ne sont pas les anciennes que l'on retrouve. Ce sont des forces neuves, données pour ce jour."],["Tout concourt au bien","Faites confiance au travail caché de Dieu.","Père, même ce que je ne comprends pas est entre tes mains. Fais concourir toutes choses à mon bien, et garde-moi dans ton amour. Amen.","Toutes choses concourent au bien de ceux qui aiment Dieu.","Romains 8:28","Tout n'est pas bon, mais rien n'est perdu. Dieu sait tisser même les fils sombres dans l'ouvrage."],["Dieu est pour moi","Tenez ferme face à ce qui s'oppose.","Seigneur, quand tout semble contre moi, rappelle-moi que tu es pour moi. Cela change tout. Amen.","Si Dieu est pour nous, qui sera contre nous ?","Romains 8:31","Cette question n'attend pas de réponse. Elle remet simplement chaque obstacle à sa juste taille."],["Ta grâce me suffit","Accueillez vos limites sans honte.","Seigneur, je cesse de cacher ma faiblesse. Que ta puissance s'y accomplisse. Ta grâce me suffit aujourd'hui. Amen.","Ma grâce te suffit, car ma puissance s'accomplit dans la faiblesse.","2 Corinthiens 12:9","Nos faiblesses ne sont pas des obstacles à la grâce. Elles sont l'endroit précis où elle agit."],["Demander avec confiance","Osez frapper à la porte.","Père, je viens demander, chercher et frapper. Je crois que tu entends. Ouvre ce qui doit s'ouvrir. Amen.","Demandez, et l'on vous donnera ; cherchez, et vous trouverez ; frappez, et l'on vous ouvrira.","Matthieu 7:7","Demander est un acte de confiance. On ne frappe qu'à la porte de quelqu'un que l'on croit présent."],["Chercher d'abord son Royaume","Remettez les priorités à leur place.","Seigneur, que ton Royaume passe avant mes urgences. Remets de l'ordre dans ce que je poursuis. Le reste, je te le confie. Amen.","Cherchez premièrement le royaume et la justice de Dieu ; et toutes ces choses vous seront données par-dessus.","Matthieu 6:33","Quand la première place est bien occupée, les autres choses trouvent la leur sans effort."],["La journée que Dieu a faite","Recevez ce jour comme un don.","Éternel, ce jour vient de toi. Je le reçois tel qu'il est. Apprends-moi à m'en réjouir. Amen.","C'est ici la journée que l'Éternel a faite : qu'elle soit pour nous un sujet d'allégresse et de joie !","Psaume 118:24","Aucune journée n'est ordinaire pour celui qui la reçoit comme un cadeau."],["Des bontés nouvelles","Recommencez ce matin, sans le poids d'hier.","Seigneur, merci pour ce matin neuf. Tes compassions ne sont pas épuisées. Je recommence avec toi. Amen.","Les bontés de l'Éternel ne sont pas épuisées, ses compassions ne sont pas à leur terme ; elles se renouvellent chaque matin.","Lamentations 3:22-23","Hier ne décide pas d'aujourd'hui. Chaque matin arrive avec sa propre provision de grâce."],["D'où vient mon secours","Levez les yeux plus haut que le problème.","Éternel, je lève les yeux vers toi. Mon secours ne vient pas de mes calculs, mais de toi qui as fait le ciel et la terre. Amen.","Le secours me vient de l'Éternel, qui a fait les cieux et la terre.","Psaume 121:2","Regarder plus haut ne fait pas disparaître la montagne. Cela rappelle qui l'a faite."],["Ma lumière et mon salut","Laissez la lumière chasser la peur.","Seigneur, sois ma lumière aujourd'hui. Là où tu éclaires, la crainte n'a plus de place. Amen.","L'Éternel est ma lumière et mon salut : de qui aurais-je crainte ?","Psaume 27:1","La peur grandit dans l'obscurité. Un peu de lumière suffit à la ramener à ses vraies proportions."],["Goûter sa bonté","Remarquez ce qui est bon aujourd'hui.","Éternel, ouvre mes yeux sur ta bonté dans les petites choses de ce jour. Que je la goûte et que je m'en souvienne. Amen.","Sentez et voyez combien l'Éternel est bon !","Psaume 34:9","La bonté de Dieu ne se prouve pas, elle se goûte. Il faut s'arrêter un instant pour en sentir la saveur."],["Un cœur pur","Demandez un nouveau départ intérieur.","Ô Dieu, crée en moi un cœur pur. Lave ce qui est trouble, renouvelle ce qui est usé. Amen.","Ô Dieu ! crée en moi un cœur pur, renouvelle en moi un esprit bien disposé.","Psaume 51:12","Un cœur pur ne se fabrique pas, il se reçoit. La prière de David commence par « crée »."],["À l'ombre du Tout-Puissant","Trouvez refuge en Dieu.","Très-Haut, je me réfugie sous ton abri. Garde-moi et garde ceux que j'aime. Que je repose à ton ombre. Amen.","Celui qui demeure sous l'abri du Très-Haut repose à l'ombre du Tout-Puissant.","Psaume 91:1","Demeurer est plus que passer. C'est faire de la présence de Dieu sa maison, pas son abri d'urgence."],["N'oublier aucun bienfait","Faites mémoire de ce que Dieu a fait.","Mon âme, bénis l'Éternel. Seigneur, je me souviens de tes bienfaits, un à un, et je te remercie. Amen.","Mon âme, bénis l'Éternel, et n'oublie aucun de ses bienfaits !","Psaume 103:2","L'oubli est le premier ennemi de la gratitude. Se souvenir, c'est déjà rendre grâce."],["Une créature merveilleuse","Regardez-vous avec les yeux de Dieu.","Créateur, merci de m'avoir fait avec soin. Guéris le regard dur que je porte sur moi. Que je me voie comme tu me vois. Amen.","Je te loue de ce que je suis une créature si merveilleuse.","Psaume 139:14","S'accueillir soi-même n'est pas de l'orgueil. C'est honorer l'ouvrage et celui qui l'a fait."],["Compter ses jours","Vivez ce jour avec sagesse.","Éternel, apprends-moi la valeur de mes jours. Que je ne les gaspille ni dans le regret ni dans la hâte. Amen.","Enseigne-nous à bien compter nos jours, afin que nous appliquions notre cœur à la sagesse.","Psaume 90:12","Compter ses jours ne rend pas triste. Cela rend chaque jour plus précieux."],["Un avenir et une espérance","Faites confiance aux projets de Dieu.","Seigneur, tu connais les projets que tu as pour moi. Je te fais confiance pour demain. Garde vivante mon espérance. Amen.","Car je connais les projets que j'ai formés sur vous, dit l'Éternel, projets de paix et non de malheur, afin de vous donner un avenir et de l'espérance.","Jérémie 29:11","L'espérance n'est pas de l'optimisme. C'est la confiance en Celui qui tient l'avenir."],["Une chose nouvelle","Ouvrez-vous à ce que Dieu commence.","Dieu, tu fais du neuf là où je ne voyais que du désert. Ouvre mes yeux sur ce que tu commences aujourd'hui. Amen.","Voici, je vais faire une chose nouvelle.","Ésaïe 43:19","Le neuf germe souvent sans bruit. Il faut un regard attentif pour l'apercevoir."],["Appelé par son nom","Souvenez-vous à qui vous appartenez.","Seigneur, tu m'appelles par mon nom. Je suis à toi. Que cette certitude apaise toute crainte. Amen.","Ne crains rien, car je te rachète, je t'appelle par ton nom : tu es à moi !","Ésaïe 43:1","Être appelé par son nom, c'est être connu. Et être connu de Dieu, c'est ne plus jamais être perdu."],["Une paix ferme","Fixez vos pensées sur Dieu.","Seigneur, mes pensées s'éparpillent. Ramène-les vers toi, et garde-moi dans ta paix. Amen.","À celui qui est ferme dans ses sentiments tu assures la paix, la paix, parce qu'il se confie en toi.","Ésaïe 26:3","La paix suit l'attention. Là où se posent nos pensées, notre cœur finit par s'installer."],["La lumière du monde","Suivez la lumière aujourd'hui.","Jésus, lumière du monde, marche devant moi. Que je ne reste pas dans mes zones d'ombre. Amen.","Je suis la lumière du monde.","Jean 8:12","Suivre la lumière ne demande pas de tout voir. Il suffit de garder les yeux sur elle."],["Demeurer attaché","Restez relié à la source.","Seigneur, sans toi je me dessèche. Garde-moi attaché à toi, et que ma vie porte du fruit. Amen.","Je suis le cep, vous êtes les sarments.","Jean 15:5","Le sarment ne s'efforce pas de porter du fruit. Il reste attaché, et le fruit vient."],["Le chemin","Laissez-vous conduire.","Jésus, quand je ne sais plus où aller, sois mon chemin. Quand je doute, sois ma vérité. Quand je faiblis, sois ma vie. Amen.","Je suis le chemin, la vérité, et la vie.","Jean 14:6","Le chemin n'est pas un plan que l'on reçoit. C'est quelqu'un que l'on suit."],["La vie en abondance","Accueillez la vie que Dieu donne.","Bon Berger, tu es venu pour que j'aie la vie. Élargis mon cœur pour recevoir ce que tu donnes. Amen.","Je suis venu afin que les brebis aient la vie, et qu'elles soient dans l'abondance.","Jean 10:10","L'abondance dont parle Jésus se mesure d'abord en vie : en paix, en sens, en amour reçu et donné."],["Le plus grand, c'est l'amour","Choisissez d'aimer aujourd'hui.","Seigneur, augmente en moi la foi et l'espérance, mais par-dessus tout apprends-moi à aimer. Amen.","Maintenant donc ces trois choses demeurent : la foi, l'espérance, la charité ; mais la plus grande de ces choses, c'est la charité.","1 Corinthiens 13:13","Beaucoup de choses passeront. Ce qui a été fait avec amour demeure."],["Tout avec amour","Mettez de l'amour dans les gestes simples.","Père, que tout ce que je ferai aujourd'hui, même le plus petit geste, soit fait avec amour. Amen.","Que tout ce que vous faites se fasse avec charité !","1 Corinthiens 16:14","Ce n'est pas la grandeur de la tâche qui compte, mais l'amour que l'on y met."],["Ne pas se lasser","Persévérez dans le bien.","Seigneur, quand je ne vois pas le fruit de mes efforts, garde-moi fidèle. Donne-moi de continuer à faire le bien. Amen.","Ne nous lassons pas de faire le bien.","Galates 6:9","La moisson a son temps. Entre la semence et le fruit, il y a la patience."],["Pardonner","Déposez ce que vous retenez contre quelqu'un.","Père, comme tu m'as pardonné, aide-moi à pardonner. Délie mon cœur de la rancune. Amen.","Soyez bons les uns envers les autres, compatissants, vous pardonnant réciproquement.","Éphésiens 4:32","Pardonner ne dit pas que le mal était peu de chose. Cela refuse de le porter plus longtemps."],["Rendre grâces","Dites merci, même aujourd'hui.","Seigneur, en toutes choses je veux te dire merci. Pour ce qui est clair et pour ce que je ne comprends pas encore. Amen.","Rendez grâces en toutes choses.","1 Thessaloniciens 5:18","Rendre grâces en toutes choses ne veut pas dire pour toutes choses. Cela veut dire : sans jamais cesser de voir le bien."],["Prier sans cesse","Faites de votre journée une conversation.","Dieu, que ma journée entière soit une prière : mes gestes, mes pensées, mes silences. Reste avec moi. Amen.","Soyez toujours joyeux. Priez sans cesse.","1 Thessaloniciens 5:16-17","Prier sans cesse, ce n'est pas parler sans arrêt. C'est vivre en présence de quelqu'un."],["Voir avec la foi","Croyez avant de voir.","Seigneur, affermis ma foi quand rien n'est encore visible. Que je tienne pour sûr ce que tu as promis. Amen.","Or la foi est une ferme assurance des choses qu'on espère, une démonstration de celles qu'on ne voit pas.","Hébreux 11:1","La foi ne nie pas ce que l'on voit. Elle sait qu'il y a davantage."],["Le même, aujourd'hui","Appuyez-vous sur Celui qui ne change pas.","Jésus, tout change autour de moi, mais toi tu demeures. Sois mon point fixe aujourd'hui. Amen.","Jésus-Christ est le même hier, aujourd'hui, et éternellement.","Hébreux 13:8","Dans un monde qui bouge, la stabilité ne vient pas des circonstances. Elle vient de Celui qui ne change pas."],["Demander la sagesse","Cherchez conseil auprès de Dieu.","Père, j'ai une décision à prendre et je manque de sagesse. Donne-la-moi, simplement, comme tu l'as promis. Amen.","Si quelqu'un d'entre vous manque de sagesse, qu'il la demande à Dieu.","Jacques 1:5","Reconnaître que l'on ne sait pas est le commencement de la sagesse. La demander en est la suite."],["S'approcher de Dieu","Faites le premier pas.","Seigneur, je m'approche de toi maintenant. Approche-toi de moi. Que je sente ta présence. Amen.","Approchez-vous de Dieu, et il s'approchera de vous.","Jacques 4:8","Dieu n'est jamais loin. Un pas vers lui suffit pour le découvrir tout près."],["Se décharger","Laissez Dieu porter vos soucis.","Père, je me décharge sur toi de ce qui me pèse. Tu prends soin de moi : je te crois. Amen.","Déchargez-vous sur lui de tous vos soucis, car lui-même prend soin de vous.","1 Pierre 5:7","Nous ne sommes pas faits pour porter seuls. Se décharger est un geste d'humilité et de confiance."],["L'amour qui chasse la peur","Laissez-vous aimer.","Seigneur, que ton amour prenne en moi la place de la peur. Remplis ce que la crainte occupait. Amen.","L'amour parfait bannit la crainte.","1 Jean 4:18","On ne chasse pas la peur en luttant contre elle. On la remplace par plus grand qu'elle."],["Aimé le premier","Recevez avant de donner.","Dieu, tu m'as aimé avant que je te cherche. Que cet amour reçu devienne l'amour que je donne. Amen.","Pour nous, nous l'aimons, parce qu'il nous a aimés le premier.","1 Jean 4:19","Nous n'aimons pas pour être aimés de Dieu. Nous aimons parce que nous le sommes déjà."],["Un esprit de force","Refusez la timidité.","Seigneur, tu ne m'as pas donné un esprit de crainte. Réveille en moi la force, l'amour et la sagesse. Amen.","Car ce n'est pas un esprit de timidité que Dieu nous a donné, mais un esprit de force, d'amour et de sagesse.","2 Timothée 1:7","La force sans amour blesse, l'amour sans sagesse s'égare. Dieu donne les trois ensemble."],["La joie, ma force","Puisez de la force dans la joie.","Éternel, rends-moi la joie. Qu'elle soit ma force dans ce que j'ai à traverser aujourd'hui. Amen.","La joie de l'Éternel sera votre force.","Néhémie 8:10","La joie n'est pas une récompense pour après l'épreuve. Elle est une force pour la traverser."],["Marcher humblement","Revenez à l'essentiel.","Seigneur, apprends-moi ce qui compte : agir avec justice, aimer la bonté, et marcher humblement avec toi. Amen.","Que tu pratiques la justice, que tu aimes la miséricorde, et que tu marches humblement avec ton Dieu.","Michée 6:8","Trois gestes simples résument une vie droite. Aucun ne demande d'être extraordinaire."],["Dieu au milieu de moi","Souvenez-vous qu'il est là.","Éternel mon Dieu, tu es au milieu de ma vie, au milieu de ce jour. Que je ne l'oublie pas. Amen.","L'Éternel, ton Dieu, est au milieu de toi, comme un héros qui sauve.","Sophonie 3:17","Dieu n'attend pas à la fin du chemin. Il se tient au milieu, là où nous sommes."],["Remettre son fardeau","Laissez-vous soutenir.","Seigneur, je te remets ce fardeau que je porte depuis trop longtemps. Soutiens-moi. Amen.","Remets ton sort à l'Éternel, et il te soutiendra.","Psaume 55:23","Être soutenu ne veut pas dire que le fardeau disparaît. Cela veut dire que l'on ne tombe pas."],["Le sentier de la vie","Cherchez la joie de sa présence.","Dieu, montre-moi le sentier de la vie. Que je trouve ma joie devant ta face. Amen.","Tu me feras connaître le sentier de la vie ; il y a d'abondantes joies devant ta face.","Psaume 16:11","La joie profonde n'est pas au bout d'une réussite. Elle est dans une présence."],["Être lumière","Éclairez là où vous êtes.","Seigneur, que ma présence apporte un peu de lumière à quelqu'un aujourd'hui. Sers-toi de moi. Amen.","Vous êtes la lumière du monde.","Matthieu 5:14","Une petite lumière ne chasse pas toute la nuit. Elle suffit pourtant à ce que quelqu'un retrouve son chemin."],["Patient dans l'épreuve","Tenez bon, avec espérance.","Père, garde ma joie dans l'espérance, ma patience dans l'épreuve et ma fidélité dans la prière. Amen.","Réjouissez-vous en espérance. Soyez patients dans l'affliction. Persévérez dans la prière.","Romains 12:12","Espérance, patience, prière : trois appuis pour les jours où l'on avance lentement."],["Dormir en paix","Déposez votre journée.","Seigneur, je dépose cette journée entre tes mains. Ce qui est fait est fait. Donne-moi un repos paisible. Amen.","Je me couche et je m'endors en paix.","Psaume 4:9","Bien dormir est un acte de foi : c'est admettre que le monde tourne sans nous, et que Dieu veille."],["Un temps pour tout","Acceptez la saison où vous êtes.","Dieu, apprends-moi à reconnaître le temps que je traverse et à ne pas forcer les saisons. Amen.","Il y a un temps pour tout.","Ecclésiaste 3:1","Chaque saison a son travail et sa grâce. Vouloir l'été en hiver épuise sans rien hâter."],["Faire la paix","Soyez artisan de paix aujourd'hui.","Seigneur, fais de moi un artisan de paix : dans mes paroles, dans ma maison, dans mes silences. Amen.","Heureux ceux qui procurent la paix.","Matthieu 5:9","La paix ne se trouve pas toute faite. Elle se fabrique, un geste après l'autre."],["Rien n'est impossible","Confiez à Dieu ce qui semble fermé.","Père, cette situation me paraît sans issue. Mais rien ne t'est impossible. Je te la remets. Amen.","Car rien n'est impossible à Dieu.","Luc 1:37","L'impossible décrit nos limites, pas celles de Dieu."],["Tout est possible à celui qui croit","Demandez davantage de foi.","Seigneur, je crois. Viens au secours de mon peu de foi. Élargis ce que j'ose espérer. Amen.","Tout est possible à celui qui croit.","Marc 9:23","La foi n'a pas besoin d'être grande. Elle a besoin d'être placée en Celui qui est grand."],["Semer avec larmes","Confiez vos peines à Dieu.","Dieu, tu vois mes larmes. Fais qu'elles ne soient pas perdues. Qu'un jour elles deviennent une moisson de joie. Amen.","Ceux qui sèment avec larmes moissonneront avec chants d'allégresse.","Psaume 126:5","Aucune larme versée devant Dieu n'est inutile. Elles arrosent ce qui poussera."],["Dieu est proche","Appelez-le simplement.","Éternel, je t'invoque. Tu es près de moi, plus près que mes pensées. Écoute ma prière. Amen.","L'Éternel est près de tous ceux qui l'invoquent.","Psaume 145:18","La prière ne fait pas venir Dieu de loin. Elle nous rend attentifs à Celui qui est déjà là."],["Guérir le cœur brisé","Présentez vos blessures.","Seigneur, voici ce qui est brisé en moi. Panse mes blessures avec ta douceur. Je me confie en toi. Amen.","Il guérit ceux qui ont le cœur brisé, et il panse leurs blessures.","Psaume 147:3","Dieu ne détourne pas les yeux des cœurs brisés. C'est vers eux qu'il se penche."],["Toutes choses nouvelles","Croyez au renouveau.","Dieu, toi qui fais toutes choses nouvelles, commence par moi. Renouvelle mon regard et mon espérance. Amen.","Voici, je fais toutes choses nouvelles.","Apocalypse 21:5","Le renouveau promis ne répare pas seulement l'ancien. Il crée ce qui n'existait pas."],["Avec vous tous les jours","Ne vous croyez jamais seul.","Jésus, tu as promis d'être là tous les jours. Aujourd'hui en fait partie. Merci d'être avec moi. Amen.","Je suis avec vous tous les jours, jusqu'à la fin du monde.","Matthieu 28:20","Tous les jours : les lumineux, les ordinaires et les difficiles. Aucun n'est exclu de la promesse."],["Confier ses projets","Mettez votre travail entre ses mains.","Éternel, je te remets ce que j'entreprends. Bénis l'ouvrage de mes mains et garde-moi de l'orgueil. Amen.","Recommande à l'Éternel tes œuvres, et tes projets réussiront.","Proverbes 16:3","Confier son travail à Dieu ne dispense pas de travailler. Cela libère de l'angoisse du résultat."],["Un cœur joyeux","Accueillez la joie comme un remède.","Seigneur, allège mon cœur aujourd'hui. Donne-moi de sourire, de rire, et de porter la joie autour de moi. Amen.","Un cœur joyeux est un bon remède.","Proverbes 17:22","La joie se cultive. Elle commence souvent par une petite décision : regarder ce qui est bon."],["Une réponse douce","Choisissez vos mots avec douceur.","Père, mets une garde à mes lèvres. Que mes paroles apaisent au lieu de blesser. Amen.","Une réponse douce calme la fureur.","Proverbes 15:1","La douceur n'est pas de la faiblesse. Il faut plus de force pour répondre calmement que pour crier."],["Vivre ensemble","Priez pour l'unité autour de vous.","Seigneur, bénis ma famille et ceux qui m'entourent. Donne-nous de vivre ensemble dans la paix. Amen.","Voici, oh ! qu'il est agréable, qu'il est doux pour des frères de demeurer ensemble !","Psaume 133:1","L'unité n'est pas l'absence de différences. C'est le choix de rester ensemble malgré elles."],["Donner","Ouvrez la main.","Dieu généreux, apprends-moi à donner sans compter : mon temps, mon attention, ce que j'ai reçu. Amen.","Donnez, et il vous sera donné.","Luc 6:38","Une main fermée ne perd rien, mais elle ne peut rien recevoir non plus."],["Marcher par la foi","Avancez sans tout voir.","Seigneur, je ne vois pas la suite, mais je te fais confiance. J'avance par la foi. Amen.","Car nous marchons par la foi et non par la vue.","2 Corinthiens 5:7","La vue montre ce qui est. La foi s'appuie sur Celui qui est."],["Donner avec joie","Offrez de bon cœur.","Père, que je donne sans regret ni contrainte. Mets de la joie dans ma générosité. Amen.","Dieu aime celui qui donne avec joie.","2 Corinthiens 9:7","Ce n'est pas le montant qui fait le don, c'est le cœur qui l'accompagne."],["Être conduit","Laissez-vous instruire.","Seigneur, montre-moi la voie à suivre. Je veux écouter avant de décider. Garde ton regard sur moi. Amen.","Je t'instruirai et te montrerai la voie que tu dois suivre.","Psaume 32:8","Être conduit demande d'écouter. Et écouter demande de ralentir."],["Dieu combat pour moi","Cessez de lutter seul.","Éternel, ce combat me dépasse. Combats pour moi. Donne-moi de rester en paix pendant que tu agis. Amen.","L'Éternel combattra pour vous ; et vous, gardez le silence.","Exode 14:14","Certains combats ne se gagnent pas en s'agitant davantage. Ils se gagnent en restant en paix."],["Être béni et gardé","Recevez la bénédiction.","Seigneur, bénis-moi et garde-moi. Bénis aussi ceux que je porte dans mon cœur aujourd'hui. Amen.","Que l'Éternel te bénisse, et qu'il te garde !","Nombres 6:24","Recevoir une bénédiction, c'est se laisser dire du bien par Dieu. Puis le transmettre."],["Le calme et la confiance","Trouvez votre force dans le calme.","Dieu, calme ce qui s'agite en moi. Que ma force vienne de la confiance, pas de l'agitation. Amen.","C'est dans le calme et la confiance que sera votre force.","Ésaïe 30:15","L'agitation donne l'illusion d'agir. Le calme permet de bien agir."],["La prière du matin","Commencez la journée avec Dieu.","Éternel, dès ce matin je me tourne vers toi. Entends ma voix. Que ce jour commence et s'achève en toi. Amen.","Éternel ! le matin tu entends ma voix.","Psaume 5:4","Les premières minutes donnent le ton de la journée. Les offrir à Dieu, c'est lui confier le reste."],["Là où est mon trésor","Regardez ce qui compte vraiment.","Seigneur, montre-moi où j'ai placé mon trésor. Attache mon cœur à ce qui ne passe pas. Amen.","Car là où est ton trésor, là aussi sera ton cœur.","Matthieu 6:21","Le cœur suit ce que l'on chérit. Choisir son trésor, c'est choisir la direction de sa vie."],["Voir Dieu","Gardez un regard clair.","Père, purifie mon cœur pour que je te reconnaisse dans ce jour : dans un visage, une parole, un silence. Amen.","Heureux ceux qui ont le cœur pur, car ils verront Dieu !","Matthieu 5:8","Un cœur encombré voit trouble. Un cœur simple aperçoit Dieu là où d'autres ne voient rien."],["Le rocher de mon cœur","Appuyez-vous sur ce qui tient.","Seigneur, quand mon corps et mon cœur faiblissent, sois mon rocher. Tu es ma part pour toujours. Amen.","Dieu sera toujours le rocher de mon cœur et mon partage.","Psaume 73:26","Ce qui est solide se reconnaît aux jours de tempête. Dieu tient quand le reste vacille."],["L'œuvre commencée","Faites confiance au travail de Dieu en vous.","Dieu, tu as commencé en moi une bonne œuvre. Je crois que tu la mèneras à bien. Donne-moi la patience. Amen.","Celui qui a commencé en vous cette bonne œuvre la rendra parfaite.","Philippiens 1:6","Nous sommes un ouvrage en cours. Dieu n'abandonne pas ce qu'il a commencé."],["Sauvé par grâce","Cessez de vouloir tout mériter.","Père, merci pour ta grâce que je n'ai pas gagnée. Délivre-moi du besoin de tout mériter. Amen.","Car c'est par la grâce que vous êtes sauvés, par le moyen de la foi.","Éphésiens 2:8","La grâce ne se gagne pas, elle se reçoit. C'est ce qui la rend si reposante."],["Le fruit de l'Esprit","Laissez mûrir le bien en vous.","Esprit Saint, fais mûrir en moi l'amour, la joie et la paix. Que ma vie en porte le fruit. Amen.","Mais le fruit de l'Esprit, c'est l'amour, la joie, la paix, la patience, la bonté.","Galates 5:22","Un fruit ne se fabrique pas, il mûrit. Il faut du temps, de la lumière et de la patience."],["Rempli d'espérance","Recevez la joie et la paix.","Dieu de l'espérance, remplis-moi de joie et de paix dans la foi. Que j'en déborde pour les autres. Amen.","Que le Dieu de l'espérance vous remplisse de toute joie et de toute paix dans la foi.","Romains 15:13","L'espérance n'est pas faite pour être gardée. Quand elle remplit un cœur, elle déborde."]].map(([t,d,p,v,r,x])=>({t,d,p,v,r,x}));
+// Prières de Saint Antoine : la première est ouverte tout de suite, puis une nouvelle chaque jour.
+const SA=[
+ {k:'Prière principale',t:'La Grande Prière de Saint Antoine',img:'img/sa1.jpg',p:["Saint Antoine, thaumaturge puissant, toi devant qui les impossibilités s'effondrent, je crie vers Toi ce soir.","Je ne viens pas avec des mots polis — je viens avec mes blessures ouvertes, mes nuits sans sommeil, mes portes claquées au visage.","Toi qui as ressuscité ce qui était mort, toi qui as rendu ce qui était perdu à jamais : regarde ma vie. Regarde ce que je n'arrive plus à porter seul.","Je Te le demande avec force : brise les chaînes qui m'emprisonnent. Renverse les murs dressés contre moi. Que ce qui semblait perdu — l'argent, la santé, l'amour, la paix — revienne vers moi comme un fleuve qu'on ne peut plus retenir.","Que mes ennemis deviennent des témoins de ma délivrance. Que ceux qui m'ont vu pleurer me voient danser.","Saint Antoine, ne tarde pas. Mon âme est à genoux, mais ma foi est debout.","Intercède pour moi devant le Trône de Dieu, maintenant, et que le miracle commence aujourd'hui même.","Je déclare, je crois, je reçois.","Ainsi soit-il. Amen."]},
+ {k:'Prière sacrée',t:'Prière pour la Protection',img:'img/sa2.jpg',p:["Seigneur, entoure-moi de Ta lumière.","Déploie Tes anges autour de mon foyer, de mes pensées, de mon chemin.","Que rien de ce qui n'est pas amour ne puisse m'atteindre.","Que Ta paix soit ma forteresse, et Ta présence mon bouclier.","En Toi je marche, en Toi je repose. Amen."]},
+ {k:'Prière sacrée',t:'Prière pour la Famille',img:'img/sa3.jpg',p:["Père d'amour, je Te confie ceux que Tu m'as donnés.","Bénis chaque cœur, chaque parole, chaque silence.","Que la douceur remplace la colère, que la compréhension remplace le jugement, que l'unité remplace la distance.","Fais de notre maison un sanctuaire où Ta paix habite.","Amen."]},
+ {k:'Prière sacrée',t:'Prière pour les Finances',img:'img/sa4.jpg',p:["Source de toute abondance, je m'ouvre à Ton flux.","Bénis mon travail, multiplie ce que je sème, ordonne mes pas vers les portes qui doivent s'ouvrir.","Que je sois canal de Ta prospérité, non pour amasser mais pour bénir.","Je reçois avec gratitude ce que Tu prépares déjà pour moi.","Amen."]},
+ {k:'Prière sacrée',t:'Prière de Guérison',img:'img/sa5.jpg',p:["Souffle divin, touche ce qui en moi demande à être restauré.","Guéris le corps, apaise la mémoire, relève l'âme.","Là où il y a fatigue, dépose Ta force. Là où il y a blessure, dépose Ta lumière.","Je me remets entièrement entre Tes mains, avec confiance.","Amen."]}
+];
+const MOODS=['Reconnaissant','Paisible','Plein d\'espoir','En quête','Joyeux'];
+const SUGG=["Par où commencer aujourd'hui ?","Je n'arrive pas à ouvrir une vidéo","J'ai besoin d'une parole d'encouragement"];
+
+/* ---------- state ---------- */
+const dstr=(off=0)=>{const d=new Date();d.setDate(d.getDate()+off);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const TODAY=dstr(),NOW=new Date();
+const fdate=s=>new Date(s+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+const seed=()=>({user:null,start:TODAY,lessons:{},journal:[],sa:null,saRead:[],gift:false,owned:[],rgift:false,refund:false});
+let S;try{S=JSON.parse(localStorage.getItem('ta10'))}catch(e){}
+if(!S||!S.start)S=seed();
+const save=()=>{try{localStorage.setItem('ta10',JSON.stringify(S))}catch(e){}};
+const fresh=()=>({tab:'home',prog:null,cur:0,mood:null,chat:[],busy:false,play:false,pos:0,saI:0,saBack:'home',off:null,offBack:'shop',ep:null,day:false,menu:false,rform:false,fresh:false,t0:''});
+let V=fresh(),timer=null,sample=null,D=DAILY[0];
+window.claude?.use?.('sample').then(s=>{sample=s}).catch(()=>{});
+
+const MONTH=NOW.toLocaleDateString('fr-FR',{month:'long'});
+const THEME_LABEL='Thème '+(/^[aeiouhéèàâ]/i.test(MONTH)?"d'":'de ')+MONTH;
+const dayN=()=>Math.max(1,Math.round((new Date(TODAY)-new Date(S.start))/864e5)+1);
+const ld=id=>(S.lessons[id]||[]).length;
+const has=p=>!p.gift||S.gift;
+const first=()=>(S.user?.name||'Ami').split(' ')[0];
+const saOpen=()=>S.sa?Math.min(SA.length,Math.round((new Date(TODAY)-new Date(S.sa))/864e5)+1):1;
+const toast=m=>{const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>t.hidden=true,2400)};
+const LABEL={home:'Accueil',lib:'Programmes',pray:'Prières',shop:'Bonus'};
+const back=t=>`<button class="back" data-a="tab" data-t="${t}">${ic('chev')}${LABEL[t]}</button>`;
+const tm=pos=>{const s=Math.round(pos/100*720);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
+const offersLeft=()=>OFFERS.filter(o=>!S.owned.includes(o.id));
+
+// Calendrier du nicho : la prochaine fête donne une raison d'écrire et d'habiller une offre.
+function nextEvent(){const y=NOW.getFullYear(),a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),
+ h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),em=Math.floor((h+l-7*m+114)/31)-1,ed=(h+l-7*m+114)%31+1;
+ const E=new Date(y,em,ed),plus=n=>new Date(y,em,ed+n),adv=new Date(y,11,3);adv.setDate(adv.getDate()-adv.getDay());
+ const ev=[[new Date(y,0,6),"l'Épiphanie"],[new Date(y,1,2),'la Chandeleur'],[plus(-46),'le Carême'],[E,'Pâques'],[plus(49),'la Pentecôte'],[new Date(y,5,13),'la Saint-Antoine'],
+  [new Date(y,7,15),"l'Assomption"],[new Date(y,8,29),'la Saint-Michel'],[new Date(y,10,1),'la Toussaint'],[adv,"l'Avent"],[new Date(y,11,8),"l'Immaculée Conception"],[new Date(y,11,25),'Noël']];
+ const t=new Date(TODAY+'T00:00:00');for(const [dt,n] of ev){const diff=Math.round((dt-t)/864e5);if(diff>=0&&diff<=14)return {n,diff,d:dt.toLocaleDateString('fr-FR',{day:'numeric',month:'long'})}}return null}
+
+/* ---------- screens ---------- */
+function vLogin(){return `<div class="login gut enter">
+ <div class="brand">${ic('crown')}<span class="wordmark">Temps d'Abondance</span><span class="soft" style="font-style:italic;font-family:var(--display);font-size:17px">Votre espace sacré vous attend</span></div>
+ <form id="loginf" class="panel" style="gap:16px;padding:24px 20px" novalidate>
+  <div class="lhead"><span class="eyebrow">Accès sacré</span><h2>Entrez dans votre Royaume</h2><p class="soft small">Utilisez le nom et l'email de votre inscription.</p></div>
+  <div class="orn">✦</div>
+  <label class="field" for="lname">Votre nom<span class="inp">${ic('user')}<input id="lname" type="text" autocomplete="name" placeholder="Entrez votre nom complet"></span></label>
+  <label class="field" for="lmail">Adresse email<span class="inp">${ic('mail')}<input id="lmail" type="email" autocomplete="email" placeholder="Votre email"></span></label>
+  <p id="lerr" class="small" style="color:#ffb4a8" hidden>Indiquez votre nom et une adresse email valide.</p>
+  <button class="btn gold" id="lbtn" type="submit">Entrer dans le Royaume →</button>
+  <p class="small soft center">Des difficultés ? <span style="color:var(--accent);user-select:all">hello@timeofabundance.com</span></p></form>
+ <p class="verse">« Cherchez premièrement le royaume et la justice de Dieu ; et toutes ces choses vous seront données par-dessus. »<br><span class="eyebrow" style="font-style:normal;font-family:var(--body);margin-top:6px">Matthieu 6:33</span></p></div>`}
+
+function vHome(){const open=saOpen(),nx=SA.findIndex((x,j)=>j<open&&!S.saRead.includes(j)),x=SA[nx<0?0:nx];
+ return `<div class="topbar"><span class="mark">${ic('crown')}<span class="wordmark">Temps d'Abondance</span></span><button class="avatar" data-a="menu" aria-label="Mon compte">${esc(first()[0].toUpperCase())}</button></div>
+ <h1 class="welcome">Bienvenue, <em>${esc(first())}</em>,<br>dans votre Royaume Sacré</h1>
+ <button class="hc hero banner" data-a="sa" style="background-image:url(${x.img})">
+   <span class="btxt"><span class="eyebrow">${open>1?`${open} prières ouvertes sur ${SA.length}`:'Votre prière sacrée'}</span><h2>${esc(x.t)}</h2>
+   <span class="s">${nx<0?"Une nouvelle prière s'ouvre demain.":S.gift?"Ouverte pour vous aujourd'hui.":'Lisez-la pour débloquer de nouvelles leçons.'}</span></span>
+  <span class="access">Ouvrir la prière ${ic('arrow')}</span></button>
+ ${mc('data-a="tab" data-t="lib"',tile('book'),'Mes programmes','Accédez à ce qui est déjà débloqué pour vous.','gold')}
+ ${LOCKS.map((l,i)=>`<button class="mc lockrow" data-a="lockgo" data-i="${i}">${l.tag?`<span class="tag">${esc(l.tag)}</span>`:''}${tile('lock')}<span class="grow"><span class="eyebrow">${esc(l.eb)}</span><span class="t">${esc(l.t)}</span><span class="s">${esc(l.s)}</span></span><span class="chev">${ic('lock')}</span></button>`).join('')}
+ <button class="mc bhome" data-a="tab" data-t="shop"><span class="tile">${GIFT}</span><span class="grow"><span class="t">Bonus</span><span class="s">Du contenu en plus pour approfondir votre parcours.</span><span class="bprog">${Array.from({length:BONUS.length+1},(_,i)=>`<i class="${i<BONUS.length?'on':''}"></i>`).join('')}<span style="margin-left:4px">${BONUS.length} sur ${BONUS.length+1} débloqués</span></span></span><span class="chev">${ic('chev')}</span></button>
+ <button class="mc" data-a="tab" data-t="guide" style="border-color:var(--accent)">${pm('live')}<span class="grow"><span class="t">Je veux parler au ${PERE}</span><span class="s">En ligne · répond à toute heure</span></span><span class="chev">${ic('chev')}</span></button>`}
+
+const rail=(title,cards)=>`<div class="railhead"><h2>${title}</h2>${cards.length>2?'<span class="small soft">Faites glisser ›</span>':''}</div><div class="rail">${cards.join('')}</div>`;
+const pcard=(attrs,cover,title,meta,cta,cls='',cc='')=>`<button class="pc ${cls}" ${attrs}>${cover}<h3>${esc(title)}</h3><span class="small soft">${esc(meta)}</span><span class="access ${cls==='off'?'dim':''} ${cc}">${cta}</span></button>`;
+function vLib(){
+ const card=o=>pcard(`data-a="offer" data-id="${o.id}"`,`<span class="cv" ${o.img?`style="background-image:url(${o.img})"`:''}>${o.img?'':ic('spark')}</span>`,o.t,o.s,`Découvrir ${ic('spark')}`,'','prem');
+ const progs=offersLeft().filter(o=>o.top).map(card).concat(P.map(p=>!has(p)
+  ?pcard('data-a="sa"',`<span class="cv typo">${ic('lock')}<b>Leçons à débloquer</b><small>Verrouillé</small></span>`,'Leçons à débloquer','Lisez la Prière de Saint Antoine','Débloquer')
+  :pcard(`data-a="open" data-id="${p.id}"`,`<span class="cv" style="background-image:url(${p.img})">${p.gift?`<span class="badge">${V.fresh?'Débloqué':'Cadeau offert'}</span>`:''}${ld(p.id)?`<span class="bar"><i style="width:${ld(p.id)/p.l.length*100}%"></i></span>`:''}</span>`,
+    p.t,ld(p.id)===p.l.length?'Terminé':ld(p.id)?`${ld(p.id)} sur ${p.l.length} vidéos vues`:`${p.l.length} vidéos`,`${ic('play')} ${ld(p.id)&&ld(p.id)<p.l.length?'Continuer':'Regarder'}`,p.gift&&V.fresh?'fresh':'')))
+  .concat([pcard('data-a="later"',`<span class="cv tease" style="background-image:url(${SOON.img})"><span class="badge">Bientôt</span><span class="seal">${ic('lock')}</span></span>`,SOON.t,SOON.s,`${ic('unlock')} Débloquer`,'','prem')]);
+ const open=saOpen(),wait=i=>{const n=i-open+1;return n<=1?'Demain':`Dans ${n} jours`};
+ const pray=SA.map((x,i)=>i<open
+  ?pcard(`data-a="sacard" data-i="${i}"`,`<span class="cv" style="background-image:url(${x.img})">${S.saRead.includes(i)?'<span class="badge">Lue ✓</span>':''}</span>`,x.t,S.saRead.includes(i)?'Lue':'À lire','Lire')
+  :pcard('data-a="salock"',`<span class="cv lockd" style="background-image:url(${x.img})"><span class="lk">${ic('lock')}${wait(i)}</span></span>`,x.t,`S'ouvre ${wait(i).toLowerCase()}`,'Verrouillée','off'));
+ const more=S.refund?[]:offersLeft().filter(o=>!o.top).map(card)
+  .concat([pcard('data-a="later"',`<span class="cv typo">${ic('lock')}<b>Nouveau programme</b><small>Bientôt</small></span>`,'Nouveau programme','Bientôt disponible','Bientôt','off')]);
+ return `<div class="head"><h1>Programmes</h1></div>
+ ${V.fresh?`<p class="unlockline">✦ ${P.find(p=>p.gift).l.length} nouvelles leçons débloquées</p>`:''}
+ ${rail('Mes programmes',progs)}
+ ${rail('Prières de Saint Antoine',pray)}
+ ${more.length>1?rail('À découvrir',more):''}`}
+
+function vProg(){const p=P.find(x=>x.id===V.prog),done=S.lessons[p.id]||[];return `${back('lib')}
+ <div class="head"><span class="eyebrow">Vidéo ${V.cur+1} sur ${p.l.length}</span><h2>${esc(p.l[V.cur])}</h2></div>
+ <div class="video" style="background-image:url(${p.poster})"><button class="playbtn" data-a="play" id="pb" aria-label="Lecture ou pause">${ic(V.play?'pause':'play')}</button></div>
+ <div class="bar"><i id="pbar" style="width:${V.pos}%"></i></div>
+ <button class="btn ${done.includes(V.cur)?'line':''}" data-a="mark">${done.includes(V.cur)?'Vidéo terminée ✓':'Marquer comme terminée'}</button>
+ <section>${p.l.map((t,i)=>`<button class="lesson ${i===V.cur?'cur':''} ${done.includes(i)?'ok':''}" data-a="lesson" data-i="${i}"><span class="dot">${ic('check')}</span><span class="grow">${esc(t)}</span></button>`).join('')}</section>`}
+
+function vPray(){const open=saOpen();return `<div class="brand"><span class="eyebrow">${esc(NOW.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'}))}</span><h1>Prière du jour</h1><span class="rule"></span></div>
+ <section class="ivory"><h2>${esc(D.t)}</h2><span class="rule"></span><p>${esc(D.p)}</p><p class="ref">« ${esc(D.v)} »<b>${esc(D.r)}</b></p></section>
+ <details class="panel"><summary>Réflexion du jour</summary><p class="soft">${esc(D.x)}</p></details>
+ ${mc('data-a="sa"',tile('pray'),'Prières de Saint Antoine',`${open} sur ${SA.length} ouvertes`)}
+ ${mc('data-a="tab" data-t="journal"',tile('pen'),'Mon journal','')}`}
+
+function vSA(){const open=saOpen(),i=V.saI,x=SA[i],read=S.saRead.includes(i),nx=SA[open];
+ return `${back(V.saBack)}
+ <div class="brand"><span class="eyebrow">✦ ${esc(x.k)} ✦</span><h1>${esc(x.t)}</h1><span class="rule"></span></div>
+ <div class="sa pray">${x.p.map(t=>`<p>${esc(t)}</p>`).join('')}</div>
+ <button class="btn ${read?'line':'gold'}" data-a="saread">${read?'Prière lue ✓':'Marquer comme lue'}</button>
+ <div class="days" role="group" aria-label="Vos prières de Saint Antoine">${SA.map((y,j)=>j<open
+   ?`<button class="dd ${j===i?'now':S.saRead.includes(j)?'ok':'open'}" data-a="sago" data-i="${j}" aria-label="${esc(y.t)}">${S.saRead.includes(j)&&j!==i?ic('check'):j+1}</button>`
+   :`<button class="dd" data-a="salock" aria-label="${esc(y.t)}, verrouillée">${ic('lock')}</button>`).join('')}</div>
+ ${nx?`<section class="panel center" style="border-color:var(--accent)"><span class="eyebrow">Demain s'ouvre pour vous</span><h2>${esc(nx.t)}</h2><p class="soft small">Une nouvelle prière chaque jour. Revenez demain pour la recevoir.</p></section>`:''}`}
+
+function vJournal(){const today=S.journal.find(e=>e.d===TODAY);return `${back('pray')}
+ <div class="head"><h1>Mon journal</h1></div>
+ <section class="panel">${today?`<p style="white-space:pre-wrap;overflow-wrap:anywhere">${esc(today.x)}</p><p class="small soft">Enregistré aujourd'hui. Revenez demain.</p>`
+  :`<label class="field" for="jtext">Qu'a éveillé en vous la prière d'aujourd'hui ?<textarea id="jtext" placeholder="Écrivez ce qui est sur votre cœur…"></textarea></label>
+  <div class="chips" role="group" aria-label="Ressenti">${MOODS.map(m=>`<button class="chip ${V.mood===m?'on':''}" data-a="mood" data-m="${esc(m)}">${esc(m)}</button>`).join('')}</div>
+  <button class="btn" data-a="savej">Enregistrer</button>`}</section>
+ ${S.journal.filter(e=>e!==today).sort((a,b)=>a.d<b.d?1:-1).map(e=>`<div class="entry"><p class="small soft">${esc(fdate(e.d))}${e.mood?' · '+esc(e.mood):''}</p><p>${esc(e.x)}</p></div>`).join('')}`}
+
+function vTheme(){const m=NOW.getMonth(),T=THEME_PAGE,t=THEMES[m],eps=T.eps[m]||[];
+ return `${back('shop')}
+ <div class="brand"><span class="eyebrow">${esc(THEME_LABEL)}</span><h1>${esc(t)}</h1>${T.sub[m]?`<span class="soft" style="font-style:italic">${esc(T.sub[m])}</span>`:''}</div>
+ <div class="sa">${(T.intro[m]||[`Ce mois-ci, nous avançons ensemble sur ce thème, jour après jour, par la prière et la réflexion.`]).map(p=>`<p>${esc(p)}</p>`).join('')}</div>
+ ${T.learn[m]?`<details class="panel"><summary>Ce que vous apprendrez</summary><ol class="list">${T.learn[m].map((x,i)=>`<li><span class="n">${i+1}</span><span>${esc(x)}</span></li>`).join('')}</ol></details>`:''}
+ ${eps.length?`<span class="eyebrow" style="margin-top:6px">Écritures Vivantes · ${eps.length} vidéos</span>
+  <div class="ep">${eps.map((e,i)=>`<button class="mc" data-a="ep" data-i="${i}" aria-expanded="${V.ep===i}">${tile(V.ep===i?'pause':'play')}<span class="grow"><span class="t">${esc(e[0])}</span>${V.ep===i?`<span class="s">${esc(e[1])}</span>`:''}</span></button>
+   ${V.ep===i?`<div class="video"><span class="small soft" style="position:relative">Vidéo de l'épisode ${i+1} à ajouter</span></div>`:''}`).join('')}</div>`:''}`}
+
+function vShop(){const total=BONUS.length+1;
+ return `<div class="bhead"><span class="gbox">${GIFT}</span><div class="grow"><h1>Bonus</h1><p class="soft">${BONUS.length} bonus débloqués sur ${total}</p></div></div>
+ <div class="bar jade"><i style="width:${BONUS.length/total*100}%"></i></div>
+ ${BONUS.map((x,i)=>mc(x.a,tile(x.i),x.t(),x.s(),'bonus','chev',`Bonus ${i+1} · Débloqué ✓`)).join('')}
+ <div class="mc bonus soon">${tile('lock')}<span class="grow"><span class="eyebrow">Bonus ${total} · Bientôt</span><span class="t">Un nouveau bonus se prépare</span><span class="s">Il s'ouvrira ici, sans rien avoir à faire.</span></span><span class="chev">${ic('lock')}</span></div>`}
+
+// Page de vente en texte : chaque cadenas mène ici, jamais directement au paiement.
+function vOffer(){const o=OFFERS.find(x=>x.id===V.off);return `${back(V.offBack)}
+ <div class="brand"><span class="eyebrow">Offre pour vous</span><h1>${esc(o.t)}</h1><span class="rule"></span></div>
+ ${o.img?`<div class="video" style="aspect-ratio:4/3;background-image:url(${o.img});background-position:center 15%"></div>`:''}
+ <div class="sa">${o.p.map(t=>`<p>${esc(t)}</p>`).join('')}</div>
+ <section class="panel"><h2>Ce que vous recevez</h2><ul class="list">${o.pts.map(x=>`<li><span class="b">✦</span><span>${esc(x)}</span></li>`).join('')}</ul></section>
+ <button class="btn gold" data-a="buy" data-id="${o.id}">Débloquer maintenant →</button>
+ <p class="small soft center">Accès immédiat dans votre application après l'achat.</p>`}
+
+function vScript(){return `${back('shop')}
+ <div class="brand"><span class="eyebrow">Rapport confidentiel</span><h1>Script sacré pour ${esc(first())}</h1><span class="rule"></span></div>
+ <div class="sa pray"><p>Moi, ${esc(first())}, j'échange ma fatigue contre la faveur de Dieu.</p></div>
+ ${['La Lecture de l\'Âme','L\'Ordre de Restitution','Le Bouclier de Lignée','Le Renouveau de la Vie','Le Sceau du Repos'].map(t=>mc('data-a="soon"',tile('scroll'),t,'')).join('')}`}
+
+// Aide avant tout, cadeau ensuite ; le remboursement reste visible et à un geste.
+function vRefund(){const g=OFFERS.find(o=>o.id===REFUND_GIFT);
+ if(S.refund)return `${back('home')}<div class="head" style="margin-top:12px"><span class="eyebrow">Demande reçue</span><h1>Merci, ${esc(first())}</h1><p class="soft">Notre équipe vous répond sous 24 heures à ${esc(S.user.email)}.</p></div>
+  <button class="btn" data-a="tab" data-t="guide">Écrire à l'assistant en attendant</button><button class="linkbtn" data-a="rcancel">J'ai changé d'avis, annuler ma demande</button>`;
+ if(V.rform)return `${back('home')}<div class="head"><h1>Remboursement</h1><p class="soft">Dites-nous simplement ce qui ne va pas.</p></div>
+  <form id="refundf" class="panel"><label class="field" for="rwhy">Motif<select id="rwhy"><option>Le contenu ne me convient pas</option><option>Problème technique</option><option>Achat par erreur</option><option>Autre</option></select></label>
+  <label class="field" for="rmsg">Message (facultatif)<textarea id="rmsg" style="min-height:80px"></textarea></label>
+  <button class="btn" type="submit">Envoyer ma demande</button></form>`;
+ return `${back('home')}<div class="head"><span class="eyebrow">Nous sommes là pour vous</span><h1>Un souci ?</h1><p class="soft">La plupart des difficultés se règlent en une minute.</p></div>
+ ${mc('data-a="rstart"',tile('pray'),'Je ne sais pas par où commencer','')}
+ ${mc('data-a="rask" data-q="Je n\'arrive pas à ouvrir une vidéo"',tile('play'),'Une vidéo ne s\'ouvre pas','')}
+ ${mc('data-a="tab" data-t="guide"',tile('chat'),"Écrire à l'assistant",'')}
+ ${g&&!S.rgift?`<section class="panel center" style="border-color:var(--accent)"><span class="eyebrow">Un cadeau pour vous</span><h2>${esc(g.t)}</h2><p class="soft small">Recevez ce programme gratuitement, dès maintenant.</p><button class="btn gold" data-a="rgift">Recevoir mon cadeau</button></section>`:''}
+ <button class="linkbtn" data-a="rform">Demander un remboursement</button>`}
+
+const hhmm=()=>new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+function vGuide(){return `<div class="wa">${pm()}<div class="grow"><h3>${PERE}</h3><p class="small soft">Assistant virtuel · en ligne</p></div></div>
+ <div class="msgs" id="msgs" aria-live="polite"><div class="msg a">Bonjour ${esc(first())}. Je suis l'assistant virtuel du ${PERE}. Je réponds à toute heure à vos questions sur vos prières et votre parcours. Que puis-je faire pour vous ?<small>${V.t0||(V.t0=hhmm())}</small></div>
+  ${V.chat.map(m=>`<div class="msg ${m.r==='user'?'u':'a'}">${esc(m.c)}<small>${m.h}${m.r==='user'?' ✓✓':''}</small></div>`).join('')}
+  ${V.chat.length?'':SUGG.map(s=>`<button class="chip" style="align-self:flex-start" data-a="ask" data-q="${esc(s)}">${esc(s)}</button>`).join('')}</div>
+ <form class="composer" id="chatf"><input id="chatin" type="text" placeholder="Écrivez un message…" autocomplete="off" aria-label="Votre message"><button class="send" type="submit" aria-label="Envoyer">${ic('send')}</button></form>`}
+
+/* ---------- overlays ---------- */
+function dayModal(){const d=dayN(),from=Math.max(1,d-3),ds=Array.from({length:7},(_,i)=>from+i);
+ return `<div class="scrim"><div class="modal" role="dialog" aria-modal="true" aria-label="Votre chemin"><span class="eyebrow">✦ Votre chemin ✦</span>
+  <h2>Jour <em style="font-style:normal">${d}</em> de connexion</h2><p class="soft">Vous construisez quelque chose d'éternel.</p>
+  <div class="days">${ds.map(n=>`<span class="dd ${n<d?'ok':n===d?'now':''}">${n<d?ic('check'):n}</span>`).join('')}</div>
+  <button class="btn gold" data-a="daygo">Continuer mon chemin</button></div></div>`}
+// Déblocage gamifié : le cadenas s'ouvre, puis l'application emmène la personne voir ses nouvelles leçons.
+function unlockShow(){const p=P.find(x=>x.gift),u=document.createElement('div');u.id='unlock';
+ const sparks=Array.from({length:14},(_,i)=>{const a=i/14*6.283,r=90+Math.random()*60;return `<span class="spark" style="--x:${Math.round(Math.cos(a)*r)}px;--y:${Math.round(Math.sin(a)*r)}px"></span>`}).join('');
+ u.innerHTML=`<div class="rays"></div><div class="ulock">${ic('lock')}${sparks}</div>
+  <span class="eyebrow rev">✦ Félicitations ✦</span><h1 class="rev d2">Nouvelles leçons débloquées</h1>
+  <div class="ucard rev d3"><i style="background-image:url(${p.img})"></i><div><h3>${esc(p.t)}</h3><p class="small soft">${p.l.length} leçons vidéo ajoutées à vos programmes</p></div></div>
+  ${inviteCard('rev d3')}
+  <button class="btn gold rev d4" data-a="unlockgo" style="max-width:340px">Voir mes leçons</button>`;
+ document.body.appendChild(u);
+ setTimeout(()=>{u.classList.add('open');const l=u.querySelector('.ulock svg');if(l)l.outerHTML=ic('unlock')},1150);
+ unlockShow.t=setTimeout(unlockGo,6500)}
+// Invitation à revenir : la prochaine prière verrouillée, avec le jour où elle s'ouvre.
+function inviteCard(cls=''){const nx=SA[saOpen()];if(!nx)return '';
+ return `<div class="invite ${cls}"><i style="background-image:url(${nx.img})"></i><div><span class="eyebrow">Demain s'ouvre pour vous</span><b>${esc(nx.t)}</b><span class="small soft">Revenez demain pour la recevoir.</span></div></div>`}
+// Félicitations après chaque prière lue, avec la progression et le rendez-vous du lendemain.
+function bravoShow(){$('#unlock')?.remove();const u=document.createElement('div');u.id='unlock';u.className='bravo';
+ const open=saOpen(),n=S.saRead.length,todo=SA.findIndex((x,j)=>j<open&&!S.saRead.includes(j)),all=n>=SA.length;
+ const sparks=Array.from({length:14},(_,i)=>{const a=i/14*6.283,r=90+Math.random()*60;return `<span class="spark" style="--x:${Math.round(Math.cos(a)*r)}px;--y:${Math.round(Math.sin(a)*r)}px"></span>`}).join('');
+ u.innerHTML=`<div class="rays"></div><div class="ulock">${ic('check')}${sparks}</div>
+  <span class="eyebrow rev">✦ Prière accomplie ✦</span><h1 class="rev d2">${all?'Chemin accompli':'Bravo, '+esc(first())+' !'}</h1>
+  <div class="days rev d2">${SA.map((x,j)=>`<span class="dd ${S.saRead.includes(j)?'now':j<open?'open':''}">${S.saRead.includes(j)?ic('check'):j<open?j+1:ic('lock')}</span>`).join('')}</div>
+  <p class="count rev d3">${all?`Vous avez prié les ${SA.length} prières de Saint Antoine.`:`${n} ${n>1?'prières accomplies':'prière accomplie'} sur ${SA.length}`}</p>
+  ${todo>=0?`<p class="soft rev d3">Votre prochaine prière est déjà ouverte.</p><button class="btn gold rev d4" data-a="bravonext" data-i="${todo}" style="max-width:340px">Lire la suivante</button><button class="linkbtn rev d4" data-a="bravoclose">Plus tard</button>`
+   :all?`<button class="btn gold rev d4" data-a="bravolib" style="max-width:340px">Voir mes programmes</button>`
+   :`${inviteCard('rev d3')}<button class="btn gold rev d4" data-a="bravoclose" style="max-width:340px">À demain</button>`}`;
+ document.body.appendChild(u);setTimeout(()=>u.classList.add('open'),120)}
+function bravoClose(){const u=$('#unlock');if(!u)return;u.classList.add('out');setTimeout(()=>u.remove(),550)}
+function unlockGo(){clearTimeout(unlockShow.t);const u=$('#unlock');if(!u)return;stopPlay();V.tab='lib';V.fresh=true;render();u.classList.add('out');setTimeout(()=>u.remove(),550)}
+function menuSheet(){return `<div class="scrim low" data-a="menuclose"><div class="sheet" role="dialog" aria-modal="true" aria-label="Mon compte" data-a="noop">
+ <div class="row"><span class="avatar">${esc(first()[0].toUpperCase())}</span><div class="grow"><h3>${esc(S.user.name)}</h3><p class="small soft">${esc(S.user.email)} · Jour ${dayN()}</p></div></div>
+ ${mc('data-a="tab" data-t="guide"',tile('chat'),'Aide','')}
+ ${mc('data-a="tab" data-t="refund"',tile('mail'),'Remboursement','')}
+ ${mc('data-a="logout"',tile('user'),'Déconnexion','')}
+ <button class="linkbtn" data-a="reset" style="margin-top:6px">Recommencer la démo</button></div></div>`}
+// écran de bienvenue animé entre la connexion et l'application
+function welcome(name,done){const w=document.createElement('div');w.id='welcome';
+ w.innerHTML=`${ic('crown')}<h1></h1><p class="soft">Votre espace sacré est prêt.<br>Entrée en cours…</p><div class="wbar"><i></i></div>`;
+ w.querySelector('h1').textContent='Bienvenue, '+name+'.';document.body.appendChild(w);
+ setTimeout(()=>{w.querySelector('.wbar i').style.width='100%'},120);
+ setTimeout(()=>{done();w.classList.add('out');setTimeout(()=>w.remove(),650)},2400)}
+
+/* ---------- engine ---------- */
+function render(){
+ D=DAILY[(dayN()-1)%DAILY.length];
+ const app=$('#app');if(!S.user){app.innerHTML=vLogin();return}
+ const views={home:vHome,lib:vLib,prog:vProg,pray:vPray,sa:vSA,journal:vJournal,theme:vTheme,shop:vShop,offer:vOffer,script:vScript,guide:vGuide,refund:vRefund};
+ const tabs=[['home','Accueil','home'],['lib','Programmes','book'],['pray','Prières Quotidiennes','pray'],['shop','Bonus','gift'],['guide','Père Michel','chat']];
+ const cur={prog:'lib',sa:V.saBack,journal:'pray',theme:'shop',offer:V.offBack,script:'shop',refund:'home'}[V.tab]||V.tab;
+ const enter=render.last!==V.tab;render.last=V.tab;
+ app.innerHTML=`<main class="gut ${V.tab==='guide'?'chat':''} ${enter?'enter':''}" id="view">${views[V.tab]()}</main>
+  <nav class="tabs" aria-label="Navigation">${tabs.map(t=>`<button data-a="tab" data-t="${t[0]}" ${cur===t[0]?'aria-current="page"':''}>${ic(t[2])}<span>${t[1]}</span></button>`).join('')}</nav>
+  ${V.day?dayModal():''}${V.menu?menuSheet():''}`;
+ if(V.tab==='guide'){const v=$('#view');v.scrollTop=v.scrollHeight}
+ watchGift();
+}
+function stopPlay(){V.play=false;clearInterval(timer)}
+function markLesson(){const a=S.lessons[V.prog]=S.lessons[V.prog]||[];if(a.includes(V.cur))return;a.push(V.cur);save();const p=P.find(x=>x.id===V.prog);
+ toast(a.length===p.l.length?'Programme terminé':'Vidéo terminée');if(V.cur<p.l.length-1){V.cur++;V.pos=0}}
+function openProg(id){const p=P.find(x=>x.id===id);V.prog=p.id;V.tab='prog';V.cur=Math.min(ld(p.id),p.l.length-1);V.pos=0}
+function openSA(){if(!S.sa)S.sa=TODAY;const open=saOpen();let i=0;for(let j=0;j<open;j++)if(!S.saRead.includes(j)){i=j;break}
+ V.saBack=['pray','lib'].includes(V.tab)?V.tab:'home';V.tab='sa';V.saI=i;V.saT=Date.now();save()}
+// Le cadeau apparaît quand la fin de la prière est à l'écran, et jamais avant un temps minimum de lecture.
+let giftTimer=null;const GIFT_MIN=12000;
+function showGift(){if(V.tab==='sa'&&!S.gift){S.gift=true;save();render();unlockShow()}}
+function watchGift(){clearInterval(giftTimer);if(V.tab!=='sa'||S.gift)return;let seen=0;
+ giftTimer=setInterval(()=>{if(V.tab!=='sa'||S.gift){clearInterval(giftTimer);return}
+  const v=$('#view'),e=$('.sa p:last-child');if(!v||!e)return;
+  seen=e.getBoundingClientRect().bottom<=v.getBoundingClientRect().bottom+12?seen+500:0;
+  if(seen>=1500&&Date.now()-V.saT>=GIFT_MIN){clearInterval(giftTimer);showGift()}},500)}
+// Liens directs pour les e-mails : #saint-antoine, #priere, #programmes, #bonus, #guide
+function applyHash(){const h=location.hash.slice(1);if(!S.user||!h)return;
+ if(h==='saint-antoine')openSA();else{const t={priere:'pray',programmes:'lib',bonus:'shop',guide:'guide'}[h];if(t)V.tab=t}}
+
+const GUIDE_RULES=`Tu es l'assistant virtuel du ${PERE}, dans l'application Temps d'Abondance (prières et vidéos de spiritualité chrétienne). Tu écris comme dans une messagerie : messages courts, chaleureux, simples, 60 mots maximum, sans titres ni listes.
+Tu es un assistant automatique : tu n'es ni un prêtre ni une personne. Ne prétends jamais être le ${PERE} lui-même ni un être humain, et si on te demande qui tu es, dis-le clairement. Tu ne donnes pas de sacrements, d'absolution ni de direction spirituelle personnelle.
+Réponds dans la langue de la personne (français par défaut).
+L'application : Accueil (Prière de Saint Antoine, Mes programmes, Bonus) ; Programmes (vidéos et prières à faire glisser) ; Prières Quotidiennes (prière du jour, thème du mois, journal) ; Bonus. Une nouvelle prière de Saint Antoine s'ouvre chaque jour. Le compte et le remboursement sont dans le rond en haut à droite de l'Accueil.
+Programmes vidéo : ${P.map(p=>p.t).join(' ; ')}.
+Règles : pour une commande, un paiement ou un accès perdu, n'invente rien et oriente vers l'équipe à hello@timeofabundance.com (réponse sous 24 heures) ; pour un remboursement, indique le rond en haut à droite de l'Accueil et ne propose aucun achat. Ne promets jamais de résultat financier, de guérison ou de délai ; aucun conseil médical, juridique ou financier. En cas de détresse grave, invite avec douceur à contacter un proche ou les services d'urgence. Si tu ne sais pas, dis-le.`;
+function fallback(q){q=q.toLowerCase();
+ if(/rembours/.test(q))return "Vous pouvez demander un remboursement depuis le rond en haut à droite de l'Accueil. L'équipe répond sous 24 heures.";
+ if(/paiement|commande|factur|achat/.test(q))return "Pour votre commande, notre équipe vous répond sous 24 heures à hello@timeofabundance.com.";
+ if(/ouvrir|connexion|connecter|accès|charge|vidéo|audio/.test(q))return "Fermez puis rouvrez l'application. Si la vidéo ne s'ouvre toujours pas, écrivez à hello@timeofabundance.com en indiquant son nom.";
+ if(/commenc|début|aujourd/.test(q))return "Commencez par la Prière de Saint Antoine, sur l'Accueil. Elle débloque vos premières leçons.";
+ return "Je suis là pour vous aider avec l'application et votre parcours. Pouvez-vous préciser votre question ?"}
+async function ask(q){
+ q=q.trim();if(!q||V.busy)return;V.busy=true;V.chat.push({r:'user',c:q,h:hhmm()});V.tab='guide';render();
+ const box=document.createElement('div');box.className='msg a typing';box.innerHTML='<i></i><i></i><i></i>';$('#msgs').appendChild(box);
+ const v=$('#view');v.scrollTop=v.scrollHeight;let ans='';
+ await new Promise(r=>setTimeout(r,1100));
+ const show=t=>{box.className='msg a';box.textContent=t;v.scrollTop=v.scrollHeight};
+ try{if(!sample)throw 0;
+  const hist=V.chat.slice(-9,-1).map(m=>(m.r==='user'?'Personne : ':'Assistant : ')+m.c).join('\n');
+  const r=await sample(`${GUIDE_RULES}\nPrénom : ${first()}.\n${hist?'Conversation jusqu\'ici :\n'+hist+'\n':''}Message de la personne : ${q}\nRéponds uniquement par le message de l'assistant.`,
+   {cache:false,modelTier:'quick',onText:({text})=>show(text)});ans=r.text;
+ }catch(e){ans=fallback(q)}
+ V.chat.push({r:'assistant',c:ans,h:hhmm()});V.busy=false;if(V.tab==='guide')render();
+}
+
+document.addEventListener('click',e=>{
+ const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a;
+ if(a==='noop')return;
+ if(a==='tab'){stopPlay();if(b.dataset.t!=='lib')V.fresh=false;V.tab=b.dataset.t;V.menu=false;V.rform=false}
+ else if(a==='menu')V.menu=true;
+ else if(a==='menuclose')V.menu=false;
+ else if(a==='open'){stopPlay();openProg(b.dataset.id)}
+ else if(a==='offer'&&OFFERS.find(x=>x.id===b.dataset.id).top){const o=OFFERS.find(x=>x.id===b.dataset.id);if(o.url){const l=document.createElement('a');l.href=o.url;l.target='_blank';l.rel='noopener';l.click()}else toast('Lien de la page de vente à ajouter');return}
+ else if(a==='offer'){V.offBack=['home','lib'].includes(V.tab)?V.tab:'shop';V.off=b.dataset.id;V.tab='offer'}
+ else if(a==='buy'){const o=OFFERS.find(x=>x.id===b.dataset.id);if(o.url){const l=document.createElement('a');l.href=o.url;l.target='_blank';l.rel='noopener';l.click()}else toast('Lien de paiement à ajouter');return}
+ else if(a==='later'){toast('Bientôt disponible');return}
+ else if(a==='soon'){toast('Contenu à brancher dans la version finale');return}
+ else if(a==='lesson'){stopPlay();V.cur=+b.dataset.i;V.pos=0}
+ else if(a==='mark'){stopPlay();markLesson()}
+ else if(a==='play'){V.play=!V.play;clearInterval(timer);$('#pb').innerHTML=ic(V.play?'pause':'play');
+   if(V.play)timer=setInterval(()=>{V.pos+=1;if(V.pos>=100){stopPlay();markLesson();render();return}$('#pbar').style.width=V.pos+'%'},250);return}
+ else if(a==='mood'){const t=$('#jtext').value;V.mood=b.dataset.m;render();$('#jtext').value=t;return}
+ else if(a==='savej'){const x=$('#jtext').value.trim();if(!x){toast('Écrivez quelques mots avant d\'enregistrer');return}S.journal.push({d:TODAY,mood:V.mood,x});save();toast('Vos mots sont enregistrés')}
+ else if(a==='logout'){S.user=null;V=fresh();save()}
+ else if(a==='reset'){S=seed();save();V=fresh();render.last=null}
+ else if(a==='ask'||a==='rask'){ask(b.dataset.q);return}
+ else if(a==='daygo')V.day=false;
+ else if(a==='sa')openSA();
+ else if(a==='sacard'){openSA();V.saI=+b.dataset.i}
+ else if(a==='sago'){V.saI=+b.dataset.i;render();$('#view').scrollTop=0;return}
+ else if(a==='salock'){toast('Cette prière s\'ouvre un jour après l\'autre');return}
+ else if(a==='saread'){const isNew=!S.saRead.includes(V.saI);if(isNew){S.saRead.push(V.saI);save()}
+   render();if(!S.gift)setTimeout(showGift,700);else if(isNew)setTimeout(bravoShow,350);return}
+ else if(a==='bravoclose'){bravoClose();return}
+ else if(a==='bravonext'){bravoClose();V.saI=+b.dataset.i;V.saT=Date.now();render();$('#view').scrollTop=0;return}
+ else if(a==='bravolib'){bravoClose();V.tab='lib'}
+ else if(a==='unlockgo'){unlockGo();return}
+ else if(a==='lockgo'){const l=LOCKS[+b.dataset.i];if(l.url){const k=document.createElement('a');k.href=l.url;k.target='_blank';k.rel='noopener';k.click()}else toast('Lien de la page de vente à ajouter');return}
+ else if(a==='ep'){const i=+b.dataset.i;V.ep=V.ep===i?null:i}
+ else if(a==='rstart'){V.tab='home';toast('Commencez par le pas affiché ici')}
+ else if(a==='rgift'){S.rgift=true;if(!S.owned.includes(REFUND_GIFT))S.owned.push(REFUND_GIFT);save();V.tab='shop';toast('Votre cadeau est dans Bonus')}
+ else if(a==='rform')V.rform=true;
+ else if(a==='rcancel'){S.refund=false;save();V.tab='home';toast('Votre demande est annulée')}
+ render();
+});
+document.addEventListener('submit',e=>{e.preventDefault();
+ if(e.target.id==='loginf'){const n=$('#lname').value.trim(),m=$('#lmail').value.trim();
+  if(n.length<2||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m)){$('#lerr').hidden=false;return}
+  const btn=$('#lbtn');if(btn.disabled)return;btn.disabled=true;$('#lerr').hidden=true;btn.textContent='✦ Connexion…';
+  setTimeout(()=>welcome(n.split(' ')[0],()=>{S.user={name:n,email:m};S.start=S.start||TODAY;save();V.day=true;applyHash();render()}),800)}
+ if(e.target.id==='refundf'){S.refund=true;V.rform=false;save();render()}
+ if(e.target.id==='chatf'){const i=$('#chatin'),q=i.value;i.value='';ask(q)}
+});
+
+// starry sky: twinkling stars drifting slowly upward, a few gold ones, an occasional shooting star
+{const c=document.createElement('canvas'),x=c.getContext('2d'),still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ $('#sky').appendChild(c);let W,H,stars=[],shoot=null,next=3500;
+ const size=()=>{const r=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;c.width=W*r;c.height=H*r;x.setTransform(r,0,0,r,0,0);
+  stars=Array.from({length:Math.min(Math.round(W*H/4200),320)},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()<.1?1.5:Math.random()*.9+.3,
+   a:.3+Math.random()*.65,p:Math.random()*6.28,s:.5+Math.random()*1.8,g:Math.random()<.16,v:.8+Math.random()*2.4}));if(still)draw(0)};
+ function draw(t){x.clearRect(0,0,W,H);
+  for(const s of stars){const tw=still?1:.5+.5*Math.sin(t/1000*s.s+s.p);let y=still?s.y:(s.y-t/1000*s.v)%H;if(y<0)y+=H;
+   x.fillStyle=s.g?'#e9cd8f':'#ffffff';x.globalAlpha=s.a*tw;x.beginPath();x.arc(s.x,y,s.r,0,6.29);x.fill();
+   if(s.r>1.2){x.globalAlpha=s.a*tw*.16;x.beginPath();x.arc(s.x,y,s.r*4.5,0,6.29);x.fill()}}
+  if(!still){if(!shoot&&t>next)shoot={x:Math.random()*W*.7,y:Math.random()*H*.35,t0:t};
+   if(shoot){const k=(t-shoot.t0)/900;if(k>=1){shoot=null;next=t+7000+Math.random()*9000}else{const px=shoot.x+k*W*.45,py=shoot.y+k*H*.22,
+     g=x.createLinearGradient(px,py,px-90,py-44);g.addColorStop(0,'rgba(255,255,255,'+(1-k)+')');g.addColorStop(1,'rgba(255,255,255,0)');
+     x.globalAlpha=1;x.strokeStyle=g;x.lineWidth=1.6;x.lineCap='round';x.beginPath();x.moveTo(px,py);x.lineTo(px-90,py-44);x.stroke()}}
+   x.globalAlpha=1;requestAnimationFrame(draw)}}
+ addEventListener('resize',size);size();if(!still)requestAnimationFrame(draw)}
+addEventListener('hashchange',()=>{applyHash();render()});
+applyHash();render();
+</script>
