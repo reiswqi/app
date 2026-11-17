@@ -146,7 +146,7 @@ async function openClient(email){ST.detail={email,loading:true};draw();window.sc
  ST.detail={email,ev,devs};}catch(e){ST.detail={email,err:e.message}}draw()}
 
 function draw(){const app=$('#app');
- if(!SB_URL||!SB_KEY){app.innerHTML=`<div class="login"><h2>Painel ainda não configurado</h2><p class="muted">Preencha SB_URL e SB_KEY no início deste arquivo (os mesmos de src.html).</p></div>`;return}
+ if(!SB_URL||!SB_KEY){app.innerHTML=`<div class="login"><h2>Falta conectar o banco de dados</h2><p class="muted">O painel ainda não está ligado ao Supabase, então nenhum dado está sendo salvo. Crie o projeto no supabase.com (passo a passo enviado pelo Claude) e mande ao Claude a <b>Project URL</b> e a chave <b>anon public</b>. Depois disso, esta tela vira o login do painel.</p></div>`;return}
  if(!SES){app.innerHTML=`<form class="login" id="lf"><small style="font-size:11px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">Temps d'Abondance</small><h2>Painel Admin</h2>
   <input id="le" type="email" autocomplete="username" placeholder="E-mail" value="${ADMIN}" required><input id="lp" type="password" autocomplete="current-password" placeholder="Senha" required>
   <button class="btn gold" type="submit">Entrar</button><p class="err" id="lerr">${esc(ST.err)}</p></form>`;return}
