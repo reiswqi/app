@@ -185,6 +185,52 @@ textarea{min-height:110px;resize:vertical;line-height:1.5}
 .tcard-cta{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;margin-top:6px;padding:10px 16px;border-radius:999px;background:linear-gradient(90deg,#ecd28a,#b98f3c);color:var(--on-btn);font-size:12px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
 .tcard-cta svg.ic{width:14px;height:14px;fill:currentColor;stroke:none}
 .tcard .new{position:absolute;top:14px;right:14px;padding:5px 10px;border-radius:999px;background:var(--accent);color:var(--on-btn);font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;z-index:1}
+/* Remboursement : bannière rouge (Accueil), carte (Programmes), procédure en 3 étapes */
+.mc.rfd{position:relative;overflow:hidden;padding:18px 15px;color:#fff;background:linear-gradient(120deg,#e0483f 0%,#c3332d 55%,#a8241f 100%);border-color:rgba(255,150,140,.55);box-shadow:0 10px 28px rgba(200,50,45,.28)}
+.mc.rfd .t{font-weight:900;font-size:16px;letter-spacing:.1em;text-transform:uppercase}
+.mc.rfd .s{color:rgba(255,232,229,.92)}
+.mc.rfd .tile{width:50px;height:50px;border-radius:14px;border:0;background:rgba(255,255,255,.18);color:#fff}
+.mc.rfd .chev{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.2);color:#fff}
+.pc .cv.rcv{background:radial-gradient(120% 70% at 50% 15%,#5a5f68,#22252c 70%);color:#fff;align-content:center;gap:12px;padding:14px;text-align:center}
+.pc .cv.rcv svg{width:44px;height:44px;margin:0 auto;stroke-width:1.6}
+.pc .cv.rcv b{font-weight:900;font-size:15px;line-height:1.2;letter-spacing:.03em;text-transform:uppercase;text-wrap:balance}
+.pc .rtag{align-self:flex-start;padding:3px 9px;border-radius:999px;background:rgba(220,192,132,.14);color:var(--accent);font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase}
+.pc .access.red{background:linear-gradient(180deg,#7a2a2a,#4e1a1d);border:1px solid rgba(255,120,110,.4);color:#ffd7d2;box-shadow:none}
+.pc .access.red::after{display:none}
+.rhead{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;margin-top:4px}
+.rhead h1{font-size:34px}
+.rsteps{display:flex;align-items:center;justify-content:center;margin:6px 0 2px}
+.rsteps i{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:900;font-size:13px;border:1px solid var(--line);background:var(--panel);color:var(--soft)}
+.rsteps i.on{background:linear-gradient(135deg,#ecd28a,#b98f3c);color:var(--on-btn);border:0;box-shadow:0 0 18px rgba(220,192,132,.5)}
+.rsteps i.ok{border-color:var(--accent);color:var(--accent);background:rgba(220,192,132,.1)}
+.rsteps i svg.ic{width:15px;height:15px;stroke-width:2.6}
+.rsteps b{width:48px;height:1px;background:var(--line)}
+.rsteps b.ok{background:var(--accent)}
+.rcard{display:flex;flex-direction:column;gap:14px;padding:22px 18px;border-radius:18px;background:linear-gradient(180deg,#1d3252,#13233d);border:1px solid var(--card-line);box-shadow:0 14px 36px rgba(0,0,0,.35)}
+.rcard h2{font-size:26px}
+.rcard .lbl{font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.rcard .lbl small{font-weight:400;letter-spacing:0;text-transform:none;color:var(--soft)}
+.rcard .hint{font-size:13px;font-style:italic;color:var(--soft);margin-top:-8px}
+.rwhy{display:flex;flex-direction:column;gap:10px}
+.rwhy button{display:flex;align-items:center;gap:12px;padding:14px;border-radius:12px;background:rgba(8,16,32,.45);border:1px solid var(--line);text-align:left;font-weight:700;font-size:14px}
+.rwhy button .em{font-size:22px;line-height:1}
+.rwhy button[aria-pressed="true"]{border-color:var(--accent);background:rgba(220,192,132,.12);box-shadow:0 0 0 1px rgba(220,192,132,.4)}
+.rnote{display:flex;flex-direction:column;gap:10px;padding:16px;border-radius:12px;background:rgba(160,40,40,.16);border:1px solid rgba(255,120,110,.4);font-size:14px;line-height:1.5}
+.rnote b.h{color:#ff9d93;font-size:15px}
+.rcheck{display:flex;gap:12px;align-items:flex-start;padding:16px;border-radius:12px;background:rgba(8,16,32,.45);border:1px solid var(--line);text-align:left;font-size:14px;line-height:1.5}
+.rcheck .box{flex:none;width:24px;height:24px;border-radius:6px;border:1.5px solid var(--accent);display:grid;place-items:center;color:transparent;margin-top:1px}
+.rcheck[aria-checked="true"] .box{background:var(--accent);color:var(--on-btn)}
+.rcheck .box svg.ic{width:16px;height:16px;stroke-width:3}
+.btn.redb{background:linear-gradient(90deg,#d8433b,#a8241f);color:#fff;border:0;font-weight:900;letter-spacing:.06em}
+.btn[disabled]{opacity:.4;pointer-events:none}
+.rload{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;padding:40px 18px}
+.rload .bar{width:100%;max-width:260px;height:5px}
+.rload .bar i{width:0;animation:rfill 2.6s ease-in-out forwards;background:linear-gradient(90deg,#b98f3c,#ecd28a)}
+@keyframes rfill{to{width:100%}}
+.rdone{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;padding:26px 18px}
+.rdone .ck{width:76px;height:76px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--go1),var(--go2));box-shadow:0 0 0 10px rgba(20,147,100,.18);animation:pop .5s cubic-bezier(.2,.7,.2,1) both}
+.rdone .ck svg.ic{width:36px;height:36px;stroke-width:2.6}
+.rdone .bank{padding:14px;border-radius:12px;background:var(--panel);border:1px solid var(--line);font-size:14px}
 .ep{display:flex;flex-direction:column;gap:10px}
 .ep .mc{background:rgba(8,16,32,.45)}
 .ep .video{background:var(--bg);border:1px solid var(--line)}
@@ -311,7 +357,7 @@ button.mc.bonus:hover{border-color:var(--bo);box-shadow:0 0 32px rgba(111,227,19
 .typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
 @keyframes blink{0%,60%,100%{opacity:.25}30%{opacity:1}}
 /* tabs */
-nav.tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border-top:1px solid var(--line);padding:10px 4px 12px;background:var(--bg)}
+nav.tabs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));border-top:1px solid var(--line);padding:10px 2px 12px;background:var(--bg)}
 nav.tabs button{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;line-height:1.15;font-weight:700;color:var(--soft);text-align:center}
 nav.tabs button span{display:grid;place-items:center;min-height:2.3em;width:100%;font-size:clamp(8.5px,2.55vw,11px)}
 nav.tabs button[aria-current="page"]{color:var(--accent)}
@@ -422,7 +468,7 @@ const ICONS={
  unlock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 7.600-1.700"/>',
  lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
  check:'<path d="M5 12l4 4 10-10"/>',play:'<path d="M8 5l11 7-11 7z"/>',pause:'<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>',
- send:'<path d="M4 12l16-7-6 16-3-6z"/>',chev:'<path d="M9 6l6 6-6 6"/>',arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',crown:'<path d="M4 8l4 4 4-7 4 7 4-4-2 10H6z"/>'
+ send:'<path d="M4 12l16-7-6 16-3-6z"/>',card:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h3"/>',support:'<path d="M4 13v-1a8 8 0 0 1 16 0v1"/><rect x="3" y="13" width="4" height="6" rx="1.5"/><rect x="17" y="13" width="4" height="6" rx="1.5"/><path d="M19 19c0 1.500-2 2.500-5 2.500"/><path d="M9 10.500h.01M12 10.500h.01M15 10.500h.01"/>',chev:'<path d="M9 6l6 6-6 6"/>',arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',crown:'<path d="M4 8l4 4 4-7 4 7 4-4-2 10H6z"/>'
 };
 const GIFT='<svg class="gifto" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="9.500" rx="1.500" fill="#22a888"/><rect x="3" y="7.500" width="18" height="4.200" rx="1.200" fill="#57d6b2"/><rect x="10.600" y="7.500" width="2.800" height="13" fill="#f1d792"/><path d="M12 7.500C10 3.300 6.300 4.200 7.100 6.200 7.600 7.500 10 7.500 12 7.500zM12 7.500c2-4.200 5.700-3.300 4.900-1.300-.5 1.300-2.900 1.300-4.900 1.300z" fill="#ff8f7a"/></svg>';
 const ic=n=>`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]}</svg>`;
@@ -459,6 +505,7 @@ const LOCKS=[
  {tag:'Nouveau contenu',eb:'Code du Royaume',t:'Code du Royaume',s:'Cours exclusifs en audio et vidéo.',url:''}
 ];
 const PERE='Père Michel Laurent';
+const SUPPORT='hello@timeofabundance.com'; // e-mail d'aide affiché dans l'app
 const PERE_IMG='img/pere.jpg'; // photo du Père (chemin de l'image). Vide : les initiales s'affichent.
 const pm=(cls='')=>`<span class="pm ${cls}" ${PERE_IMG?`style="background-image:url(${PERE_IMG})"`:''}>${PERE_IMG?'':'PM'}</span>`;
 // Bonus offerts : chaque entrée apparaît dans l'onglet Bonus comme « Bonus N · Débloqué ». Le suivant reste annoncé « Bientôt ».
@@ -581,7 +628,8 @@ function vHome(){const open=saOpen(),nx=SA.findIndex((x,j)=>j<open&&!S.saRead.in
  ${mc('data-a="tab" data-t="lib"',tile('book'),'Mes programmes','Accédez à ce qui est déjà débloqué pour vous.','gold')}
  ${LOCKS.map((l,i)=>`<button class="mc lockrow" data-a="lockgo" data-i="${i}">${l.tag?`<span class="tag">${esc(l.tag)}</span>`:''}${tile('lock')}<span class="grow"><span class="eyebrow">${esc(l.eb)}</span><span class="t">${esc(l.t)}</span><span class="s">${esc(l.s)}</span></span><span class="chev">${ic('lock')}</span></button>`).join('')}
  <button class="mc bhome" data-a="tab" data-t="shop"><span class="tile">${GIFT}</span><span class="grow"><span class="t">Bonus</span><span class="s">Du contenu en plus pour approfondir votre parcours.</span><span class="bprog">${Array.from({length:BONUS.length+1},(_,i)=>`<i class="${i<BONUS.length?'on':''}"></i>`).join('')}<span style="margin-left:4px">${BONUS.length} sur ${BONUS.length+1} débloqués</span></span></span><span class="chev">${ic('chev')}</span></button>
- <button class="mc" data-a="tab" data-t="guide" style="border-color:var(--accent)">${pm('live')}<span class="grow"><span class="t">Je veux parler au ${PERE}</span><span class="s">En ligne · répond à toute heure</span></span><span class="chev">${ic('chev')}</span></button>`}
+ <button class="mc" data-a="tab" data-t="guide" style="border-color:var(--accent)">${pm('live')}<span class="grow"><span class="t">Je veux parler au ${PERE}</span><span class="s">En ligne · répond à toute heure</span></span><span class="chev">${ic('chev')}</span></button>
+ ${mc('data-a="tab" data-t="refund"',tile('card'),'Remboursement',"Si besoin, nous sommes là pour prendre soin de vous.",'rfd')}`}
 
 const rail=(title,cards)=>`<div class="railhead"><h2>${title}</h2>${cards.length>2?'<span class="small soft">Faites glisser ›</span>':''}</div><div class="rail">${cards.join('')}</div>`;
 const pcard=(attrs,cover,title,meta,cta,cls='',cc='')=>`<button class="pc ${cls}" ${attrs}>${cover}<h3>${esc(title)}</h3><span class="small soft">${esc(meta)}</span><span class="access ${cls==='off'?'dim':''} ${cc}">${cta}</span></button>`;
@@ -606,7 +654,8 @@ function vLib(){
  ${rail('Mes programmes',progs)}
  ${rail('Prières de Saint Antoine',pray)}
  ${rail('Pratiques divines',[nmCard,fcCard])}
- ${more.length>1?rail('À découvrir',more):''}`}
+ ${more.length>1?rail('À découvrir',more):''}
+ ${rail('Assistance',[`<button class="pc" data-a="tab" data-t="refund"><span class="cv rcv">${ic('support')}<b>Besoin d'être remboursé ?</b></span><span class="rtag">Assistance</span><h3>Demande de remboursement</h3><span class="small soft">Procédure officielle en 3 étapes · 5 min</span><span class="access red">${ic('play')} ${S.refund?'Voir ma demande':'Demander'}</span></button>`])}`}
 
 function vProg(){const p=P.find(x=>x.id===V.prog),done=S.lessons[p.id]||[];return `${back('lib')}
  <div class="head"><span class="eyebrow">Vidéo ${V.cur+1} sur ${p.l.length}</span><h2>${esc(p.l[V.cur])}</h2></div>
@@ -699,20 +748,37 @@ function vScript(){return `${back('shop')}
  <div class="sa pray"><p>Moi, ${esc(first())}, j'échange ma fatigue contre la faveur de Dieu.</p></div>
  ${['La Lecture de l\'Âme','L\'Ordre de Restitution','Le Bouclier de Lignée','Le Renouveau de la Vie','Le Sceau du Repos'].map(t=>mc('data-a="soon"',tile('scroll'),t,'')).join('')}`}
 
-// Aide avant tout, cadeau ensuite ; le remboursement reste visible et à un geste.
-function vRefund(){const g=OFFERS.find(o=>o.id===REFUND_GIFT);
- if(S.refund)return `${back('home')}<div class="head" style="margin-top:12px"><span class="eyebrow">Demande reçue</span><h1>Merci, ${esc(first())}</h1><p class="soft">Notre équipe vous répond sous 24 heures à ${esc(S.user.email)}.</p></div>
-  <button class="btn" data-a="tab" data-t="guide">Écrire à l'assistant en attendant</button><button class="linkbtn" data-a="rcancel">J'ai changé d'avis, annuler ma demande</button>`;
- if(V.rform)return `${back('home')}<div class="head"><h1>Remboursement</h1><p class="soft">Dites-nous simplement ce qui ne va pas.</p></div>
-  <form id="refundf" class="panel"><label class="field" for="rwhy">Motif<select id="rwhy"><option>Le contenu ne me convient pas</option><option>Problème technique</option><option>Achat par erreur</option><option>Autre</option></select></label>
-  <label class="field" for="rmsg">Message (facultatif)<textarea id="rmsg" style="min-height:80px"></textarea></label>
-  <button class="btn" type="submit">Envoyer ma demande</button></form>`;
- return `${back('home')}<div class="head"><span class="eyebrow">Nous sommes là pour vous</span><h1>Un souci ?</h1><p class="soft">La plupart des difficultés se règlent en une minute.</p></div>
- ${mc('data-a="rstart"',tile('pray'),'Je ne sais pas par où commencer','')}
- ${mc('data-a="rask" data-q="Je n\'arrive pas à ouvrir une vidéo"',tile('play'),'Une vidéo ne s\'ouvre pas','')}
- ${mc('data-a="tab" data-t="guide"',tile('chat'),"Écrire à l'assistant",'')}
- ${g&&!S.rgift?`<section class="panel center" style="border-color:var(--accent)"><span class="eyebrow">Un cadeau pour vous</span><h2>${esc(g.t)}</h2><p class="soft small">Recevez ce programme gratuitement, dès maintenant.</p><button class="btn gold" data-a="rgift">Recevoir mon cadeau</button></section>`:''}
- <button class="linkbtn" data-a="rform">Demander un remboursement</button>`}
+// Remboursement : procédure officielle en 3 étapes (e-mail → motif → confirmation), puis traitement et confirmation.
+// REFUND_HOOK : adresse (webhook) qui reçoit chaque demande en JSON. Vide = la demande reste seulement sur l'appareil du client.
+const REFUND_HOOK='';
+const RWHY=[['🤔',"Ce n'était pas ce que j'attendais"],['⏰',"Je n'ai pas eu le temps de l'utiliser"],['⚙️','Problème technique'],['💛','Raisons personnelles ou financières'],['🔄','Achat par erreur'],['✏️','Autre raison']];
+function vRefund(){const R=V.r=V.r||{s:1,mail:S.user.email,why:-1,det:'',ok:false};
+ const top=`${back('home')}<div class="rhead"><span class="eyebrow">Procédure officielle</span><h1>Demande de remboursement</h1><p class="soft">Suivez ces trois étapes pour traiter votre remboursement.</p></div>`;
+ if(S.refund||R.s===5)return `${back('home')}<div class="rcard rdone"><span class="ck">${ic('check')}</span><h2>Votre demande de remboursement est enregistrée</h2>
+  <p class="soft">Nous avons bien reçu votre demande${S.refund&&S.refund.mail?` pour ${esc(S.refund.mail)}`:''}.</p>
+  <div class="bank">💳 Le montant peut apparaître sur votre relevé bancaire sous <b>1 à 2 cycles de facturation</b>, selon votre banque.</div>
+  <p class="small soft">Une question ? Écrivez-nous à <a href="mailto:${SUPPORT}" style="color:var(--accent)">${SUPPORT}</a></p>
+  <button class="btn gold" data-a="tab" data-t="home">Retour à l'accueil</button></div>`;
+ if(R.s===4)return `${top}<div class="rcard rload"><span style="font-size:34px">⏳</span><h2>Traitement de votre demande…</h2><p class="soft">Merci de patienter, ne fermez pas cette page.</p><span class="bar"><i></i></span></div>`;
+ const dot=n=>`<i class="${R.s===n?'on':R.s>n?'ok':''}">${R.s>n?ic('check'):n}</i>`;
+ const steps=`<div class="rsteps" aria-label="Étape ${R.s} sur 3">${dot(1)}<b class="${R.s>1?'ok':''}"></b>${dot(2)}<b class="${R.s>2?'ok':''}"></b>${dot(3)}</div>`;
+ if(R.s===1)return `${top}${steps}<form class="rcard" id="rmailf"><h2>Quelle est votre adresse e-mail ?</h2><p class="soft">Indiquez l'adresse utilisée lors de votre achat.</p>
+  <label class="lbl" for="rmail">E-mail d'achat</label><p class="hint">Elle doit être identique à celle du paiement.</p>
+  <input type="email" id="rmail" value="${esc(R.mail)}" placeholder="votre@email.com" autocomplete="email" required>
+  <button class="btn gold" type="submit">Continuer ${ic('arrow')}</button></form>`;
+ if(R.s===2)return `${top}${steps}<div class="rcard"><h2>Quel est le motif du remboursement ?</h2><p class="soft">Choisissez ce qui décrit le mieux votre situation. Vous pouvez ajouter des précisions ensuite.</p>
+  <div class="rwhy">${RWHY.map((w,i)=>`<button data-a="rwhy" data-i="${i}" aria-pressed="${R.why===i}"><span class="em">${w[0]}</span>${esc(w[1])}</button>`).join('')}</div>
+  <label class="lbl" for="rdet">Précisions <small>(facultatif)</small></label>
+  <textarea id="rdet" style="min-height:96px" placeholder="Racontez-nous votre expérience, si vous le souhaitez…">${esc(R.det)}</textarea>
+  <button class="btn gold" data-a="rnext" ${R.why<0?'disabled':''}>Continuer ${ic('arrow')}</button><button class="btn line" data-a="rprev">← Retour</button></div>`;
+ return `${top}${steps}<div class="rcard"><h2>Confirmation finale</h2><p class="soft">Avant de traiter votre remboursement, merci de confirmer ce qui suit :</p>
+  <div class="rnote"><b class="h">⚠️ À savoir</b><span>En demandant ce remboursement, vous <b>renoncez à l'acte de foi</b> posé en rejoignant ce programme.</span><span>Votre accès aux programmes, prières et bonus sera <b>définitivement fermé</b> une fois le remboursement effectué.</span></div>
+  <button class="rcheck" data-a="rok" role="checkbox" aria-checked="${R.ok}"><span class="box">${ic('check')}</span><span>Je comprends et j'accepte qu'en demandant ce remboursement, je <b>renonce à mon acte de foi</b> et à mon accès au programme, de façon définitive.</span></button>
+  <button class="btn redb" data-a="rsend" ${R.ok?'':'disabled'}>Confirmer et demander le remboursement</button><button class="btn line" data-a="rprev">← Retour</button></div>`}
+function refundSend(){const R=V.r;R.s=4;render();
+ const req={mail:R.mail,why:RWHY[R.why][1],det:R.det,name:S.user.name,date:new Date().toISOString()};
+ if(REFUND_HOOK)fetch(REFUND_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(req)}).catch(()=>{});
+ setTimeout(()=>{S.refund=req;save();R.s=5;if(V.tab==='refund')render()},2700)}
 
 const hhmm=()=>new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
 function vGuide(){return `<div class="wa">${pm()}<div class="grow"><h3>${PERE}</h3><p class="small soft">Assistant virtuel · en ligne</p></div></div>
@@ -832,8 +898,8 @@ function render(){
  D=DAILY[(dayN()-1)%DAILY.length];
  const app=$('#app');if(!S.user){app.innerHTML=vLogin();return}
  const views={home:vHome,lib:vLib,prog:vProg,pray:vPray,sa:vSA,journal:vJournal,theme:vTheme,shop:vShop,offer:vOffer,script:vScript,guide:vGuide,refund:vRefund,num:vNum,focus:vFocus};
- const tabs=[['home','Accueil','home'],['lib','Programmes','book'],['pray','Prières Quotidiennes','pray'],['shop','Bonus','gift'],['guide','Père Michel','chat']];
- const cur={prog:'lib',sa:V.saBack,journal:'pray',theme:'shop',offer:V.offBack,script:'shop',refund:'home',num:'lib',focus:'lib'}[V.tab]||V.tab;
+ const tabs=[['home','Accueil','home'],['lib','Programmes','book'],['pray','Prières Quotidiennes','pray'],['shop','Bonus','gift'],['guide','Père Michel','chat'],['refund','Rembourser','card']];
+ const cur={prog:'lib',sa:V.saBack,journal:'pray',theme:'shop',offer:V.offBack,script:'shop',num:'lib',focus:'lib'}[V.tab]||V.tab;
  const enter=render.last!==V.tab;render.last=V.tab;
  app.innerHTML=`<main class="gut ${V.tab==='guide'?'chat':''} ${enter?'enter':''}" id="view">${views[V.tab]()}</main>
   <nav class="tabs" aria-label="Navigation">${tabs.map(t=>`<button data-a="tab" data-t="${t[0]}" ${cur===t[0]?'aria-current="page"':''}>${ic(t[2])}<span>${t[1]}</span></button>`).join('')}</nav>
@@ -855,9 +921,9 @@ function watchGift(){clearInterval(giftTimer);if(V.tab!=='sa'||S.gift)return;let
   const v=$('#view'),e=$('.sa p:last-child');if(!v||!e)return;
   seen=e.getBoundingClientRect().bottom<=v.getBoundingClientRect().bottom+12?seen+500:0;
   if(seen>=1500&&Date.now()-V.saT>=GIFT_MIN){clearInterval(giftTimer);showGift()}},500)}
-// Liens directs pour les e-mails : #saint-antoine, #priere, #programmes, #bonus, #guide
+// Liens directs pour les e-mails : #saint-antoine, #priere, #programmes, #bonus, #guide, #remboursement
 function applyHash(){const h=location.hash.slice(1);if(!S.user||!h)return;
- if(h==='saint-antoine')openSA();else{const t={priere:'pray',programmes:'lib',bonus:'shop',guide:'guide',nombres:'num',focus:'focus'}[h];if(t)V.tab=t}}
+ if(h==='saint-antoine')openSA();else{const t={priere:'pray',programmes:'lib',bonus:'shop',guide:'guide',nombres:'num',focus:'focus',remboursement:'refund'}[h];if(t)V.tab=t}}
 
 const GUIDE_RULES=`Tu es l'assistant virtuel du ${PERE}, dans l'application Temps d'Abondance (prières et vidéos de spiritualité chrétienne). Tu écris comme dans une messagerie : messages courts, chaleureux, simples, 60 mots maximum, sans titres ni listes.
 Tu es un assistant automatique : tu n'es ni un prêtre ni une personne. Ne prétends jamais être le ${PERE} lui-même ni un être humain, et si on te demande qui tu es, dis-le clairement. Tu ne donnes pas de sacrements, d'absolution ni de direction spirituelle personnelle.
@@ -934,11 +1000,12 @@ document.addEventListener('click',e=>{
    if(!txt){toast('Choisissez une intention ou écrivez la vôtre');return}
    const wasYest=S.fc.last===dstr(-1);S.fc.streak=wasYest?S.fc.streak+1:1;S.fc.last=TODAY;S.fc.f[TODAY]=txt;
    if(!S.fc.days.includes(TODAY))S.fc.days.push(TODAY);S.fc.days=S.fc.days.slice(-60);save();V.fm=false;render();setTimeout(focusDoneShow,300);return}
+ else if(a==='rwhy'){V.r.det=$('#rdet')?.value||'';V.r.why=+b.dataset.i}
+ else if(a==='rnext'){V.r.det=$('#rdet')?.value||'';if(V.r.why<0)return;V.r.s=3;V.r.ok=false}
+ else if(a==='rprev'){if(V.r.s===2)V.r.det=$('#rdet')?.value||'';V.r.s--}
+ else if(a==='rok')V.r.ok=!V.r.ok;
+ else if(a==='rsend'){if(V.r.ok)refundSend();return}
  else if(a==='ep'||a==='epgo'){const i=+b.dataset.i;V.ep=a==='ep'&&V.ep===i?null:i;render();if(V.ep!==null)$('#ep'+i+' video')?.play().catch(()=>{});if(V.ep!==null)setTimeout(()=>$('#ep'+i)?.scrollIntoView({behavior:'smooth',block:'start'}),60);return}
- else if(a==='rstart'){V.tab='home';toast('Commencez par le pas affiché ici')}
- else if(a==='rgift'){S.rgift=true;if(!S.owned.includes(REFUND_GIFT))S.owned.push(REFUND_GIFT);save();V.tab='shop';toast('Votre cadeau est dans Bonus')}
- else if(a==='rform')V.rform=true;
- else if(a==='rcancel'){S.refund=false;save();V.tab='home';toast('Votre demande est annulée')}
  render();
 });
 document.addEventListener('submit',e=>{e.preventDefault();
@@ -946,7 +1013,7 @@ document.addEventListener('submit',e=>{e.preventDefault();
   if(n.length<2||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m)){$('#lerr').hidden=false;return}
   const btn=$('#lbtn');if(btn.disabled)return;btn.disabled=true;$('#lerr').hidden=true;btn.textContent='✦ Connexion…';
   setTimeout(()=>welcome(n.split(' ')[0],()=>{S.user={name:n,email:m};S.start=S.start||TODAY;save();V.day=true;applyHash();render()}),800)}
- if(e.target.id==='refundf'){S.refund=true;V.rform=false;save();render()}
+ if(e.target.id==='rmailf'){const m=$('#rmail').value.trim();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m)){toast('Entrez une adresse e-mail valide');return}V.r.mail=m;V.r.s=2;render();$('#view').scrollTop=0}
  if(e.target.id==='chatf'){const i=$('#chatin'),q=i.value;i.value='';ask(q)}
 });
 

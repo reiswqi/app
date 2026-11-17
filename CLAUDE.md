@@ -13,6 +13,7 @@ Lucas (Brésil, parle portugais avec Claude) reconstruit l'app française « Tem
 - Onglets : Accueil, Programmes (rails : Mes programmes, Prières de Saint Antoine, **Pratiques divines** = Nombres Puissants + Focus du Jour, À découvrir), Prières Quotidiennes, Bonus (thème du mois), Père Michel (chat ; sur GitHub il n'y a que des réponses de secours).
 - Tokens : fond #0a1426, accent doré #dcc084, émeraude #149364/#07583a, carte #1d3252, polices Cormorant Garamond + Lato.
 - Thème du mois (Bonus) : change tout seul selon le mois du visiteur (`THEMES[NOW.getMonth()]`). `THEME_PAGE` a le contenu complet de novembre (mois 10) : sous-titre, intro, « ce que vous apprendrez », 5 épisodes « Écritures Vivantes », et `vid` = lecteur `<video>` natif (`video/aulaN.mp4`, poster `img/aulaN.jpg` = image tirée de la vidéo, sans sous-titres), `hero` (couverture `img/theme-nov.jpg`), `dur` (durées). Design « chamativo » : grande couverture + bouton doré Commencer/Continuer, barre de progression, cartes de leçons avec miniature, durée et badge « Vue » ; leçon vue à 90 % (`S.tw[année-mois]`, `epTick`) ; carte image dans Bonus (`themeCard`). Les autres mois affichent « Bientôt » tant que le contenu n'est pas ajouté ; une entrée `vid` qui n'est pas `video/...` est lue comme ID Google Drive (ancien iframe, déconseillé : barre noire + bouton Drive).
+- Remboursement (`vRefund`, onglet « Rembourser », bannière rouge à l'Accueil, carte « Assistance » dans Programmes, lien `#remboursement`) : procédure en 3 étapes inspirée de la page refund.html de l'app anglaise (même déroulé, textes français originaux) : e-mail → motif (6 choix + précisions) → confirmation (« acte de foi », case à cocher) → traitement → succès. Demande gardée dans `S.refund`. **`REFUND_HOOK` est vide : les demandes ne sont envoyées nulle part** tant que Lucas n'a pas donné une destination (webhook, Google Sheets, e-mail…). `SUPPORT` = e-mail d'aide affiché.
 - Nombres Puissants (S.nm) : Oracle / Horloge / Mon nombre ; 3 étapes → pop-up « Cadeau débloqué ». Focus du Jour (S.fc) : un thème par jour, 3 intentions ou la sienne, pop-up « Bravo », série de jours. Textes originaux de Claude : **les versets sont à vérifier**.
 
 ## Fait
@@ -21,6 +22,7 @@ Page de vente « Découvrez votre ange gardien » (https://reiswqi.github.io/a/,
 ## À faire / idées en attente
 - Remplacer les vidéos par vturb (Lucas a dit qu'il migrera plus tard : il enverra les codes d'embed).
 - Carte verrouillée « Leçons à débloquer » (Programmes) : proposé de la remplacer par une couverture floutée + cadenas ; en attente de réponse de Lucas.
+- Destination des demandes de remboursement (`REFUND_HOOK`) : à demander à Lucas.
 - Prix Kiwify « XX € », liens des pages de vente Prière Secrète / Code du Royaume, carte Promesses, badge « Bientôt » vs « Débloquer », nom « Protocole Sacré », Bonus 3, entraîner l'agent Père Michel, vérifier les versets.
 - Divine Truth, Solomon's Wisdom, Daily Decree (autres pratiques de l'app anglaise) : non ajoutées, seulement si Lucas le demande.
 - Contenu des thèmes des autres mois (décembre, janvier…) quand Lucas envoie les leçons.
