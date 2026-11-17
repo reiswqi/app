@@ -14,7 +14,9 @@
   --ok:#74d3a0; --go1:#149364; --go2:#07583a; --bo:#6fe3c1; --bo-deep:#0c6f63; --bo1:#15504d; --bo2:#0b2c33; --paper:#f8f5ee; --ivory:#efe9dc; --ivory-ink:#16203a; --ivory-gold:#876618;
   --display:"Cormorant Garamond",Georgia,serif; --body:"Lato",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
-html,body{height:100%}
+html,body{height:100%;margin:0;padding:0}
+body{overflow-x:clip}
+@supports (height:100dvh){html,body{height:100dvh}}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
 *{box-sizing:border-box}
 button,input,textarea,select{font:inherit;color:inherit}
@@ -357,7 +359,10 @@ button.mc.bonus:hover{border-color:var(--bo);box-shadow:0 0 32px rgba(111,227,19
 .typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
 @keyframes blink{0%,60%,100%{opacity:.25}30%{opacity:1}}
 /* tabs */
-nav.tabs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));border-top:1px solid var(--line);padding:10px 2px 12px;background:var(--bg)}
+nav.tabs{position:relative;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));padding:10px 2px max(12px,env(safe-area-inset-bottom,0px));background:none}
+/* fond et filet de la barre sur toute la largeur de l'écran (tablette, ordinateur), même si la colonne de l'app est plus étroite */
+nav.tabs::before{content:"";position:absolute;top:0;bottom:0;left:50%;width:100vw;transform:translateX(-50%);background:var(--bg);border-top:1px solid var(--line);z-index:-1}
+nav.tabs button{position:relative}
 nav.tabs button{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;line-height:1.15;font-weight:700;color:var(--soft);text-align:center}
 nav.tabs button span{display:grid;place-items:center;min-height:2.3em;width:100%;font-size:clamp(8.5px,2.55vw,11px)}
 nav.tabs button[aria-current="page"]{color:var(--accent)}

@@ -29,7 +29,7 @@ Page de vente « Découvrez votre ange gardien » (https://reiswqi.github.io/a/,
 
 ## Règles de travail
 - Dans le Chromium de test, Cormorant affiche les accents décalés (coût, contrôle) : bug d'affichage de l'environnement, pas des textes (déjà en NFC).
-- `src.html` doit garder en tête `<meta charset="utf-8">` et `<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">` : sans elles, l'iPhone affiche la page en 980 px (tout minuscule). Tester aussi avec `devices['iPhone 13']` dans Playwright.
+- `src.html` doit garder en tête `<meta charset="utf-8">` et `<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">` : sans elles, l'iPhone affiche la page en 980 px (tout minuscule). Tester aussi avec `devices['iPhone 13']` dans Playwright. `html,body{margin:0}` est obligatoire (sinon 8 px de marge du navigateur = trou en bas à gauche) ; la barre d'onglets a un fond pleine largeur (`nav.tabs::before`) pour tablette/ordinateur. Tester iPhone, Pixel, iPad et 1366 px.
 - Ne jamais copier le texte d'autres apps : contenu original. Tester en 400 px (Playwright) avant de publier. Vérifier les accents français.
 - Pousser sur `main` directement, sauf demande contraire. Ne jamais écrire de token dans un fichier.
 - Les fichiers > 100 Mo ne passent pas sur GitHub : compresser les vidéos (ffmpeg, 540p, crf 29).
