@@ -168,6 +168,8 @@ textarea{min-height:110px;resize:vertical;line-height:1.5}
 .epplay svg.ic{width:26px;height:26px;fill:currentColor;stroke:none;margin-left:4px}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 6px rgba(220,192,132,.25),0 10px 30px rgba(0,0,0,.5)}50%{box-shadow:0 0 0 14px rgba(220,192,132,.06),0 10px 30px rgba(0,0,0,.5)}}
 .epc:not(.seen) .epseen{display:none}
+.epup{position:absolute;top:12px;right:12px;padding:5px 10px;border-radius:999px;background:linear-gradient(90deg,#ecd28a,#b98f3c);color:var(--on-btn);font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;animation:pulse 2.4s ease-in-out infinite}
+.vtbox{background:#000;min-height:120px}
 .epc.seen .epplay{animation:none;background:rgba(10,20,38,.75);color:var(--accent);box-shadow:0 0 0 1.5px var(--accent)}
 .epv{position:relative;aspect-ratio:16/9;background:#000}
 .epv video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
@@ -485,7 +487,13 @@ const mc=(attrs,lead,t,s,cls='',end='chev',eb='')=>`<button class="mc ${cls}" ${
 // video: code du lecteur vturb de chaque leçon (à renseigner). gift: programme offert par le pop-up de Saint Antoine.
 const P=[
  {id:'michel',gift:1,t:"Prières Puissantes à l'Archange Michel",img:'img/michel.jpg',med:'50% 9%/250%',poster:'img/michel-video.jpg',
-  l:["Prières Puissantes à l'Archange Michel","Invocations Sacrées à l'Archange Michel"],video:['','']},
+  l:["Prières Puissantes à l'Archange Michel","Invocations Sacrées à l'Archange Michel"],video:['',''],
+  // vidéos vturb (id du lecteur) + miniatures + textes de la page
+  vt:['6afcdba31ad19b5f5d3f7ed9','6afcdb9a12ed6b9f676ec5dc'],th:['img/michel-1.jpg','img/michel-2.jpg'],hero:'img/michel-video.jpg',hpos:'88% 22%',
+  sub:"Le prince des armées célestes se tient à vos côtés. Apprenez à l'appeler.",
+  quote:"Quand vous priez saint Michel, vous n'affrontez plus rien seul.",
+  d:["Les prières qui appellent sa protection sur vous, votre maison et ceux que vous aimez. À dire dès ce soir.","Comment l'invoquer au moment précis où la peur, le doute ou le combat se présentent."],
+  learn:["Une protection pour vous et votre foyer","Les paroles exactes pour l'invoquer","La force face aux peurs et aux attaques","Un rituel simple à garder chaque jour"]},
  {id:'chant',t:"Le Chant Sacré de l'Archange Michel",img:'img/chant.jpg',med:'50% 6%/260%',poster:'img/chant-video.jpg',
   l:["Le Chant Sacré de l'Archange Michel","Activation de Votre Ange Gardien","Le Sceau de la Guérison Divine — La Prière de l'Archange Raphaël","Débloquer les Bénédictions Financières avec l'Archange Uriel"],video:['','','','']},
  {id:'freq',t:"Les 7 Fréquences de l'Accélération Divine",img:'img/freq.jpg',poster:'img/freq-video.jpg',
@@ -695,7 +703,32 @@ function vLib(){
  ${more.length>1?rail('À découvrir',more):''}
  ${rail('Assistance',[`<button class="pc" data-a="tab" data-t="refund"><span class="cv rcv">${ic('support')}<b>Besoin d'être remboursé ?</b></span><span class="rtag">Assistance</span><h3>Demande de remboursement</h3><span class="small soft">Procédure officielle en 3 étapes · 5 min</span><span class="access red">${ic('play')} ${S.refund?'Voir ma demande':'Demander'}</span></button>`])}`}
 
-function vProg(){const p=P.find(x=>x.id===V.prog),done=S.lessons[p.id]||[];return `${back('lib')}
+// Programme avec vidéos vturb : même présentation que le thème du mois (couverture, progression, cartes de leçons).
+const VT_ACC='f6647e7e-ca7e-45b0-a540-5bf8ca46db4a'; // compte vturb
+// Le script vturb cherche son lecteur au chargement : on le recharge à chaque fois que le lecteur est (re)dessiné.
+function vtLoad(){document.querySelectorAll('vturb-smartplayer').forEach(el=>{if(el.dataset.ld)return;el.dataset.ld=1;const id=el.id.slice(4);
+ document.querySelectorAll('script[data-vt="'+id+'"]').forEach(s=>s.remove());
+ const s=document.createElement('script');s.src=`https://scripts.converteai.net/${VT_ACC}/players/${id}/v4/player.js`;s.async=true;s.dataset.vt=id;document.head.appendChild(s)})}
+function vProgVt(p){const done=S.lessons[p.id]||[],n=p.l.length,nx=p.l.findIndex((_,i)=>!done.includes(i)),all=nx<0,open=V.pop;
+ return `${back('lib')}
+ <section class="thero" style="background-image:url(${p.hero||p.poster});background-position:${p.hpos||'center'}"><div class="thero-in">
+  <span class="tbadge">${ic('spark')}Programme débloqué</span>
+  <h1>${esc(p.t)}</h1>${p.sub?`<span class="tsub">${esc(p.sub)}</span>`:''}
+  <div class="tmeta"><span>${ic('play')}${n} leçons vidéo</span><span>${ic('pray')}À votre rythme</span></div>
+  <div class="tprog"><span class="bar"><i style="width:${done.length/n*100}%"></i></span><b>${done.length}/${n}</b></div>
+  <button class="btn gold" data-a="pgo" data-i="${all?0:nx}">${ic('play')}${all?'Revoir la leçon 1':done.length?`Continuer · Leçon ${nx+1}`:'Commencer la leçon 1'}</button>
+ </div></section>
+ ${p.quote?`<p class="tquote">${esc(p.quote)}</p>`:''}
+ ${p.learn?`<div class="tsec"><span class="eyebrow">Ce que vous allez recevoir</span></div><ul class="tlearn" style="margin:0;padding:0">${p.learn.map(x=>`<li><span class="k">${ic('check')}</span>${esc(x)}</li>`).join('')}</ul>`:''}
+ <div class="tsec"><span class="eyebrow">Vos leçons</span><h2>${n} leçons sacrées</h2></div>
+ <div class="eps">${p.l.map((t,i)=>{const on=open===i,seen=done.includes(i),up=!on&&i===nx&&done.length>0;return `<article class="epc ${on?'on':''} ${seen?'seen':''}" id="pl${i}">
+  ${on?`<div class="vtbox"><vturb-smartplayer id="vid-${p.vt[i]}" style="display:block;margin:0 auto;width:100%"><div class="vturb-player-placeholder" style="position:relative;width:100%;padding:56.25% 0 0;z-index:0;background-color:black"></div></vturb-smartplayer></div>`
+   :`<button class="epthumb" data-a="pep" data-i="${i}" style="background-image:url(${(p.th||[])[i]||p.poster})" aria-label="Regarder la leçon ${i+1} : ${esc(t)}"><span class="epnum">Leçon ${i+1}</span><span class="epseen">${ic('check')}Vue</span>${up?'<span class="epup">À suivre</span>':''}<span class="epplay">${ic('play')}</span></button>`}
+  <button class="epbody" data-a="pep" data-i="${i}" aria-expanded="${on}"><span class="eyebrow">Leçon ${i+1}${seen?' · Vue ✓':''}</span><span class="ept">${esc(t)}</span>${(p.d||[])[i]?`<span class="epd">${esc(p.d[i])}</span>`:''}</button>
+  ${on?`<div class="epnext">${seen?(i<n-1?`<button class="btn line" data-a="pgo" data-i="${i+1}">Leçon suivante ${ic('arrow')}</button>`:''):`<button class="btn gold" data-a="pmark" data-i="${i}">${ic('check')} J'ai terminé cette leçon</button>`}</div>`:''}
+ </article>`}).join('')}</div>
+ ${all?`<div class="tdone">${ic('spark')}<h3>Programme terminé</h3><p class="small">Vous avez reçu les ${n} leçons. Revenez les prier aussi souvent que vous le souhaitez.</p></div>`:''}`}
+function vProg(){const p=P.find(x=>x.id===V.prog),done=S.lessons[p.id]||[];if(p.vt)return vProgVt(p);return `${back('lib')}
  <div class="head"><span class="eyebrow">Vidéo ${V.cur+1} sur ${p.l.length}</span><h2>${esc(p.l[V.cur])}</h2></div>
  <div class="video" style="background-image:url(${p.poster})"><button class="playbtn" data-a="play" id="pb" aria-label="Lecture ou pause">${ic(V.play?'pause':'play')}</button></div>
  <div class="bar"><i id="pbar" style="width:${V.pos}%"></i></div>
@@ -949,12 +982,13 @@ function render(){
   <nav class="tabs" aria-label="Navigation">${tabs.map(t=>`<button data-a="tab" data-t="${t[0]}" ${cur===t[0]?'aria-current="page"':''}>${ic(t[2])}<span>${t[1]}</span></button>`).join('')}</nav>
   ${V.day?dayModal():''}${V.menu?menuSheet():''}${V.fm?focusModal():''}`;
  if(V.tab==='guide'){const v=$('#view');v.scrollTop=v.scrollHeight}
+ vtLoad();
  watchGift();
 }
 function stopPlay(){V.play=false;clearInterval(timer)}
 function markLesson(){const a=S.lessons[V.prog]=S.lessons[V.prog]||[];track('lecon',{prog:V.prog,n:V.cur+1});if(a.includes(V.cur))return;a.push(V.cur);save();const p=P.find(x=>x.id===V.prog);
  toast(a.length===p.l.length?'Programme terminé':'Vidéo terminée');if(V.cur<p.l.length-1){V.cur++;V.pos=0}}
-function openProg(id){const p=P.find(x=>x.id===id);V.prog=p.id;V.tab='prog';V.cur=Math.min(ld(p.id),p.l.length-1);V.pos=0}
+function openProg(id){const p=P.find(x=>x.id===id);V.prog=p.id;V.tab='prog';V.pop=null;V.cur=Math.min(ld(p.id),p.l.length-1);V.pos=0}
 function openSA(){if(!S.sa)S.sa=TODAY;const open=saOpen();let i=0;for(let j=0;j<open;j++)if(!S.saRead.includes(j)){i=j;break}
  V.saBack=['pray','lib'].includes(V.tab)?V.tab:'home';V.tab='sa';V.saI=i;V.saT=Date.now();save()}
 // Le cadeau apparaît quand la fin de la prière est à l'écran, et jamais avant un temps minimum de lecture.
@@ -1050,6 +1084,9 @@ document.addEventListener('click',e=>{
  else if(a==='rprev'){if(V.r.s===2)V.r.det=$('#rdet')?.value||'';V.r.s--}
  else if(a==='rok')V.r.ok=!V.r.ok;
  else if(a==='rsend'){if(V.r.ok)refundSend();return}
+ else if(a==='pep'||a==='pgo'){const i=+b.dataset.i;V.pop=a==='pep'&&V.pop===i?null:i;V.cur=i;render();if(V.pop!==null)setTimeout(()=>$('#pl'+i)?.scrollIntoView({behavior:'smooth',block:'start'}),60);return}
+ else if(a==='pmark'){const i=+b.dataset.i,p=P.find(x=>x.id===V.prog),d=S.lessons[p.id]=S.lessons[p.id]||[];if(!d.includes(i)){d.push(i);save();track('lecon',{prog:p.id,n:i+1})}
+   toast(d.length===p.l.length?'Programme terminé ✦ Bravo !':`Leçon ${i+1} terminée ✓ La suivante vous attend`);V.pop=i;render();$('#pl'+i)?.scrollIntoView({block:'start'});return}
  else if(a==='ep'||a==='epgo'){const i=+b.dataset.i;V.ep=a==='ep'&&V.ep===i?null:i;render();if(V.ep!==null)$('#ep'+i+' video')?.play().catch(()=>{});if(V.ep!==null)setTimeout(()=>$('#ep'+i)?.scrollIntoView({behavior:'smooth',block:'start'}),60);return}
  render();
 });
