@@ -587,6 +587,38 @@ S.nm=S.nm||{o:[],c:false,n:null,g:false};S.fc=S.fc||{last:'',streak:0,days:[],f:
 const save=()=>{try{localStorage.setItem('ta10',JSON.stringify(S))}catch(e){}};
 const fresh=()=>({tab:'home',prog:null,cur:0,mood:null,chat:[],busy:false,play:false,pos:0,saI:0,saBack:'home',off:null,offBack:'shop',ep:null,day:false,menu:false,rform:false,fresh:false,t0:'',nt:'o',nsel:null,fm:false,fsel:-1,fown:''});
 let V=fresh(),timer=null,sample=null,D=DAILY[0];
+/* ---------- journal d'activité (Supabase) ----------
+   Chaque action est envoyée dans la table `events` (voir supabase/setup.sql). Les clients peuvent seulement AJOUTER des lignes :
+   ni lire, ni modifier, ni effacer. Seul l'admin (admin.html) peut lire. Clé « publishable/anon » : publique par conception. */
+const SB_URL='';   // ex. https://xxxx.supabase.co
+const SB_KEY='';   // clé publique « anon » / « publishable » (jamais la clé secrète service_role)
+const CONSENT_V='2026-11-v1';
+const TK=(()=>{const rid=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36);
+ let dev;try{dev=localStorage.getItem('ta_dev');if(!dev){dev=rid();localStorage.setItem('ta_dev',dev)}}catch(e){dev=rid()}
+ let q=[];try{q=JSON.parse(localStorage.getItem('ta_q'))||[]}catch(e){}
+ const keep=()=>{try{localStorage.setItem('ta_q',JSON.stringify(q.slice(-500)))}catch(e){}};
+ return {dev,ses:rid(),q,keep,shown:Date.now(),busy:false}})();
+function track(type,detail={}){
+ const u=S&&S.user;
+ TK.q.push({client_ts:new Date().toISOString(),email:u?u.email.toLowerCase():null,name:u?u.name:null,device:TK.dev,session:TK.ses,type,
+  detail,page:(V&&V.tab)||'',ua:navigator.userAgent.slice(0,300),lang:navigator.language,tz:Intl.DateTimeFormat().resolvedOptions().timeZone||'',
+  screen:screen.width+'x'+screen.height});
+ TK.keep();clearTimeout(track.t);track.t=setTimeout(()=>tkFlush(),1500)}
+function tkFlush(final){if(!SB_URL||!SB_KEY||!TK.q.length||(TK.busy&&!final))return;
+ const batch=TK.q.slice(0,50);TK.busy=true;
+ fetch(SB_URL+'/rest/v1/events',{method:'POST',keepalive:!!final,headers:{apikey:SB_KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(batch)})
+  .then(r=>{if(r.ok){TK.q.splice(0,batch.length);TK.keep();if(TK.q.length)setTimeout(tkFlush,300)}})
+  .catch(()=>{}).finally(()=>{TK.busy=false})}
+// clics : on garde l'action et ses paramètres (id, numéro…), jamais de texte écrit par le client
+const TK_SKIP=new Set(['noop','tab','menuclose','rwhy','rok','numpick','fpick','ep']);
+function logClick(a,b){if(TK_SKIP.has(a))return;const d={};for(const k in b.dataset)if(k!=='a')d[k]=String(b.dataset[k]).slice(0,120);track('act',{a,...d})}
+function logView(){const t=V.tab;if(logView.last===t)return;logView.last=t;
+ const d={tab:t};if(t==='prog')d.prog=V.prog;if(t==='offer')d.offer=V.off;if(t==='sa')d.priere=V.saI;track('view',d)}
+document.addEventListener('visibilitychange',()=>{if(document.hidden){track('away',{secs:Math.round((Date.now()-TK.shown)/1000)});clearTimeout(track.t);tkFlush(true)}
+ else{TK.shown=Date.now();track('back')}});
+addEventListener('pagehide',()=>tkFlush(true));
+addEventListener('error',e=>{if((track.err=(track.err||0)+1)<=5)track('error',{msg:String(e.message).slice(0,200)})});
+setInterval(()=>tkFlush(),20000);
 window.claude?.use?.('sample').then(s=>{sample=s}).catch(()=>{});
 
 const MONTH=NOW.toLocaleDateString('fr-FR',{month:'long'});
@@ -620,7 +652,8 @@ function vLogin(){return `<div class="login gut enter">
   <label class="field" for="lmail">Adresse email<span class="inp">${ic('mail')}<input id="lmail" type="email" autocomplete="email" placeholder="Votre email"></span></label>
   <p id="lerr" class="small" style="color:#ffb4a8" hidden>Indiquez votre nom et une adresse email valide.</p>
   <button class="btn gold" id="lbtn" type="submit">Entrer dans le Royaume →</button>
-  <p class="small soft center">Des difficultés ? <span style="color:var(--accent);user-select:all">${SUPPORT}</span></p></form>
+  <p class="small soft center">Des difficultés ? <span style="color:var(--accent);user-select:all">${SUPPORT}</span></p>
+  <p class="soft center" style="font-size:11px;line-height:1.45;opacity:.8">En entrant, vous acceptez que votre activité dans l'application (connexions, appareil, adresse IP, contenus consultés) soit enregistrée pour sécuriser votre accès et le suivi de votre compte.</p></form>
  <p class="verse">« Cherchez premièrement le royaume et la justice de Dieu ; et toutes ces choses vous seront données par-dessus. »<br><span class="eyebrow" style="font-style:normal;font-family:var(--body);margin-top:6px">Matthieu 6:33</span></p></div>`}
 
 function vHome(){const open=saOpen(),nx=SA.findIndex((x,j)=>j<open&&!S.saRead.includes(j)),x=SA[nx<0?0:nx];
@@ -698,14 +731,14 @@ const twKey=()=>NOW.getFullYear()+'-'+NOW.getMonth();
 const twSeen=()=>{S.tw=S.tw||{};return S.tw[twKey()]=S.tw[twKey()]||[]};
 const twMin=d=>Math.round(d.reduce((a,x)=>{const[m,s]=x.split(':');return a+ +m*60+ +s},0)/60);
 // Une leçon compte comme vue à 90 % ou à la fin ; on met la page à jour sans tout reconstruire (la vidéo continue).
-function epTick(v,i,end){if(!end&&!(v.duration&&v.currentTime/v.duration>.9))return;const w=twSeen();if(w.includes(i))return;w.push(i);save();
+function epTick(v,i,end){if(!end&&!(v.duration&&v.currentTime/v.duration>.9))return;const w=twSeen();if(w.includes(i))return;w.push(i);save();track('video',{lecon:i+1,ev:'vue',t:Math.round(v.currentTime)});
  const n=(THEME_PAGE.eps[NOW.getMonth()]||[]).length,c=$('#ep'+i);if(c)c.classList.add('seen');
  const bi=$('.tprog .bar i'),bt=$('.tprog b');if(bi)bi.style.width=w.length/n*100+'%';if(bt)bt.textContent=w.length+'/'+n;
  toast(w.length===n?'Thème complété ✦ Bravo !':'Leçon '+(i+1)+' vue ✓')}
 function vTheme(){const m=NOW.getMonth(),T=THEME_PAGE,t=THEMES[m],eps=T.eps[m]||[],vids=T.vid[m]||[],dur=T.dur[m]||[],w=twSeen(),
   nx=eps.findIndex((_,i)=>!w.includes(i)),done=eps.length>0&&nx<0,intro=T.intro[m]||[`Ce mois-ci, nous avançons ensemble sur ce thème, jour après jour, par la prière et la réflexion.`];
  const player=(i,e)=>{const v=vids[i];
-  if(v&&v.startsWith('video/'))return `<div class="epv"><video controls autoplay playsinline preload="metadata" poster="img/aula${i+1}.jpg" src="${v}" controlsList="nodownload noplaybackrate" disablePictureInPicture oncontextmenu="return false" ontimeupdate="epTick(this,${i})" onended="epTick(this,${i},1)"></video></div>`;
+  if(v&&v.startsWith('video/'))return `<div class="epv"><video controls autoplay playsinline preload="metadata" poster="img/aula${i+1}.jpg" src="${v}" controlsList="nodownload noplaybackrate" disablePictureInPicture oncontextmenu="return false" onplay="track('video',{lecon:${i+1},ev:'lecture',t:Math.round(this.currentTime)})" onpause="if(!this.ended)track('video',{lecon:${i+1},ev:'pause',t:Math.round(this.currentTime)})" ontimeupdate="epTick(this,${i})" onended="epTick(this,${i},1)"></video></div>`;
   if(v)return `<div class="video" style="border-radius:0"><iframe src="https://drive.google.com/file/d/${v}/preview" allow="autoplay;fullscreen" allowfullscreen title="${esc(e[0])}"></iframe><span class="shield" aria-hidden="true"></span></div>`;
   return `<div class="video" style="border-radius:0"><span class="small soft" style="position:relative">Vidéo de la leçon ${i+1} à ajouter</span></div>`};
  return `${back('shop')}
@@ -783,6 +816,7 @@ function vRefund(){const R=V.r=V.r||{s:1,mail:S.user.email,why:-1,det:'',ok:fals
   <button class="btn redb" data-a="rsend" ${R.ok?'':'disabled'}>Confirmer et demander le remboursement</button><button class="btn line" data-a="rprev">← Retour</button></div>`}
 function refundSend(){const R=V.r;R.s=4;render();
  const req={mail:R.mail,why:RWHY[R.why][1],det:R.det,name:S.user.name,date:new Date().toISOString()};
+ track('refund',{mail:req.mail,motif:req.why,precisions:(req.det||'').slice(0,1000)});tkFlush(true);
  if(REFUND_HOOK)fetch(REFUND_HOOK,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({
   _subject:'Demande de remboursement — '+req.name,_template:'table',_captcha:'false',
   'Nom':req.name,'E-mail d\'achat':req.mail,'E-mail de connexion':S.user.email,'Motif':req.why,'Précisions':req.det||'—',
@@ -905,7 +939,8 @@ function welcome(name,done){const w=document.createElement('div');w.id='welcome'
 /* ---------- engine ---------- */
 function render(){
  D=DAILY[(dayN()-1)%DAILY.length];
- const app=$('#app');if(!S.user){app.innerHTML=vLogin();return}
+ const app=$('#app');if(!S.user){app.innerHTML=vLogin();logView.last=null;return}
+ logView();
  const views={home:vHome,lib:vLib,prog:vProg,pray:vPray,sa:vSA,journal:vJournal,theme:vTheme,shop:vShop,offer:vOffer,script:vScript,guide:vGuide,refund:vRefund,num:vNum,focus:vFocus};
  const tabs=[['home','Accueil','home'],['lib','Programmes','book'],['pray','Prières Quotidiennes','pray'],['shop','Bonus','gift'],['guide','Père Michel','chat'],['refund','Rembourser','card']];
  const cur={prog:'lib',sa:V.saBack,journal:'pray',theme:'shop',offer:V.offBack,script:'shop',num:'lib',focus:'lib'}[V.tab]||V.tab;
@@ -917,14 +952,14 @@ function render(){
  watchGift();
 }
 function stopPlay(){V.play=false;clearInterval(timer)}
-function markLesson(){const a=S.lessons[V.prog]=S.lessons[V.prog]||[];if(a.includes(V.cur))return;a.push(V.cur);save();const p=P.find(x=>x.id===V.prog);
+function markLesson(){const a=S.lessons[V.prog]=S.lessons[V.prog]||[];track('lecon',{prog:V.prog,n:V.cur+1});if(a.includes(V.cur))return;a.push(V.cur);save();const p=P.find(x=>x.id===V.prog);
  toast(a.length===p.l.length?'Programme terminé':'Vidéo terminée');if(V.cur<p.l.length-1){V.cur++;V.pos=0}}
 function openProg(id){const p=P.find(x=>x.id===id);V.prog=p.id;V.tab='prog';V.cur=Math.min(ld(p.id),p.l.length-1);V.pos=0}
 function openSA(){if(!S.sa)S.sa=TODAY;const open=saOpen();let i=0;for(let j=0;j<open;j++)if(!S.saRead.includes(j)){i=j;break}
  V.saBack=['pray','lib'].includes(V.tab)?V.tab:'home';V.tab='sa';V.saI=i;V.saT=Date.now();save()}
 // Le cadeau apparaît quand la fin de la prière est à l'écran, et jamais avant un temps minimum de lecture.
 let giftTimer=null;const GIFT_MIN=12000;
-function showGift(){if(V.tab==='sa'&&!S.gift){S.gift=true;save();render();unlockShow()}}
+function showGift(){if(V.tab==='sa'&&!S.gift){S.gift=true;save();track('cadeau',{type:'lecons'});render();unlockShow()}}
 function watchGift(){clearInterval(giftTimer);if(V.tab!=='sa'||S.gift)return;let seen=0;
  giftTimer=setInterval(()=>{if(V.tab!=='sa'||S.gift){clearInterval(giftTimer);return}
   const v=$('#view'),e=$('.sa p:last-child');if(!v||!e)return;
@@ -963,6 +998,7 @@ async function ask(q){
 document.addEventListener('click',e=>{
  const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a;
  if(a==='noop')return;
+ logClick(a,b);
  if(a==='tab'){stopPlay();if(b.dataset.t!=='lib')V.fresh=false;V.tab=b.dataset.t;V.menu=false;V.rform=false}
  else if(a==='menu')V.menu=true;
  else if(a==='menuclose')V.menu=false;
@@ -978,7 +1014,7 @@ document.addEventListener('click',e=>{
    if(V.play)timer=setInterval(()=>{V.pos+=1;if(V.pos>=100){stopPlay();markLesson();render();return}$('#pbar').style.width=V.pos+'%'},250);return}
  else if(a==='mood'){const t=$('#jtext').value;V.mood=b.dataset.m;render();$('#jtext').value=t;return}
  else if(a==='savej'){const x=$('#jtext').value.trim();if(!x){toast('Écrivez quelques mots avant d\'enregistrer');return}S.journal.push({d:TODAY,mood:V.mood,x});save();toast('Vos mots sont enregistrés')}
- else if(a==='logout'){S.user=null;V=fresh();save()}
+ else if(a==='logout'){tkFlush(true);S.user=null;V=fresh();save()}
  else if(a==='reset'){S=seed();save();V=fresh();render.last=null}
  else if(a==='ask'||a==='rask'){ask(b.dataset.q);return}
  else if(a==='daygo')V.day=false;
@@ -986,7 +1022,7 @@ document.addEventListener('click',e=>{
  else if(a==='sacard'){openSA();V.saI=+b.dataset.i}
  else if(a==='sago'){V.saI=+b.dataset.i;render();$('#view').scrollTop=0;return}
  else if(a==='salock'){toast('Cette prière s\'ouvre un jour après l\'autre');return}
- else if(a==='saread'){const isNew=!S.saRead.includes(V.saI);if(isNew){S.saRead.push(V.saI);save()}
+ else if(a==='saread'){const isNew=!S.saRead.includes(V.saI);track('priere',{n:V.saI+1,titre:SA[V.saI].t,nouvelle:isNew});if(isNew){S.saRead.push(V.saI);save()}
    render();if(!S.gift)setTimeout(showGift,700);else if(isNew)setTimeout(bravoShow,350);return}
  else if(a==='bravoclose'){bravoClose();return}
  else if(a==='bravonext'){bravoClose();V.saI=+b.dataset.i;V.saT=Date.now();render();$('#view').scrollTop=0;return}
@@ -1021,9 +1057,9 @@ document.addEventListener('submit',e=>{e.preventDefault();
  if(e.target.id==='loginf'){const n=$('#lname').value.trim(),m=$('#lmail').value.trim();
   if(n.length<2||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m)){$('#lerr').hidden=false;return}
   const btn=$('#lbtn');if(btn.disabled)return;btn.disabled=true;$('#lerr').hidden=true;btn.textContent='✦ Connexion…';
-  setTimeout(()=>welcome(n.split(' ')[0],()=>{S.user={name:n,email:m};S.start=S.start||TODAY;save();V.day=true;applyHash();render()}),800)}
+  setTimeout(()=>welcome(n.split(' ')[0],()=>{S.user={name:n,email:m};S.start=S.start||TODAY;S.consent=S.consent||{v:CONSENT_V,at:new Date().toISOString()};save();track('login',{consent:CONSENT_V,consent_at:S.consent.at,jour:dayN()});V.day=true;applyHash();render()}),800)}
  if(e.target.id==='rmailf'){const m=$('#rmail').value.trim();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m)){toast('Entrez une adresse e-mail valide');return}V.r.mail=m;V.r.s=2;render();$('#view').scrollTop=0}
- if(e.target.id==='chatf'){const i=$('#chatin'),q=i.value;i.value='';ask(q)}
+ if(e.target.id==='chatf'){const i=$('#chatin'),q=i.value;i.value='';if(q.trim())track('chat',{car:q.length});ask(q)}
 });
 
 // starry sky: twinkling stars drifting slowly upward, a few gold ones, an occasional shooting star
@@ -1043,5 +1079,7 @@ document.addEventListener('submit',e=>{e.preventDefault();
    x.globalAlpha=1;requestAnimationFrame(draw)}}
  addEventListener('resize',size);size();if(!still)requestAnimationFrame(draw)}
 addEventListener('hashchange',()=>{applyHash();render()});
+{const u=new URLSearchParams(location.search),d={hash:location.hash.slice(1),ref:document.referrer.slice(0,200),pwa:matchMedia('(display-mode: standalone)').matches};
+ ['utm_source','utm_medium','utm_campaign','src'].forEach(k=>{if(u.get(k))d[k]=u.get(k).slice(0,80)});track('open',d)}
 applyHash();render();
 </script>

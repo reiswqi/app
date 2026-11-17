@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0a1426">
+<title>Painel Admin · Temps d'Abondance</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Lato:wght@400;700;900&display=swap">
+<style>
+:root{--bg:#0a1426;--ink:#fff;--soft:rgba(206,219,240,.78);--line:rgba(190,208,238,.18);--panel:rgba(30,51,82,.55);--card:#16294a;--accent:#dcc084;--ok:#74d3a0;--bad:#ff8f84;--display:"Cormorant Garamond",Georgia,serif;--body:"Lato",system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;min-height:100%}
+body{background:var(--bg);color:var(--ink);font:14px/1.45 var(--body);-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0;padding:0}
+a{color:var(--accent)}
+h1,h2,h3{margin:0;font-family:var(--display);font-weight:600;line-height:1.15}
+.wrap{max-width:1120px;margin:0 auto;padding:20px max(16px,env(safe-area-inset-left,0px)) 60px}
+.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.top h1{font-size:26px;flex:1;min-width:200px}
+.top h1 small{display:block;font-family:var(--body);font-size:11px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 14px;border-radius:8px;border:1px solid var(--line);background:var(--panel);font-weight:700;font-size:13px;white-space:nowrap}
+.btn.gold{background:linear-gradient(90deg,#ecd28a,#b98f3c);color:#0a1426;border:0;font-weight:900}
+.btn:hover{border-color:var(--accent)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:18px}
+.kpi{padding:14px;border-radius:12px;background:var(--panel);border:1px solid var(--line)}
+.kpi b{display:block;font-size:26px;font-family:var(--display);color:var(--accent)}
+.kpi span{font-size:12px;color:var(--soft)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tabs button{padding:9px 14px;border-radius:999px;border:1px solid var(--line);font-weight:700;font-size:13px}
+.tabs button[aria-current="true"]{background:var(--accent);color:#0a1426;border-color:var(--accent)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.bar input,.bar select{flex:1;min-width:180px;padding:11px 12px;border-radius:8px;border:1px solid var(--line);background:rgba(8,16,32,.6)}
+.bar select{flex:0 0 auto;min-width:0}
+.list{display:flex;flex-direction:column;gap:8px}
+.row{display:grid;grid-template-columns:1.6fr 1fr 1fr .7fr .7fr auto;gap:10px;align-items:center;width:100%;text-align:left;padding:12px 14px;border-radius:12px;background:var(--panel);border:1px solid var(--line)}
+.row:hover{border-color:var(--accent)}
+.row .nm{font-weight:900}.row .em{font-size:12px;color:var(--soft);word-break:break-all}
+.row .k{font-size:11px;color:var(--soft);display:block}
+.head{background:none;border:0;padding:4px 14px;font-size:11px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--soft)}
+.tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;background:rgba(255,120,110,.18);color:var(--bad);border:1px solid rgba(255,120,110,.4)}
+.tag.ok{background:rgba(116,211,160,.14);color:var(--ok);border-color:rgba(116,211,160,.4)}
+.tag.gold{background:rgba(220,192,132,.14);color:var(--accent);border-color:rgba(220,192,132,.4)}
+.panel{padding:16px;border-radius:14px;background:var(--panel);border:1px solid var(--line);margin-bottom:12px}
+.panel h3{font-size:20px;margin-bottom:10px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.facts div{padding:10px;border-radius:10px;background:rgba(8,16,32,.45)}
+.facts b{display:block;font-size:16px}.facts span{font-size:11px;color:var(--soft)}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--soft)}
+.tl .day{margin:16px 0 6px;font-weight:900;color:var(--accent);font-size:13px}
+.ev{display:grid;grid-template-columns:62px 22px 1fr;gap:8px;padding:7px 0;border-bottom:1px solid var(--line)}
+.ev time{color:var(--soft);font-variant-numeric:tabular-nums}
+.ev .d{font-size:12px;color:var(--soft);word-break:break-word}
+.ev.imp .t{color:var(--accent);font-weight:900}
+.ev.bad .t{color:var(--bad);font-weight:900}
+.muted{color:var(--soft)}
+.err{color:var(--bad)}
+.login{max-width:380px;margin:12vh auto 0;display:flex;flex-direction:column;gap:12px;padding:24px;border-radius:16px;background:var(--panel);border:1px solid var(--line)}
+.login input{padding:12px;border-radius:8px;border:1px solid var(--line);background:rgba(8,16,32,.6)}
+.scroll{overflow-x:auto}
+.print-only{display:none}
+@media (max-width:760px){
+ .row{grid-template-columns:1fr auto;gap:4px 10px}
+ .row .c3,.row .c4,.row .c5,.row>.muted{display:none}
+ .head{display:none}
+ .ev{grid-template-columns:50px 20px 1fr}
+}
+@media print{
+ :root{--ink:#000;--soft:#444;--line:#ccc;--panel:#fff;--accent:#7a5a12;--bad:#a00;--ok:#060}
+ body{background:#fff;color:#000;font-size:11px}
+ .noprint,.top .btn,.tabs,.bar,.kpis{display:none!important}
+ .print-only{display:block}
+ .panel,.facts div{border:1px solid #ccc;background:#fff;break-inside:avoid}
+ .wrap{max-width:none;padding:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"><p class="muted">Carregando…</p></div>
+<script>
+/* Painel Admin : lê a tabela `events` do Supabase. Só o e-mail admin (lr.bussine@gmail.com) consegue ler (regra no banco). */
+const SB_URL='';   // mesmo valor que em src.html
+const SB_KEY='';   // mesma chave pública « anon / publishable »
+const ADMIN='lr.bussine@gmail.com';
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtD=d=>new Date(d).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});
+const fmtT=d=>new Date(d).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+const fmtDT=d=>d?fmtD(d)+' '+fmtT(d):'—';
+const TZ=Intl.DateTimeFormat().resolvedOptions().timeZone;
+const ago=d=>{const s=(Date.now()-new Date(d))/1000;if(s<60)return 'agora';if(s<3600)return Math.round(s/60)+' min atrás';if(s<86400)return Math.round(s/3600)+' h atrás';const n=Math.round(s/86400);return n+(n>1?' dias':' dia')+' atrás'};
+const dur=s=>{s=+s||0;if(s<60)return s+' s';const m=Math.round(s/60);if(m<60)return m+' min';return Math.floor(m/60)+' h '+(m%60)+' min'};
+
+/* ---------- autenticação Supabase (sem biblioteca) ---------- */
+let SES=null;try{SES=JSON.parse(sessionStorage.getItem('ta_admin'))}catch(e){}
+async function auth(body,grant){const r=await fetch(SB_URL+'/auth/v1/token?grant_type='+grant,{method:'POST',headers:{apikey:SB_KEY,'Content-Type':'application/json'},body:JSON.stringify(body)});
+ const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error_description||j.msg||j.message||'Falha no login');
+ SES={at:j.access_token,rt:j.refresh_token,exp:Date.now()+(j.expires_in-60)*1000,email:j.user&&j.user.email};sessionStorage.setItem('ta_admin',JSON.stringify(SES));return SES}
+async function token(){if(SES&&Date.now()>SES.exp)await auth({refresh_token:SES.rt},'refresh_token');return SES.at}
+async function api(path,range){const h={apikey:SB_KEY,Authorization:'Bearer '+await token()};if(range)h.Range=range;
+ const r=await fetch(SB_URL+'/rest/v1/'+path,{headers:h});if(r.status===401){logout();throw new Error('Sessão expirada')}
+ if(!r.ok)throw new Error('Erro '+r.status+' : '+(await r.text()).slice(0,200));return r.json()}
+async function all(path,max=20000){let out=[],from=0;const step=1000;
+ while(from<max){const page=await api(path,from+'-'+(from+step-1));out=out.concat(page);if(page.length<step)break;from+=step}return out}
+function logout(){SES=null;sessionStorage.removeItem('ta_admin');draw()}
+
+/* ---------- nomes legíveis ---------- */
+const TABS={home:'Início',lib:'Programas',pray:'Orações diárias',shop:'Bônus',guide:'Père Michel',refund:'Reembolso',theme:'Tema do mês',prog:'Programa (vídeos)',sa:'Oração de Santo Antônio',offer:'Página de oferta',script:'Script Divino',num:'Números Poderosos',focus:'Foco do Dia',journal:'Diário'};
+const ACTS={open:'Abriu um programa',offer:'Abriu uma oferta',buy:'Clicou em COMPRAR',later:'Clicou em conteúdo “em breve”',soon:'Clicou em conteúdo “em breve”',lesson:'Escolheu uma lição',mark:'Marcou vídeo como concluído',play:'Play / pausa no vídeo do programa',mood:'Escolheu o humor do dia',savej:'Salvou o diário',logout:'Saiu da conta',reset:'Reiniciou a demonstração',ask:'Pergunta pronta ao Père Michel',rask:'Pergunta de ajuda',daygo:'Abriu o caminho do dia',sa:'Abriu a oração de Santo Antônio',sacard:'Abriu uma oração de Santo Antônio',sago:'Avançou na oração',salock:'Tentou abrir oração bloqueada',saread:'Concluiu a leitura da oração',bravoclose:'Fechou o “Bravo”',bravonext:'Continuou após “Bravo”',bravolib:'Foi para Programas após “Bravo”',unlockgo:'Abriu lições desbloqueadas',lockgo:'Clicou em conteúdo bloqueado (venda)',numopen:'Abriu Números Poderosos',ntab:'Trocou aba em Números',numclose:'Fechou Números',numgo:'Calculou seu número',numgift:'Recebeu o presente de Números',focusopen:'Abriu Foco do Dia',fopen:'Abriu escolha de intenção',fclose:'Fechou escolha de intenção',fset:'Definiu a intenção do dia',rnext:'Reembolso: passou para a confirmação',rprev:'Reembolso: voltou uma etapa',rsend:'Reembolso: clicou em CONFIRMAR',epgo:'Abriu uma aula do tema',menu:'Abriu o menu da conta'};
+const ICO={open:'📲',login:'🔑',view:'👁️',act:'👆',video:'🎬',priere:'🙏',lecon:'✅',cadeau:'🎁',chat:'💬',refund:'💸',away:'⏸️',back:'▶️',error:'⚠️'};
+function label(e){const d=e.detail||{};switch(e.type){
+ case 'open':return ['Abriu o app',[d.pwa?'app instalado':'navegador',d.utm_source&&'origem: '+d.utm_source,d.hash&&'#'+d.hash,d.ref&&'veio de '+d.ref].filter(Boolean).join(' · ')];
+ case 'login':return ['Fez login (aceitou o registro de atividade)','consentimento '+(d.consent||'')+(d.consent_at?' em '+fmtDT(d.consent_at):'')];
+ case 'view':return ['Abriu a tela: '+(TABS[d.tab]||d.tab),[d.prog&&'programa '+d.prog,d.offer&&'oferta '+d.offer,d.priere!=null&&'oração nº '+(+d.priere+1)].filter(Boolean).join(' · ')];
+ case 'act':{if(d.a==='epgo'&&d.i!=null)return ['Abriu a aula '+(+d.i+1)+' do tema',''];if(d.a==='sacard'&&d.i!=null)return ['Abriu a oração de Santo Antônio nº '+(+d.i+1),''];const x=Object.entries(d).filter(([k])=>k!=='a').map(([k,v])=>k+': '+v).join(' · ');return [ACTS[d.a]||('Ação: '+d.a),x]}
+ case 'video':return [`Aula ${d.lecon} do tema: `+({lecture:'deu play',pause:'pausou',vue:'ASSISTIU (90 %+)'}[d.ev]||d.ev),'aos '+dur(d.t)];
+ case 'priere':return ['Leu a oração '+d.n+(d.titre?' — '+d.titre:''),d.nouvelle?'primeira leitura':'releitura'];
+ case 'lecon':return ['Concluiu a lição '+d.n,'programa '+d.prog];
+ case 'cadeau':return ['Desbloqueou um presente',d.type||''];
+ case 'chat':return ['Mandou mensagem ao Père Michel',d.car+' caracteres'];
+ case 'refund':return ['PEDIU REEMBOLSO','motivo: '+(d.motif||'—')+(d.precisions?' · “'+d.precisions+'”':'')+(d.mail?' · e-mail informado: '+d.mail:'')];
+ case 'away':return ['Saiu / minimizou o app','ficou '+dur(d.secs)+' ativo'];
+ case 'back':return ['Voltou ao app',''];
+ case 'error':return ['Erro no app',d.msg||''];
+ default:return [e.type,JSON.stringify(d)]}}
+function uaName(ua){ua=ua||'';const os=/iPhone/.test(ua)?'iPhone':/iPad/.test(ua)?'iPad':/Android/.test(ua)?'Android':/Windows/.test(ua)?'Windows':/Mac OS X/.test(ua)?'Mac':/Linux/.test(ua)?'Linux':'?';
+ const br=/Edg\//.test(ua)?'Edge':/OPR\//.test(ua)?'Opera':/Instagram/.test(ua)?'Instagram':/FBAN|FBAV/.test(ua)?'Facebook':/CriOS|Chrome\//.test(ua)?'Chrome':/FxiOS|Firefox/.test(ua)?'Firefox':/Safari/.test(ua)?'Safari':'?';return os+' · '+br}
+
+/* ---------- estado / telas ---------- */
+const ST={tab:'clients',q:'',f:'all',clients:null,recent:null,refunds:null,detail:null,err:''};
+async function load(){ST.err='';try{
+ if(ST.tab==='clients'&&!ST.clients)ST.clients=await all('clients?select=*&order=last_seen.desc');
+ if(ST.tab==='recent'&&!ST.recent)ST.recent=await api('events?select=*&order=created_at.desc&limit=200');
+ if(ST.tab==='refunds'&&!ST.refunds)ST.refunds=await api('events?select=*&type=eq.refund&order=created_at.desc&limit=500');
+ if(!ST.clients)ST.clients=await all('clients?select=*&order=last_seen.desc');
+}catch(e){ST.err=e.message}draw()}
+async function openClient(email){ST.detail={email,loading:true};draw();window.scrollTo(0,0);try{
+ const devs=[...new Set((await all('events?select=device&email=eq.'+encodeURIComponent(email))).map(x=>x.device).filter(Boolean))];
+ const or=['email.eq."'+email+'"'];if(devs.length)or.push('device.in.('+devs.map(d=>'"'+d+'"').join(',')+')');
+ const ev=await all('events?select=*&or=('+encodeURIComponent(or.join(','))+')&order=created_at.asc');
+ ST.detail={email,ev,devs};}catch(e){ST.detail={email,err:e.message}}draw()}
+
+function draw(){const app=$('#app');
+ if(!SB_URL||!SB_KEY){app.innerHTML=`<div class="login"><h2>Painel ainda não configurado</h2><p class="muted">Preencha SB_URL e SB_KEY no início deste arquivo (os mesmos de src.html).</p></div>`;return}
+ if(!SES){app.innerHTML=`<form class="login" id="lf"><small style="font-size:11px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">Temps d'Abondance</small><h2>Painel Admin</h2>
+  <input id="le" type="email" autocomplete="username" placeholder="E-mail" value="${ADMIN}" required><input id="lp" type="password" autocomplete="current-password" placeholder="Senha" required>
+  <button class="btn gold" type="submit">Entrar</button><p class="err" id="lerr">${esc(ST.err)}</p></form>`;return}
+ if(ST.detail)return drawClient();
+ const C=ST.clients||[],now=Date.now(),act=h=>C.filter(c=>now-new Date(c.last_seen)<h*3600e3).length;
+ const rf=C.filter(c=>c.refund).length,avg=C.length?C.reduce((a,c)=>a+(+c.secs||0),0)/C.length:0;
+ let list=C.filter(c=>(!ST.q||(c.email+' '+(c.name||'')).toLowerCase().includes(ST.q.toLowerCase()))&&(ST.f==='all'||(ST.f==='refund'&&c.refund)||(ST.f==='7d'&&now-new Date(c.last_seen)<7*864e5)||(ST.f==='idle'&&now-new Date(c.last_seen)>=7*864e5)));
+ app.innerHTML=`<div class="top"><h1><small>Temps d'Abondance</small>Painel Admin</h1><button class="btn" data-a="reload">↻ Atualizar</button><button class="btn" data-a="logout">Sair</button></div>
+ <div class="kpis"><div class="kpi"><b>${C.length}</b><span>clientes que entraram</span></div><div class="kpi"><b>${act(24)}</b><span>ativos nas últimas 24 h</span></div>
+  <div class="kpi"><b>${act(168)}</b><span>ativos nos últimos 7 dias</span></div><div class="kpi"><b>${dur(Math.round(avg))}</b><span>tempo médio no app</span></div><div class="kpi"><b style="color:var(--bad)">${rf}</b><span>pediram reembolso</span></div></div>
+ <div class="tabs">${[['clients','Clientes'],['recent','Atividade recente'],['refunds','Reembolsos']].map(t=>`<button data-a="tab" data-t="${t[0]}" aria-current="${ST.tab===t[0]}">${t[1]}</button>`).join('')}</div>
+ ${ST.err?`<p class="err">${esc(ST.err)}</p>`:''}
+ ${ST.tab==='clients'?`<div class="bar"><input id="q" placeholder="Buscar por nome ou e-mail…" value="${esc(ST.q)}"><select id="f">${[['all','Todos'],['7d','Ativos (7 dias)'],['idle','Sumidos (+7 dias)'],['refund','Pediram reembolso']].map(o=>`<option value="${o[0]}" ${ST.f===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div>
+  <div class="list"><div class="row head"><span>Cliente</span><span>Último acesso</span><span class="c3">Primeiro acesso</span><span class="c4">Sessões</span><span class="c5">Tempo</span><span></span></div>
+  ${!ST.clients?'<p class="muted">Carregando…</p>':list.length?list.map(c=>`<button class="row" data-a="client" data-e="${esc(c.email)}"><span><span class="nm">${esc(c.name||'—')}</span> ${c.refund?'<span class="tag">reembolso</span>':''}<span class="em">${esc(c.email)}</span></span>
+   <span>${ago(c.last_seen)}<span class="k">${fmtDT(c.last_seen)}</span></span><span class="c3">${fmtD(c.first_seen)}<span class="k">${esc(c.country||'')}</span></span><span class="c4">${c.sessions}<span class="k">${c.devices} aparelho(s)</span></span><span class="c5">${dur(c.secs)}</span><span class="muted">›</span></button>`).join(''):'<p class="muted">Nenhum cliente encontrado.</p>'}</div>`:''}
+ ${ST.tab==='recent'?feed(ST.recent,true):''}
+ ${ST.tab==='refunds'?feed(ST.refunds,true):''}`;
+ const q=$('#q');if(q){q.oninput=()=>{ST.q=q.value;const p=q.selectionStart;draw();const n=$('#q');n.focus();n.setSelectionRange(p,p)}}
+ const f=$('#f');if(f)f.onchange=()=>{ST.f=f.value;draw()}}
+function feed(evs,who){if(!evs)return '<p class="muted">Carregando…</p>';if(!evs.length)return '<p class="muted">Nada por aqui ainda.</p>';
+ return `<div class="panel tl">${evs.map(e=>{const [t,d]=label(e);return `<div class="ev ${e.type==='refund'?'bad':['login','video','priere'].includes(e.type)?'imp':''}"><time>${fmtD(e.created_at).slice(0,5)}<br>${fmtT(e.created_at).slice(0,5)}</time><span>${ICO[e.type]||'•'}</span>
+  <span><span class="t">${esc(t)}</span>${who&&e.email?` · <button data-a="client" data-e="${esc(e.email)}" style="color:var(--accent);font-weight:700">${esc(e.name||e.email)}</button>`:''}<br><span class="d">${esc(d)}${e.ip?' · IP '+esc(e.ip):''}</span></span></div>`}).join('')}</div>`}
+
+function drawClient(){const D=ST.detail,app=$('#app');
+ const top=`<div class="top noprint"><button class="btn" data-a="back">← Voltar</button><h1 style="font-size:22px">${esc(D.email)}</h1>${D.ev?`<button class="btn" data-a="csv">Exportar CSV</button><button class="btn gold" data-a="print">Imprimir dossiê / PDF</button>`:''}</div>`;
+ if(D.loading){app.innerHTML=top+'<p class="muted">Carregando histórico…</p>';return}
+ if(D.err){app.innerHTML=top+`<p class="err">${esc(D.err)}</p>`;return}
+ const ev=D.ev,mine=ev.filter(e=>e.email===D.email),name=(mine.slice().reverse().find(e=>e.name)||{}).name||'—';
+ const logins=ev.filter(e=>e.type==='login'),first=ev[0],last=ev[ev.length-1],ref=ev.filter(e=>e.type==='refund');
+ const secs=ev.filter(e=>e.type==='away').reduce((a,e)=>a+Math.min(+(e.detail||{}).secs||0,21600),0);
+ const sessions=new Set(ev.map(e=>e.session)).size,days=new Set(ev.map(e=>fmtD(e.created_at))).size;
+ const vids=[...new Set(ev.filter(e=>e.type==='video'&&e.detail.ev==='vue').map(e=>e.detail.lecon))].sort();
+ const plays=new Set(ev.filter(e=>e.type==='video').map(e=>e.detail.lecon)).size;
+ const prays=[...new Set(ev.filter(e=>e.type==='priere').map(e=>e.detail.n))].sort();
+ const progs=[...new Set(ev.filter(e=>e.type==='view'&&e.detail.prog).map(e=>e.detail.prog))];
+ const lessons=ev.filter(e=>e.type==='lecon').length,chats=ev.filter(e=>e.type==='chat').length;
+ const screens=[...new Set(ev.filter(e=>e.type==='view').map(e=>TABS[e.detail.tab]||e.detail.tab))];
+ const consent=logins[0];
+ // aparelhos e IPs
+ const byDev={};ev.forEach(e=>{const k=e.device||'?';const x=byDev[k]=byDev[k]||{ua:e.ua,first:e.created_at,last:e.created_at,ips:new Set(),cc:new Set(),n:0,tz:e.tz,lang:e.lang,screen:e.screen};x.last=e.created_at;x.n++;if(e.ip)x.ips.add(e.ip);if(e.country)x.cc.add(e.country)});
+ const ips={};ev.forEach(e=>{if(!e.ip)return;const x=ips[e.ip]=ips[e.ip]||{first:e.created_at,last:e.created_at,n:0,cc:e.country};x.last=e.created_at;x.n++});
+ // linha do tempo por dia
+ let day='',tl='';ev.forEach(e=>{const d=fmtD(e.created_at);if(d!==day){day=d;tl+=`<div class="day">${new Date(e.created_at).toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>`}
+  const [t,x]=label(e);tl+=`<div class="ev ${e.type==='refund'?'bad':['login','video','priere','lecon'].includes(e.type)?'imp':''}"><time>${fmtT(e.created_at)}</time><span>${ICO[e.type]||'•'}</span><span><span class="t">${esc(t)}</span><br><span class="d">${esc(x)}${x?' · ':''}${e.ip?'IP '+esc(e.ip):''}${e.country?' ('+esc(e.country)+')':''} · ${esc(uaName(e.ua))}${e.email?'':' · antes do login'}</span></span></div>`});
+ app.innerHTML=top+`
+ <div class="print-only"><h1>Dossiê de atividade do cliente</h1><p>Temps d'Abondance · gerado em ${fmtDT(new Date())} (fuso ${esc(TZ)}) · horários registrados pelo servidor</p></div>
+ <div class="panel"><h3>${esc(name)} ${ref.length?'<span class="tag">pediu reembolso</span>':'<span class="tag ok">sem reembolso</span>'}</h3>
+  <div class="facts"><div><b>${fmtDT(first.created_at)}</b><span>primeiro acesso</span></div><div><b>${fmtDT(last.created_at)}</b><span>último acesso (${ago(last.created_at)})</span></div>
+  <div><b>${logins.length}</b><span>logins</span></div><div><b>${sessions}</b><span>sessões (visitas)</span></div><div><b>${days}</b><span>dias diferentes com acesso</span></div>
+  <div><b>${dur(secs)}</b><span>tempo ativo no app</span></div><div><b>${Object.keys(byDev).length}</b><span>aparelho(s)</span></div><div><b>${Object.keys(ips).length}</b><span>endereço(s) IP</span></div></div></div>
+ <div class="grid2">
+  <div class="panel"><h3>Consentimento</h3>${consent?`<p>Aceitou o registro de atividade ao fazer login em <b>${fmtDT(consent.created_at)}</b> (versão ${esc(consent.detail.consent||'')}), a partir do IP <b>${esc(consent.ip||'—')}</b>${consent.country?' ('+esc(consent.country)+')':''}, aparelho ${esc(uaName(consent.ua))}.</p><p class="muted">Texto exibido na tela de login: « En entrant, vous acceptez que votre activité dans l'application (connexions, appareil, adresse IP, contenus consultés) soit enregistrée pour sécuriser votre accès et le suivi de votre compte. »</p>`:'<p class="muted">Nenhum login registrado.</p>'}</div>
+  <div class="panel"><h3>Uso do conteúdo</h3><div class="facts">
+   <div><b>${vids.length?vids.join(', '):'—'}</b><span>aulas do tema assistidas (90 %+)</span></div><div><b>${plays}</b><span>aulas do tema iniciadas</span></div>
+   <div><b>${prays.length?prays.join(', '):'—'}</b><span>orações de Santo Antônio lidas</span></div><div><b>${progs.length}</b><span>programas abertos</span></div>
+   <div><b>${lessons}</b><span>lições concluídas</span></div><div><b>${chats}</b><span>mensagens ao Père Michel</span></div></div>
+   <p class="muted" style="margin:10px 0 0">Telas visitadas: ${esc(screens.join(', ')||'—')}</p></div>
+ </div>
+ ${ref.length?`<div class="panel"><h3 style="color:var(--bad)">Pedido de reembolso</h3>${ref.map(e=>`<p><b>${fmtDT(e.created_at)}</b> · motivo: <b>${esc(e.detail.motif)}</b>${e.detail.precisions?` · “${esc(e.detail.precisions)}”`:''} · e-mail informado: ${esc(e.detail.mail||'')} · IP ${esc(e.ip||'—')}</p>`).join('')}</div>`:''}
+ <div class="panel"><h3>Aparelhos</h3><div class="scroll"><table><tr><th>Aparelho</th><th>Primeiro uso</th><th>Último uso</th><th>Registros</th><th>IPs / país</th><th>Idioma · fuso · tela</th></tr>
+  ${Object.entries(byDev).map(([k,x])=>`<tr><td><b>${esc(uaName(x.ua))}</b><br><span class="muted">${esc(k)}</span></td><td>${fmtDT(x.first)}</td><td>${fmtDT(x.last)}</td><td>${x.n}</td><td>${esc([...x.ips].join(', ')||'—')}<br>${esc([...x.cc].join(', '))}</td><td>${esc(x.lang||'')} · ${esc(x.tz||'')} · ${esc(x.screen||'')}</td></tr>`).join('')}</table></div></div>
+ <div class="panel"><h3>Endereços IP</h3><div class="scroll"><table><tr><th>IP</th><th>País</th><th>Primeiro</th><th>Último</th><th>Registros</th></tr>
+  ${Object.entries(ips).map(([k,x])=>`<tr><td>${esc(k)}</td><td>${esc(x.cc||'—')}</td><td>${fmtDT(x.first)}</td><td>${fmtDT(x.last)}</td><td>${x.n}</td></tr>`).join('')||'<tr><td colspan="5" class="muted">—</td></tr>'}</table></div></div>
+ <div class="panel tl"><h3>Linha do tempo completa (${ev.length} registros)</h3><p class="muted" style="margin:0">Horários do servidor, mostrados no fuso ${esc(TZ)}.</p>${tl}</div>`}
+
+function csv(){const D=ST.detail,cols=['created_at','client_ts','type','acao','detalhes','email','name','ip','country','device','session','ua','lang','tz','screen'];
+ const rows=D.ev.map(e=>{const [t,x]=label(e);return {...e,acao:t,detalhes:x}});
+ const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+ const blob=new Blob(['﻿'+cols.join(';')+'\n'+rows.map(r=>cols.map(c=>q(r[c])).join(';')).join('\n')],{type:'text/csv;charset=utf-8'});
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='dossie-'+D.email.replace(/[^a-z0-9]+/gi,'-')+'.csv';a.click()}
+
+document.addEventListener('submit',async e=>{if(e.target.id!=='lf')return;e.preventDefault();const b=e.target.querySelector('button');b.disabled=true;b.textContent='Entrando…';
+ try{await auth({email:$('#le').value.trim(),password:$('#lp').value},'password');ST.err='';load()}catch(x){ST.err=x.message==='Invalid login credentials'?'E-mail ou senha incorretos.':x.message;draw()}});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a;
+ if(a==='logout')logout();
+ else if(a==='reload'){ST.clients=ST.recent=ST.refunds=null;draw();load()}
+ else if(a==='tab'){ST.tab=b.dataset.t;draw();load()}
+ else if(a==='client')openClient(b.dataset.e);
+ else if(a==='back'){ST.detail=null;draw()}
+ else if(a==='print')window.print();
+ else if(a==='csv')csv()});
+draw();if(SES&&SB_URL)load();
+</script>
+</body>
+</html>
