@@ -102,7 +102,7 @@ details.panel summary::-webkit-details-marker{display:none}
 details.panel summary::after{content:"+";color:var(--accent);font-size:20px;line-height:1}
 details.panel[open] summary::after{content:"–"}
 .field{display:flex;flex-direction:column;gap:6px;font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--soft)}
-input[type=text],input[type=email],textarea,select{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 14px;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--ink)}
+input[type=text],input[type=email],input[type=password],textarea,select{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 14px;font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--ink)}
 textarea{min-height:110px;resize:vertical;line-height:1.5}
 .inp{position:relative;display:block}
 .inp svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:var(--accent)}
@@ -380,6 +380,13 @@ main.chat{padding-bottom:0}
 /* login, welcome, modals */
 .login{flex:1;display:flex;flex-direction:column;justify-content:center;gap:26px;padding-block:28px;overflow-y:auto;scrollbar-width:none}
 .lhead{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.inp .eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;display:grid;place-items:center;color:var(--soft);border-radius:8px}
+.inp .eye svg{position:static;transform:none;width:19px;height:19px;color:currentColor}
+.inp .eye.on{color:var(--accent)}
+.inp input[type=password],.inp input#lpw{padding-right:46px}
+.lmail{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;background:rgba(8,16,32,.45);border:1px solid var(--line);font-weight:700;font-size:14px;word-break:break-all}
+.lmail svg.ic{width:18px;height:18px;color:var(--accent)}
+.lmail .linkbtn{flex:none;color:var(--accent)}
 .lhead h2{font-size:27px;letter-spacing:.05em;text-transform:uppercase}
 .orn{display:flex;align-items:center;gap:12px;color:var(--accent);font-size:11px}
 .orn::before,.orn::after{content:"";flex:1;height:1px;background:var(--line)}
@@ -474,7 +481,7 @@ const ICONS={
  pen:'<path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"/>',scroll:'<path d="M7 4h11v13a3 3 0 0 1-3 3H6a2 2 0 0 1-2-2v-2h10M10 9h5M10 12h5"/>',
  unlock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 7.600-1.700"/>',
  lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
- check:'<path d="M5 12l4 4 10-10"/>',play:'<path d="M8 5l11 7-11 7z"/>',pause:'<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>',
+ check:'<path d="M5 12l4 4 10-10"/>',eye:'<path d="M2 12s3.500-7 10-7 10 7 10 7-3.500 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',play:'<path d="M8 5l11 7-11 7z"/>',pause:'<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>',
  send:'<path d="M4 12l16-7-6 16-3-6z"/>',card:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h3"/>',support:'<path d="M4 13v-1a8 8 0 0 1 16 0v1"/><rect x="3" y="13" width="4" height="6" rx="1.5"/><rect x="17" y="13" width="4" height="6" rx="1.5"/><path d="M19 19c0 1.500-2 2.500-5 2.500"/><path d="M9 10.500h.01M12 10.500h.01M15 10.500h.01"/>',chev:'<path d="M9 6l6 6-6 6"/>',arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',crown:'<path d="M4 8l4 4 4-7 4 7 4-4-2 10H6z"/>'
 };
 const GIFT='<svg class="gifto" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="9.500" rx="1.500" fill="#22a888"/><rect x="3" y="7.500" width="18" height="4.200" rx="1.200" fill="#57d6b2"/><rect x="10.600" y="7.500" width="2.800" height="13" fill="#f1d792"/><path d="M12 7.500C10 3.300 6.300 4.200 7.100 6.200 7.600 7.500 10 7.500 12 7.500zM12 7.500c2-4.200 5.700-3.300 4.900-1.300-.5 1.300-2.900 1.300-4.900 1.300z" fill="#ff8f7a"/></svg>';
@@ -614,11 +621,11 @@ function track(type,detail={}){
 function tkFlush(final){if(!API_URL||!TK.q.length||(TK.busy&&!final))return;
  const batch=TK.q.slice(0,50);TK.busy=true;
  // text/plain = requête « simple » (pas de pré-vérification CORS), fiable même quand la page se ferme
- fetch(API_URL+'/api/events',{method:'POST',keepalive:!!final,headers:{'Content-Type':'text/plain'},body:JSON.stringify(batch)})
+ fetch(API_URL+'/api/events',{method:'POST',keepalive:!!final,headers:{'Content-Type':'text/plain'},body:JSON.stringify({tok:S.tok||null,ev:batch})})
   .then(r=>{if(r.ok){TK.q.splice(0,batch.length);TK.keep();if(TK.q.length)setTimeout(tkFlush,300)}})
   .catch(()=>{}).finally(()=>{TK.busy=false})}
 // clics : on garde l'action et ses paramètres (id, numéro…), jamais de texte écrit par le client
-const TK_SKIP=new Set(['noop','tab','menuclose','rwhy','rok','numpick','fpick','ep']);
+const TK_SKIP=new Set(['peye','noop','tab','menuclose','rwhy','rok','numpick','fpick','ep']);
 function logClick(a,b){if(TK_SKIP.has(a))return;const d={};for(const k in b.dataset)if(k!=='a')d[k]=String(b.dataset[k]).slice(0,120);track('act',{a,...d})}
 function logView(){const t=V.tab;if(logView.last===t)return;logView.last=t;
  const d={tab:t};if(t==='prog')d.prog=V.prog;if(t==='offer')d.offer=V.off;if(t==='sa')d.priere=V.saI;track('view',d)}
@@ -651,18 +658,80 @@ function nextEvent(){const y=NOW.getFullYear(),a=y%19,b=Math.floor(y/100),c=y%10
  const t=new Date(TODAY+'T00:00:00');for(const [dt,n] of ev){const diff=Math.round((dt-t)/864e5);if(diff>=0&&diff<=14)return {n,diff,d:dt.toLocaleDateString('fr-FR',{day:'numeric',month:'long'})}}return null}
 
 /* ---------- screens ---------- */
-function vLogin(){return `<div class="login gut enter">
+// Connexion avec mot de passe : e-mail → (nouveau : nom + mot de passe, on entre tout de suite) ou (déjà inscrit : mot de passe).
+// L = état de l'écran de connexion. Sans serveur (API_URL vide ou hors ligne), on entre comme avant, sans mot de passe.
+const L={s:'mail',mail:'',name:'',err:'',busy:false,tok:null};
+async function authApi(path,body){const c=new AbortController(),t=setTimeout(()=>c.abort(),12000);
+ try{const r=await fetch(API_URL+'/api/auth/'+path,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({...body,device:TK.dev,session:TK.ses,consent:CONSENT_V}),signal:c.signal});
+  const j=await r.json().catch(()=>({}));return {status:r.status,j}}catch(e){return {status:0,j:{}}}finally{clearTimeout(t)}}
+function enterApp(name,email,tok){
+ welcome(name.split(' ')[0],()=>{S.user={name,email};S.tok=tok||null;S.start=S.start||TODAY;S.consent=S.consent||{v:CONSENT_V,at:new Date().toISOString()};save();
+  if(!tok)V.offline=true;L.s='mail';L.err='';L.busy=false;
+  track('login',{consent:CONSENT_V,consent_at:S.consent.at,jour:dayN(),compte:!!tok});V.day=true;applyHash();render()})}
+const lpass=(id,ac,ph)=>`<span class="inp">${ic('lock')}<input id="${id}" type="password" autocomplete="${ac}" placeholder="${ph}" minlength="6"><button type="button" class="eye" data-a="peye" data-f="${id}" aria-label="Afficher le mot de passe">${ic('eye')}</button></span>`;
+function vLogin(){if(!L.mail&&S.user){L.mail=S.user.email;L.name=S.user.name}
+ const head={mail:['Accès sacré','Entrez dans votre Royaume',"Indiquez l'e-mail utilisé lors de votre achat."],
+  new:['Bienvenue','Créez votre accès','Choisissez un mot de passe : vous entrez tout de suite.'],
+  pass:['Bon retour','Entrez votre mot de passe','Heureux de vous revoir.'],
+  temp:['Presque fini','Nouveau mot de passe','Choisissez votre mot de passe personnel.'],
+  forgot:['Mot de passe oublié','Nous vous aidons',''],
+  local:['Accès sacré','Entrez dans votre Royaume',"Utilisez le nom et l'email de votre inscription."]}[L.s];
+ const mailRow=`<div class="lmail">${ic('mail')}<span class="grow">${esc(L.mail)}</span><button type="button" class="linkbtn" data-a="lback">Modifier</button></div>`;
+ const body={
+  mail:`<label class="field" for="lmail">Adresse e-mail<span class="inp">${ic('mail')}<input id="lmail" type="email" autocomplete="email" inputmode="email" placeholder="Votre e-mail" value="${esc(L.mail)}"></span></label>
+   <button class="btn gold" id="lbtn" type="submit">Continuer →</button>`,
+  new:`${mailRow}<input type="email" autocomplete="username" value="${esc(L.mail)}" hidden>
+   <label class="field" for="lname">Votre nom<span class="inp">${ic('user')}<input id="lname" type="text" autocomplete="name" placeholder="Votre nom complet" value="${esc(L.name)}"></span></label>
+   <label class="field" for="lpw">Créez votre mot de passe${lpass('lpw','new-password','6 caractères minimum')}</label>
+   <button class="btn gold" id="lbtn" type="submit">Créer mon accès et entrer →</button>`,
+  pass:`${mailRow}<input type="email" autocomplete="username" value="${esc(L.mail)}" hidden>
+   <label class="field" for="lpw">Mot de passe${lpass('lpw','current-password','Votre mot de passe')}</label>
+   <button class="btn gold" id="lbtn" type="submit">Entrer dans le Royaume →</button>
+   <button type="button" class="linkbtn" data-a="lforgot">Mot de passe oublié ?</button>`,
+  temp:`${mailRow}<input type="email" autocomplete="username" value="${esc(L.mail)}" hidden>
+   <label class="field" for="lpw">Nouveau mot de passe${lpass('lpw','new-password','6 caractères minimum')}</label>
+   <button class="btn gold" id="lbtn" type="submit">Enregistrer et entrer →</button>`,
+  forgot:`<p class="soft center">Écrivez-nous à <a href="mailto:${SUPPORT}?subject=${encodeURIComponent('Mot de passe oublié — '+L.mail)}" style="color:var(--accent)">${SUPPORT}</a> depuis l'adresse <b>${esc(L.mail)}</b>. Nous vous envoyons un mot de passe provisoire dans la journée.</p>
+   <button type="button" class="btn line" data-a="lpassback">← J'ai retrouvé mon mot de passe</button>`,
+  local:`<label class="field" for="lname">Votre nom<span class="inp">${ic('user')}<input id="lname" type="text" autocomplete="name" placeholder="Entrez votre nom complet" value="${esc(L.name)}"></span></label>
+   <label class="field" for="lmail">Adresse email<span class="inp">${ic('mail')}<input id="lmail" type="email" autocomplete="email" placeholder="Votre email" value="${esc(L.mail)}"></span></label>
+   <button class="btn gold" id="lbtn" type="submit">Entrer dans le Royaume →</button>`}[L.s];
+ return `<div class="login gut enter">
  <div class="brand">${ic('crown')}<span class="wordmark">Temps d'Abondance</span><span class="soft" style="font-style:italic;font-family:var(--display);font-size:17px">Votre espace sacré vous attend</span></div>
  <form id="loginf" class="panel" style="gap:16px;padding:24px 20px" novalidate>
-  <div class="lhead"><span class="eyebrow">Accès sacré</span><h2>Entrez dans votre Royaume</h2><p class="soft small">Utilisez le nom et l'email de votre inscription.</p></div>
+  <div class="lhead"><span class="eyebrow">${head[0]}</span><h2>${head[1]}</h2>${head[2]?`<p class="soft small">${head[2]}</p>`:''}</div>
   <div class="orn">✦</div>
-  <label class="field" for="lname">Votre nom<span class="inp">${ic('user')}<input id="lname" type="text" autocomplete="name" placeholder="Entrez votre nom complet"></span></label>
-  <label class="field" for="lmail">Adresse email<span class="inp">${ic('mail')}<input id="lmail" type="email" autocomplete="email" placeholder="Votre email"></span></label>
-  <p id="lerr" class="small" style="color:#ffb4a8" hidden>Indiquez votre nom et une adresse email valide.</p>
-  <button class="btn gold" id="lbtn" type="submit">Entrer dans le Royaume →</button>
+  ${body}
+  <p id="lerr" class="small" style="color:#ffb4a8" ${L.err?'':'hidden'}>${esc(L.err)}</p>
   <p class="small soft center">Des difficultés ? <span style="color:var(--accent);user-select:all">${SUPPORT}</span></p>
   <p class="soft center" style="font-size:11px;line-height:1.45;opacity:.8">En entrant, vous acceptez que votre activité dans l'application (connexions, appareil, adresse IP, contenus consultés) soit enregistrée pour sécuriser votre accès et le suivi de votre compte.</p></form>
  <p class="verse">« Cherchez premièrement le royaume et la justice de Dieu ; et toutes ces choses vous seront données par-dessus. »<br><span class="eyebrow" style="font-style:normal;font-family:var(--body);margin-top:6px">Matthieu 6:33</span></p></div>`}
+async function loginSubmit(){if(L.busy)return;const btn=$('#lbtn'),err=m=>{L.err=m;L.busy=false;render();setTimeout(()=>{const f=$('#lpw')||$('#lmail');f&&f.focus()},50)};
+ const okMail=m=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m),pw=()=>($('#lpw')||{}).value||'';
+ L.err='';
+ if(L.s==='local'){const n=$('#lname').value.trim(),m=$('#lmail').value.trim();if(n.length<2||!okMail(m))return err('Indiquez votre nom et une adresse email valide.');
+  L.busy=true;btn.disabled=true;btn.textContent='✦ Connexion…';return setTimeout(()=>enterApp(n,m.toLowerCase(),null),500)}
+ if(L.s==='mail'){const m=$('#lmail').value.trim().toLowerCase();if(!okMail(m))return err('Indiquez une adresse e-mail valide.');L.mail=m;
+  if(!API_URL){L.s='local';return render()}
+  L.busy=true;btn.disabled=true;btn.textContent='✦ Un instant…';const r=await authApi('check',{email:m});L.busy=false;
+  if(r.status===200){L.s=r.j.exists?'pass':'new';render();setTimeout(()=>($('#lname')&&!$('#lname').value?$('#lname'):$('#lpw'))?.focus(),80);return}
+  if(r.status===0){L.s='new';return render()}   // hors ligne : on laisse créer, l'entrée se fera sans serveur
+  return err(r.j.error||'Une erreur est survenue. Réessayez.')}
+ if(L.s==='new'){const n=$('#lname').value.trim(),p=pw();L.name=n;if(n.length<2)return err('Indiquez votre nom.');if(p.length<6)return err('Le mot de passe doit contenir au moins 6 caractères.');
+  L.busy=true;btn.disabled=true;btn.textContent='✦ Création de votre accès…';const r=await authApi('register',{email:L.mail,name:n,password:p});
+  if(r.status===200)return enterApp(r.j.name,r.j.email,r.j.tok);
+  if(r.status===409){L.s='pass';return err(r.j.error)}
+  if(r.status===0)return enterApp(n,L.mail,null);
+  return err(r.j.error||'Une erreur est survenue. Réessayez.')}
+ if(L.s==='pass'){const p=pw();if(!p)return err('Entrez votre mot de passe.');
+  L.busy=true;btn.disabled=true;btn.textContent='✦ Connexion…';const r=await authApi('login',{email:L.mail,password:p});
+  if(r.status===200){if(r.j.temp){L.s='temp';L.tok=r.j.tok;L.name=r.j.name;L.busy=false;return render()}return enterApp(r.j.name,r.j.email,r.j.tok)}
+  if(r.status===0)return err('Connexion impossible. Vérifiez votre internet et réessayez.');
+  return err(r.j.error||'E-mail ou mot de passe incorrect.')}
+ if(L.s==='temp'){const p=pw();if(p.length<6)return err('Le mot de passe doit contenir au moins 6 caractères.');
+  L.busy=true;btn.disabled=true;btn.textContent='✦ Enregistrement…';const r=await authApi('password',{tok:L.tok,password:p});
+  if(r.status===200)return enterApp(L.name,L.mail,L.tok);
+  return err(r.j.error||'Une erreur est survenue. Réessayez.')}}
 
 function vHome(){const open=saOpen(),nx=SA.findIndex((x,j)=>j<open&&!S.saRead.includes(j)),x=SA[nx<0?0:nx];
  return `<div class="topbar"><span class="mark">${ic('crown')}<span class="wordmark">Temps d'Abondance</span></span><button class="avatar" data-a="menu" aria-label="Mon compte">${esc(first()[0].toUpperCase())}</button></div>
@@ -972,7 +1041,7 @@ function welcome(name,done){const w=document.createElement('div');w.id='welcome'
 /* ---------- engine ---------- */
 function render(){
  D=DAILY[(dayN()-1)%DAILY.length];
- const app=$('#app');if(!S.user){app.innerHTML=vLogin();logView.last=null;return}
+ const app=$('#app');if(!S.user||(API_URL&&!S.tok&&!V.offline)){app.innerHTML=vLogin();logView.last=null;return}
  logView();
  const views={home:vHome,lib:vLib,prog:vProg,pray:vPray,sa:vSA,journal:vJournal,theme:vTheme,shop:vShop,offer:vOffer,script:vScript,guide:vGuide,refund:vRefund,num:vNum,focus:vFocus};
  const tabs=[['home','Accueil','home'],['lib','Programmes','book'],['pray','Prières Quotidiennes','pray'],['shop','Bonus','gift'],['guide','Père Michel','chat'],['refund','Rembourser','card']];
@@ -1048,7 +1117,11 @@ document.addEventListener('click',e=>{
    if(V.play)timer=setInterval(()=>{V.pos+=1;if(V.pos>=100){stopPlay();markLesson();render();return}$('#pbar').style.width=V.pos+'%'},250);return}
  else if(a==='mood'){const t=$('#jtext').value;V.mood=b.dataset.m;render();$('#jtext').value=t;return}
  else if(a==='savej'){const x=$('#jtext').value.trim();if(!x){toast('Écrivez quelques mots avant d\'enregistrer');return}S.journal.push({d:TODAY,mood:V.mood,x});save();toast('Vos mots sont enregistrés')}
- else if(a==='logout'){tkFlush(true);S.user=null;V=fresh();save()}
+ else if(a==='logout'){tkFlush(true);S.user=null;S.tok=null;L.s='mail';L.err='';V=fresh();save()}
+ else if(a==='peye'){const f=$('#'+b.dataset.f);if(f){f.type=f.type==='password'?'text':'password';b.classList.toggle('on')}return}
+ else if(a==='lback'){L.s='mail';L.err=''}
+ else if(a==='lforgot'){L.s='forgot';L.err=''}
+ else if(a==='lpassback'){L.s='pass';L.err=''}
  else if(a==='reset'){S=seed();save();V=fresh();render.last=null}
  else if(a==='ask'||a==='rask'){ask(b.dataset.q);return}
  else if(a==='daygo')V.day=false;
@@ -1091,10 +1164,7 @@ document.addEventListener('click',e=>{
  render();
 });
 document.addEventListener('submit',e=>{e.preventDefault();
- if(e.target.id==='loginf'){const n=$('#lname').value.trim(),m=$('#lmail').value.trim();
-  if(n.length<2||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m)){$('#lerr').hidden=false;return}
-  const btn=$('#lbtn');if(btn.disabled)return;btn.disabled=true;$('#lerr').hidden=true;btn.textContent='✦ Connexion…';
-  setTimeout(()=>welcome(n.split(' ')[0],()=>{S.user={name:n,email:m};S.start=S.start||TODAY;S.consent=S.consent||{v:CONSENT_V,at:new Date().toISOString()};save();track('login',{consent:CONSENT_V,consent_at:S.consent.at,jour:dayN()});V.day=true;applyHash();render()}),800)}
+ if(e.target.id==='loginf'){loginSubmit();return}
  if(e.target.id==='rmailf'){const m=$('#rmail').value.trim();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m)){toast('Entrez une adresse e-mail valide');return}V.r.mail=m;V.r.s=2;render();$('#view').scrollTop=0}
  if(e.target.id==='chatf'){const i=$('#chatin'),q=i.value;i.value='';if(q.trim())track('chat',{car:q.length});ask(q)}
 });

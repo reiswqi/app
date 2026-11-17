@@ -48,3 +48,23 @@ select email,
 from events
 where email is not null and email <> ''
 group by email;
+
+-- Comptes des clients (mot de passe). Le mot de passe n'est jamais stocké : seulement une empreinte scrypt salée.
+create table if not exists users (
+  id              bigint generated always as identity primary key,
+  email           text unique not null,
+  name            text,
+  pass_hash       text not null,
+  pass_by         text not null default 'client',   -- client = choisi par le client ; admin = temporaire donné par Lucas
+  pass_changed_at timestamptz not null default now(),
+  created_at      timestamptz not null default now(),
+  created_ip      text,
+  created_country text,
+  created_ua      text,
+  created_device  text,
+  last_login_at   timestamptz
+);
+-- chaque action peut être rattachée au compte connecté (preuve : action faite avec le mot de passe du client)
+alter table events add column if not exists uid bigint;
+alter table events add column if not exists verified boolean not null default false;
+create index if not exists events_uid_idx on events (uid);

@@ -88,19 +88,92 @@ function okToken(req) {
 const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type' };
 const TYPE_RE = /^[a-z_]{2,40}$/;
 
+// ---------- comptes clients (mot de passe) ----------
+const EMAIL_RE = /^[^\s@]{1,100}@[^\s@]{1,100}\.[^\s@]{2,30}$/;
+const scryptP = (pw, salt) => new Promise((ok, ko) => crypto.scrypt(pw, salt, 64, { N: 16384, r: 8, p: 1 }, (e, k) => e ? ko(e) : ok(k)));
+async function hashPass(pw) { const salt = crypto.randomBytes(16); const k = await scryptP(pw, salt); return 'scrypt$' + salt.toString('hex') + '$' + k.toString('hex'); }
+async function checkPass(pw, stored) {
+  const [alg, salt, hex] = String(stored).split('$'); if (alg !== 'scrypt') return false;
+  const k = await scryptP(pw, Buffer.from(salt, 'hex')), h = Buffer.from(hex, 'hex'); return k.length === h.length && crypto.timingSafeEqual(k, h);
+}
+// jeton client : « uid.date.signature » (sans fin : le client reste connecté sur son appareil)
+const userTok = uid => { const p = uid + '.' + Date.now(); return p + '.' + sign('u:' + p); };
+function tokUid(t) {
+  const [uid, iat, sig] = String(t || '').split('.'); if (!uid || !iat || !sig || !SECRET) return null;
+  const a = Buffer.from(sig), b = Buffer.from(sign('u:' + uid + '.' + iat)); return a.length === b.length && crypto.timingSafeEqual(a, b) ? +uid : null;
+}
+const userCache = new Map();
+async function userById(uid) {
+  if (userCache.has(uid)) return userCache.get(uid);
+  const r = await pool.query('select id, email, name from users where id = $1', [uid]); const u = r.rows[0] || null; if (u) userCache.set(uid, u); return u;
+}
+async function serverEvent(req, type, email, uid, detail, body = {}) {   // événement écrit par le serveur (connexion, inscription…)
+  const { ip, chain } = clientIp(req);
+  await pool.query(`insert into events (email, name, device, session, type, detail, ua, ip, ip_chain, country, uid, verified, client_ts)
+    values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12, now())`,
+    [email, str(body.name, 200), str(body.device, 64), str(body.session, 64), type, JSON.stringify(detail || {}), str(req.headers['user-agent'], 400), ip, chain, country(ip), uid, !!uid]).catch(e => console.error('event', e.message));
+}
+const pub = u => ({ name: u.name, email: u.email });
+async function authRoute(req, res, url) {
+  const { ip } = clientIp(req);
+  let b = {}; try { b = JSON.parse(await readBody(req, 8192)); } catch (e) { return send(res, 400, { error: 'Requête invalide.' }, CORS); }
+  const email = String(b.email || '').trim().toLowerCase().slice(0, 200), pw = String(b.password || '');
+  const R = (code, body) => send(res, code, body, CORS);
+  if (url.pathname === '/api/auth/check') {
+    if (limited('chk:' + ip, 40, 15 * 60e3)) return R(429, { error: 'Trop de tentatives. Réessayez dans quelques minutes.' });
+    if (!EMAIL_RE.test(email)) return R(400, { error: 'Adresse e-mail invalide.' });
+    const r = await pool.query('select 1 from users where email = $1', [email]); return R(200, { exists: r.rowCount > 0 });
+  }
+  if (url.pathname === '/api/auth/register') {
+    if (limited('reg:' + ip, 10, 3600e3)) return R(429, { error: 'Trop de tentatives. Réessayez dans une heure.' });
+    const name = String(b.name || '').trim().slice(0, 120);
+    if (!EMAIL_RE.test(email)) return R(400, { error: 'Adresse e-mail invalide.' });
+    if (name.length < 2) return R(400, { error: 'Indiquez votre nom.' });
+    if (pw.length < 6 || pw.length > 200) return R(400, { error: 'Le mot de passe doit contenir au moins 6 caractères.' });
+    const h = await hashPass(pw);
+    const r = await pool.query(`insert into users (email, name, pass_hash, created_ip, created_country, created_ua, created_device)
+      values ($1,$2,$3,$4,$5,$6,$7) on conflict (email) do nothing returning id, email, name`, [email, name, h, ip, country(ip), str(req.headers['user-agent'], 400), str(b.device, 64)]);
+    if (!r.rowCount) return R(409, { error: 'Un compte existe déjà avec cet e-mail. Entrez votre mot de passe.', exists: true });
+    const u = r.rows[0]; await serverEvent(req, 'register', email, u.id, { consent: str(b.consent, 40) }, { ...b, name });
+    return R(200, { tok: userTok(u.id), ...pub(u) });
+  }
+  if (url.pathname === '/api/auth/login') {
+    if (limited('log:' + ip, 15, 15 * 60e3) || limited('logm:' + email, 10, 15 * 60e3)) return R(429, { error: 'Trop de tentatives. Réessayez dans 15 minutes.' });
+    const r = await pool.query('select * from users where email = $1', [email]); const u = r.rows[0];
+    if (!u || !(await checkPass(pw, u.pass_hash))) { await serverEvent(req, 'login_fail', email, null, { compte: !!u }, b); return R(401, { error: 'E-mail ou mot de passe incorrect.' }); }
+    await pool.query('update users set last_login_at = now() where id = $1', [u.id]);
+    await serverEvent(req, 'login_ok', email, u.id, { temporaire: u.pass_by === 'admin' }, { ...b, name: u.name });
+    return R(200, { tok: userTok(u.id), ...pub(u), temp: u.pass_by === 'admin' });
+  }
+  if (url.pathname === '/api/auth/password') {      // nouveau mot de passe (après un mot de passe temporaire)
+    const uid = tokUid(b.tok); if (!uid) return R(401, { error: 'Session expirée, reconnectez-vous.' });
+    if (pw.length < 6 || pw.length > 200) return R(400, { error: 'Le mot de passe doit contenir au moins 6 caractères.' });
+    const u = await userById(uid); if (!u) return R(401, { error: 'Compte introuvable.' });
+    await pool.query("update users set pass_hash = $1, pass_by = 'client', pass_changed_at = now() where id = $2", [await hashPass(pw), uid]);
+    await serverEvent(req, 'password_set', u.email, uid, {}, { ...b, name: u.name });
+    return R(200, { ok: true });
+  }
+  R(404, { error: 'introuvable' });
+}
+// mot de passe temporaire lisible (sans 0/O, 1/l)
+const tempPass = () => { const a = 'abcdefghjkmnpqrstuvwxyz23456789'; let s = ''; const r = crypto.randomBytes(10); for (const x of r) s += a[x % a.length]; return s.slice(0, 5) + '-' + s.slice(5); };
+
+
 async function postEvents(req, res) {
   const { ip, chain } = clientIp(req);
   if (limited('ev:' + ip, 240, 60e3)) return send(res, 429, { error: 'trop de requêtes' }, CORS);
   let arr; try { arr = JSON.parse(await readBody(req)); } catch (e) { return send(res, 400, { error: 'JSON invalide' }, CORS); }
+  // format { tok, ev:[…] } : actions rattachées au compte connecté (vérifié par le serveur)
+  let user = null; if (arr && !Array.isArray(arr) && Array.isArray(arr.ev)) { const uid = tokUid(arr.tok); if (uid) user = await userById(uid).catch(() => null); arr = arr.ev; }
   if (!Array.isArray(arr)) arr = [arr];
   arr = arr.slice(0, 50).filter(e => e && typeof e === 'object' && TYPE_RE.test(e.type));
   if (!arr.length) return send(res, 204, '', CORS);
-  const cc = country(ip), cols = ['client_ts', 'email', 'name', 'device', 'session', 'type', 'detail', 'page', 'ua', 'lang', 'tz', 'screen', 'ip', 'ip_chain', 'country'];
+  const cc = country(ip), cols = ['client_ts', 'email', 'name', 'device', 'session', 'type', 'detail', 'page', 'ua', 'lang', 'tz', 'screen', 'ip', 'ip_chain', 'country', 'uid', 'verified'];
   const vals = [], rows = arr.map((e, i) => {
     let ts = new Date(e.client_ts); ts = isNaN(ts) ? null : ts.toISOString();
     let detail = e.detail && typeof e.detail === 'object' ? e.detail : {}; if (JSON.stringify(detail).length > 4000) detail = { trop_long: true };
-    vals.push(ts, str(e.email, 200) && str(e.email, 200).toLowerCase().trim(), str(e.name, 200), str(e.device, 64), str(e.session, 64), e.type,
-      JSON.stringify(detail), str(e.page, 40), str(e.ua, 400), str(e.lang, 20), str(e.tz, 60), str(e.screen, 20), ip, chain, cc);
+    vals.push(ts, user ? user.email : (str(e.email, 200) && str(e.email, 200).toLowerCase().trim()), str(e.name, 200), str(e.device, 64), str(e.session, 64), e.type,
+      JSON.stringify(detail), str(e.page, 40), str(e.ua, 400), str(e.lang, 20), str(e.tz, 60), str(e.screen, 20), ip, chain, cc, user ? user.id : null, !!user);
     return '(' + cols.map((_, j) => '$' + (i * cols.length + j + 1)).join(',') + ')';
   });
   try { await pool.query(`insert into events (${cols.join(',')}) values ${rows.join(',')}`, vals); send(res, 204, '', CORS); }
@@ -121,7 +194,8 @@ async function adminGet(req, res, url) {
   const q = url.searchParams, lim = Math.min(+q.get('limit') || 200, 1000);
   try {
     if (url.pathname === '/api/admin/clients') {
-      const r = await pool.query('select * from clients order by last_seen desc limit 10000'); return send(res, 200, r.rows);
+      const r = await pool.query(`select c.*, u.created_at as account_at, u.last_login_at, u.pass_by from clients c left join users u on u.email = c.email order by c.last_seen desc limit 10000`);
+      return send(res, 200, r.rows);
     }
     if (url.pathname === '/api/admin/recent') {
       const t = q.get('type'); const r = t
@@ -135,7 +209,8 @@ async function adminGet(req, res, url) {
       const devs = d.rows.map(x => x.device);
       // tout ce que ce client a fait, y compris avant de se connecter sur ses appareils
       const r = await pool.query('select * from events where email = $1 or (device = any($2) and (email is null or email = $1)) order by created_at asc, id asc limit 20000', [email, devs]);
-      return send(res, 200, { email, devices: devs, events: r.rows });
+      const a = await pool.query('select id, email, name, pass_by, pass_changed_at, created_at, created_ip, created_country, created_ua, created_device, last_login_at from users where email = $1', [email]);
+      return send(res, 200, { email, devices: devs, events: r.rows, account: a.rows[0] || null });
     }
     send(res, 404, { error: 'introuvable' });
   } catch (e) { console.error('admin', e.message); send(res, 500, { error: 'base : ' + e.message }); }
@@ -148,6 +223,16 @@ const server = http.createServer(async (req, res) => {
     if (url.pathname === '/api/events' && req.method === 'POST') return await postEvents(req, res);
     if (url.pathname === '/api/admin/login' && req.method === 'POST') return await adminLogin(req, res);
     if (url.pathname.startsWith('/api/admin/') && req.method === 'GET') return await adminGet(req, res, url);
+    if (url.pathname === '/api/admin/reset' && req.method === 'POST') {      // mot de passe temporaire pour un client qui l'a oublié
+      if (!okToken(req)) return send(res, 401, { error: 'Sessão expirada' });
+      let b = {}; try { b = JSON.parse(await readBody(req, 4096)); } catch (e) {}
+      const email = String(b.email || '').toLowerCase(), pw = tempPass();
+      const r = await pool.query("update users set pass_hash = $1, pass_by = 'admin', pass_changed_at = now() where email = $2 returning id", [await hashPass(pw), email]);
+      if (!r.rowCount) return send(res, 404, { error: 'Esse cliente ainda não criou conta com senha.' });
+      await serverEvent(req, 'reset_admin', email, r.rows[0].id, { par: 'admin' });
+      return send(res, 200, { password: pw });
+    }
+    if (url.pathname.startsWith('/api/auth/') && req.method === 'POST') return await authRoute(req, res, url);
     if (url.pathname === '/health') { try { await pool.query('select 1'); return send(res, 200, 'ok'); } catch (e) { return send(res, 503, 'base indisponible'); } }
     if (url.pathname === '/admin' || url.pathname === '/admin/' || url.pathname === '/admin.html') {
       return send(res, 200, fs.readFileSync(ADMIN_HTML, 'utf8'), { 'Content-Type': 'text/html; charset=utf-8', 'X-Robots-Tag': 'noindex, nofollow', 'X-Frame-Options': 'DENY', 'Referrer-Policy': 'no-referrer' });

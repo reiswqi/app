@@ -109,9 +109,14 @@ function logout(){TOKEN=null;try{sessionStorage.removeItem('ta_admin')}catch(e){
 /* ---------- nomes legíveis ---------- */
 const TABS={home:'Início',lib:'Programas',pray:'Orações diárias',shop:'Bônus',guide:'Père Michel',refund:'Reembolso',theme:'Tema do mês',prog:'Programa (vídeos)',sa:'Oração de Santo Antônio',offer:'Página de oferta',script:'Script Divino',num:'Números Poderosos',focus:'Foco do Dia',journal:'Diário'};
 const ACTS={open:'Abriu um programa',offer:'Abriu uma oferta',buy:'Clicou em COMPRAR',later:'Clicou em conteúdo “em breve”',soon:'Clicou em conteúdo “em breve”',lesson:'Escolheu uma lição',mark:'Marcou vídeo como concluído',play:'Play / pausa no vídeo do programa',mood:'Escolheu o humor do dia',savej:'Salvou o diário',logout:'Saiu da conta',reset:'Reiniciou a demonstração',ask:'Pergunta pronta ao Père Michel',rask:'Pergunta de ajuda',daygo:'Abriu o caminho do dia',sa:'Abriu a oração de Santo Antônio',sacard:'Abriu uma oração de Santo Antônio',sago:'Avançou na oração',salock:'Tentou abrir oração bloqueada',saread:'Concluiu a leitura da oração',bravoclose:'Fechou o “Bravo”',bravonext:'Continuou após “Bravo”',bravolib:'Foi para Programas após “Bravo”',unlockgo:'Abriu lições desbloqueadas',lockgo:'Clicou em conteúdo bloqueado (venda)',numopen:'Abriu Números Poderosos',ntab:'Trocou aba em Números',numclose:'Fechou Números',numgo:'Calculou seu número',numgift:'Recebeu o presente de Números',focusopen:'Abriu Foco do Dia',fopen:'Abriu escolha de intenção',fclose:'Fechou escolha de intenção',fset:'Definiu a intenção do dia',rnext:'Reembolso: passou para a confirmação',rprev:'Reembolso: voltou uma etapa',rsend:'Reembolso: clicou em CONFIRMAR',epgo:'Abriu uma aula do tema',pep:'Abriu/fechou uma aula de programa',pgo:'Botão Começar/Continuar do programa',pmark:'Marcou aula do programa como concluída',menu:'Abriu o menu da conta'};
-const ICO={open:'📲',login:'🔑',view:'👁️',act:'👆',video:'🎬',priere:'🙏',lecon:'✅',cadeau:'🎁',chat:'💬',refund:'💸',away:'⏸️',back:'▶️',error:'⚠️'};
+const ICO={register:'🆕',login_ok:'🔐',login_fail:'⛔',password_set:'🔁',reset_admin:'🛠️',open:'📲',login:'🔑',view:'👁️',act:'👆',video:'🎬',priere:'🙏',lecon:'✅',cadeau:'🎁',chat:'💬',refund:'💸',away:'⏸️',back:'▶️',error:'⚠️'};
 function label(e){const d=e.detail||{};switch(e.type){
  case 'open':return ['Abriu o app',[d.pwa?'app instalado':'navegador',d.utm_source&&'origem: '+d.utm_source,d.hash&&'#'+d.hash,d.ref&&'veio de '+d.ref].filter(Boolean).join(' · ')];
+ case 'register':return ['CRIOU A CONTA com senha própria','aceitou o registro de atividade (versão '+(d.consent||'')+')'];
+ case 'login_ok':return ['Entrou com e-mail e SENHA CORRETA',d.temporaire?'senha temporária enviada por você':''];
+ case 'login_fail':return ['Tentativa de login com senha errada',d.compte?'':'e-mail sem conta'];
+ case 'password_set':return ['Definiu uma nova senha pessoal',''];
+ case 'reset_admin':return ['Você gerou uma senha temporária pelo painel','(IP e aparelho deste registro são os seus)'];
  case 'login':return ['Fez login (aceitou o registro de atividade)','consentimento '+(d.consent||'')+(d.consent_at?' em '+fmtDT(d.consent_at):'')];
  case 'view':return ['Abriu a tela: '+(TABS[d.tab]||d.tab),[d.prog&&'programa '+d.prog,d.offer&&'oferta '+d.offer,d.priere!=null&&'oração nº '+(+d.priere+1)].filter(Boolean).join(' · ')];
  case 'act':{if(d.a==='epgo'&&d.i!=null)return ['Abriu a aula '+(+d.i+1)+' do tema',''];if((d.a==='pep'||d.a==='pgo')&&d.i!=null)return ['Abriu a aula '+(+d.i+1)+' do programa',''];if(d.a==='pmark'&&d.i!=null)return ['Marcou a aula '+(+d.i+1)+' do programa como concluída',''];if(d.a==='sacard'&&d.i!=null)return ['Abriu a oração de Santo Antônio nº '+(+d.i+1),''];const x=Object.entries(d).filter(([k])=>k!=='a').map(([k,v])=>k+': '+v).join(' · ');return [ACTS[d.a]||('Ação: '+d.a),x]}
@@ -136,8 +141,8 @@ async function load(){ST.err='';try{
  if(!ST.clients)ST.clients=await api('clients');
 }catch(e){ST.err=e.message}draw()}
 async function openClient(email){ST.detail={email,loading:true};draw();window.scrollTo(0,0);try{
- const j=await api('client?email='+encodeURIComponent(email));const ev=j.events,devs=j.devices;
- ST.detail={email,ev,devs};}catch(e){ST.detail={email,err:e.message}}draw()}
+ const j=await api('client?email='+encodeURIComponent(email));const ev=j.events,devs=j.devices,acc=j.account;
+ ST.detail={email,ev,devs,acc};}catch(e){ST.detail={email,err:e.message}}draw()}
 
 function draw(){const app=$('#app');
  if(API===null){app.innerHTML=`<div class="login"><h2>Painel no Railway</h2><p class="muted">O painel admin agora fica no servidor do Railway. Abra o endereço do seu serviço « app » no Railway seguido de <b>/admin</b>.</p></div>`;return}
@@ -155,7 +160,7 @@ function draw(){const app=$('#app');
  ${ST.err?`<p class="err">${esc(ST.err)}</p>`:''}
  ${ST.tab==='clients'?`<div class="bar"><input id="q" placeholder="Buscar por nome ou e-mail…" value="${esc(ST.q)}"><select id="f">${[['all','Todos'],['7d','Ativos (7 dias)'],['idle','Sumidos (+7 dias)'],['refund','Pediram reembolso']].map(o=>`<option value="${o[0]}" ${ST.f===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div>
   <div class="list"><div class="row head"><span>Cliente</span><span>Último acesso</span><span class="c3">Primeiro acesso</span><span class="c4">Sessões</span><span class="c5">Tempo</span><span></span></div>
-  ${!ST.clients?'<p class="muted">Carregando…</p>':list.length?list.map(c=>`<button class="row" data-a="client" data-e="${esc(c.email)}"><span><span class="nm">${esc(c.name||'—')}</span> ${c.refund?'<span class="tag">reembolso</span>':''}<span class="em">${esc(c.email)}</span></span>
+  ${!ST.clients?'<p class="muted">Carregando…</p>':list.length?list.map(c=>`<button class="row" data-a="client" data-e="${esc(c.email)}"><span><span class="nm">${esc(c.name||'—')}</span> ${(c.refund?'<span class="tag">reembolso</span>':'')+(c.account_at?' <span class="tag ok">conta ✓</span>':'')}<span class="em">${esc(c.email)}</span></span>
    <span>${ago(c.last_seen)}<span class="k">${fmtDT(c.last_seen)}</span></span><span class="c3">${fmtD(c.first_seen)}<span class="k">${esc(c.country||'')}</span></span><span class="c4">${c.sessions}<span class="k">${c.devices} aparelho(s)</span></span><span class="c5">${dur(c.secs)}</span><span class="muted">›</span></button>`).join(''):'<p class="muted">Nenhum cliente encontrado.</p>'}</div>`:''}
  ${ST.tab==='recent'?feed(ST.recent,true):''}
  ${ST.tab==='refunds'?feed(ST.refunds,true):''}`;
@@ -193,6 +198,11 @@ function drawClient(){const D=ST.detail,app=$('#app');
   <div><b>${logins.length}</b><span>logins</span></div><div><b>${sessions}</b><span>sessões (visitas)</span></div><div><b>${days}</b><span>dias diferentes com acesso</span></div>
   <div><b>${dur(secs)}</b><span>tempo ativo no app</span></div><div><b>${Object.keys(byDev).length}</b><span>aparelho(s)</span></div><div><b>${Object.keys(ips).length}</b><span>endereço(s) IP</span></div></div></div>
  <div class="grid2">
+  <div class="panel"><h3>Conta com senha</h3>${D.acc?`<p>Conta criada pelo próprio cliente em <b>${fmtDT(D.acc.created_at)}</b>, a partir do IP <b>${esc(D.acc.created_ip||'—')}</b>${D.acc.created_country?' ('+esc(D.acc.created_country)+')':''}, aparelho ${esc(uaName(D.acc.created_ua))}.</p>
+   <p>Último login com senha: <b>${fmtDT(D.acc.last_login_at)}</b> · senha ${D.acc.pass_by==='admin'?'<b>temporária</b> (gerada por você)':'escolhida pelo cliente'} · ${ev.filter(e=>e.verified).length} de ${ev.length} registros feitos com a conta conectada.</p>
+   <p class="muted">Logins com senha correta: ${ev.filter(e=>e.type==='login_ok'||e.type==='register').length} · tentativas com senha errada: ${ev.filter(e=>e.type==='login_fail').length}</p>
+   <button class="btn noprint" data-a="reset" data-e="${esc(D.email)}">🛠️ Gerar senha temporária</button>${D.temp?`<p class="noprint" style="margin-top:10px">Senha temporária: <b style="font-size:18px;letter-spacing:.06em;user-select:all">${esc(D.temp)}</b><br><span class="muted">Envie ao cliente. No próximo login ele vai escolher uma senha nova.</span></p>`:''}`
+   :'<p class="muted">Este cliente ainda não criou conta com senha (entrou antes desse recurso existir).</p>'}</div>
   <div class="panel"><h3>Consentimento</h3>${consent?`<p>Aceitou o registro de atividade ao fazer login em <b>${fmtDT(consent.created_at)}</b> (versão ${esc(consent.detail.consent||'')}), a partir do IP <b>${esc(consent.ip||'—')}</b>${consent.country?' ('+esc(consent.country)+')':''}, aparelho ${esc(uaName(consent.ua))}.</p><p class="muted">Texto exibido na tela de login: « En entrant, vous acceptez que votre activité dans l'application (connexions, appareil, adresse IP, contenus consultés) soit enregistrée pour sécuriser votre accès et le suivi de votre compte. »</p>`:'<p class="muted">Nenhum login registrado.</p>'}</div>
   <div class="panel"><h3>Uso do conteúdo</h3><div class="facts">
    <div><b>${vids.length?vids.join(', '):'—'}</b><span>aulas do tema assistidas (90 %+)</span></div><div><b>${plays}</b><span>aulas do tema iniciadas</span></div>
@@ -222,7 +232,10 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b
  else if(a==='client')openClient(b.dataset.e);
  else if(a==='back'){ST.detail=null;draw()}
  else if(a==='print')window.print();
- else if(a==='csv')csv()});
+ else if(a==='csv')csv()
+ else if(a==='reset'){if(!confirm('Gerar uma senha temporária para '+b.dataset.e+'? A senha atual dele deixa de funcionar.'))return;
+  fetch(API+'/api/admin/reset',{method:'POST',headers:{Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'},body:JSON.stringify({email:b.dataset.e})})
+   .then(r=>r.json().then(j=>({ok:r.ok,j}))).then(({ok,j})=>{if(!ok)return alert(j.error||'Erro');openClient(b.dataset.e).then(()=>{ST.detail.temp=j.password;draw()})})}});
 draw();if(TOKEN&&API!==null)load();
 </script>
 </body>
