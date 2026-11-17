@@ -590,7 +590,7 @@ let V=fresh(),timer=null,sample=null,D=DAILY[0];
 /* ---------- journal d'activité (serveur Railway + Postgres) ----------
    Chaque action est envoyée à API_URL/api/events (voir server/index.js). Le serveur ajoute l'heure, l'IP et le pays.
    Les clients peuvent seulement ajouter ; seul le panneau admin (mot de passe) peut lire. */
-const API_URL='';  // ex. https://app-production-xxxx.up.railway.app (sans / à la fin)
+const API_URL='https://app-production-b4b778ce.up.railway.app';  // ex. https://app-production-xxxx.up.railway.app (sans / à la fin)
 const CONSENT_V='2026-11-v1';
 const TK=(()=>{const rid=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36);
  let dev;try{dev=localStorage.getItem('ta_dev');if(!dev){dev=rid();localStorage.setItem('ta_dev',dev)}}catch(e){dev=rid()}
