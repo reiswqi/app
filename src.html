@@ -510,7 +510,7 @@ const LOCKS=[
  {tag:'Nouveau contenu',eb:'Code du Royaume',t:'Code du Royaume',s:'Cours exclusifs en audio et vidéo.',url:''}
 ];
 const PERE='Père Michel Laurent';
-const SUPPORT='hello@timeofabundance.com'; // e-mail d'aide affiché dans l'app
+const SUPPORT='lr.bussine@gmail.com'; // e-mail d'aide affiché dans l'app
 const PERE_IMG='img/pere.jpg'; // photo du Père (chemin de l'image). Vide : les initiales s'affichent.
 const pm=(cls='')=>`<span class="pm ${cls}" ${PERE_IMG?`style="background-image:url(${PERE_IMG})"`:''}>${PERE_IMG?'':'PM'}</span>`;
 // Bonus offerts : chaque entrée apparaît dans l'onglet Bonus comme « Bonus N · Débloqué ». Le suivant reste annoncé « Bientôt ».
@@ -620,7 +620,7 @@ function vLogin(){return `<div class="login gut enter">
   <label class="field" for="lmail">Adresse email<span class="inp">${ic('mail')}<input id="lmail" type="email" autocomplete="email" placeholder="Votre email"></span></label>
   <p id="lerr" class="small" style="color:#ffb4a8" hidden>Indiquez votre nom et une adresse email valide.</p>
   <button class="btn gold" id="lbtn" type="submit">Entrer dans le Royaume →</button>
-  <p class="small soft center">Des difficultés ? <span style="color:var(--accent);user-select:all">hello@timeofabundance.com</span></p></form>
+  <p class="small soft center">Des difficultés ? <span style="color:var(--accent);user-select:all">${SUPPORT}</span></p></form>
  <p class="verse">« Cherchez premièrement le royaume et la justice de Dieu ; et toutes ces choses vous seront données par-dessus. »<br><span class="eyebrow" style="font-style:normal;font-family:var(--body);margin-top:6px">Matthieu 6:33</span></p></div>`}
 
 function vHome(){const open=saOpen(),nx=SA.findIndex((x,j)=>j<open&&!S.saRead.includes(j)),x=SA[nx<0?0:nx];
@@ -939,11 +939,11 @@ Tu es un assistant automatique : tu n'es ni un prêtre ni une personne. Ne prét
 Réponds dans la langue de la personne (français par défaut).
 L'application : Accueil (Prière de Saint Antoine, Mes programmes, Bonus) ; Programmes (vidéos et prières à faire glisser) ; Prières Quotidiennes (prière du jour, thème du mois, journal) ; dans Programmes : Nombres Puissants (oracle des nombres, horloge, votre nombre) et Focus du Jour (une intention par jour) ; Bonus. Une nouvelle prière de Saint Antoine s'ouvre chaque jour. Le compte et le remboursement sont dans le rond en haut à droite de l'Accueil.
 Programmes vidéo : ${P.map(p=>p.t).join(' ; ')}.
-Règles : pour une commande, un paiement ou un accès perdu, n'invente rien et oriente vers l'équipe à hello@timeofabundance.com (réponse sous 24 heures) ; pour un remboursement, indique le rond en haut à droite de l'Accueil et ne propose aucun achat. Ne promets jamais de résultat financier, de guérison ou de délai ; aucun conseil médical, juridique ou financier. En cas de détresse grave, invite avec douceur à contacter un proche ou les services d'urgence. Si tu ne sais pas, dis-le.`;
+Règles : pour une commande, un paiement ou un accès perdu, n'invente rien et oriente vers l'équipe à ${SUPPORT} (réponse sous 24 heures) ; pour un remboursement, indique le rond en haut à droite de l'Accueil et ne propose aucun achat. Ne promets jamais de résultat financier, de guérison ou de délai ; aucun conseil médical, juridique ou financier. En cas de détresse grave, invite avec douceur à contacter un proche ou les services d'urgence. Si tu ne sais pas, dis-le.`;
 function fallback(q){q=q.toLowerCase();
  if(/rembours/.test(q))return "Vous pouvez demander un remboursement depuis le rond en haut à droite de l'Accueil. L'équipe répond sous 24 heures.";
- if(/paiement|commande|factur|achat/.test(q))return "Pour votre commande, notre équipe vous répond sous 24 heures à hello@timeofabundance.com.";
- if(/ouvrir|connexion|connecter|accès|charge|vidéo|audio/.test(q))return "Fermez puis rouvrez l'application. Si la vidéo ne s'ouvre toujours pas, écrivez à hello@timeofabundance.com en indiquant son nom.";
+ if(/paiement|commande|factur|achat/.test(q))return "Pour votre commande, notre équipe vous répond sous 24 heures à "+SUPPORT+".";
+ if(/ouvrir|connexion|connecter|accès|charge|vidéo|audio/.test(q))return "Fermez puis rouvrez l'application. Si la vidéo ne s'ouvre toujours pas, écrivez à "+SUPPORT+" en indiquant son nom.";
  if(/commenc|début|aujourd/.test(q))return "Commencez par la Prière de Saint Antoine, sur l'Accueil. Elle débloque vos premières leçons.";
  return "Je suis là pour vous aider avec l'application et votre parcours. Pouvez-vous préciser votre question ?"}
 async function ask(q){
