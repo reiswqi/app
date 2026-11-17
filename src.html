@@ -292,6 +292,53 @@ main.chat{padding-bottom:0}
 .gcover{width:120px;aspect-ratio:9/16;border-radius:10px;background:center/cover no-repeat;border:1px solid var(--accent);box-shadow:0 0 44px rgba(220,192,132,.5);animation:pop .6s .15s both}
 .toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:700;font-size:13px;z-index:45;max-width:90%}
 @media (prefers-reduced-motion:reduce){*,*::after{transition:none!important;animation:none!important}}
+
+.pc .cv .done{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:rgba(6,11,24,.62);color:#fff}
+.pc .cv .done svg{width:44px;height:44px;padding:11px;border-radius:50%;border:2px solid rgba(255,255,255,.85);background:rgba(10,20,38,.5);stroke-width:2.4}
+.pc .cv .done small{font-size:10px;font-weight:900;letter-spacing:.16em;text-transform:uppercase}
+.center{text-align:center}
+blockquote{margin:6px 0 0;padding:12px 14px;border-left:2px solid var(--accent);background:rgba(220,192,132,.07);border-radius:0 10px 10px 0;font-family:var(--display);font-size:19px;line-height:1.35;font-style:italic}
+blockquote cite{display:block;margin-top:6px;font:900 11px var(--body);letter-spacing:.14em;text-transform:uppercase;font-style:normal;color:var(--accent)}
+.ntabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ntabs button{display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:8px 6px;border-radius:999px;border:1px solid var(--line);font-size:13px;font-weight:700;color:var(--soft);text-align:center}
+.ntabs button.on{background:var(--card);border-color:var(--accent);color:var(--ink)}
+.ntabs i,.nbtn i{display:inline-grid;place-items:center;color:var(--ok)}
+.ntabs i svg,.nbtn i svg{width:14px;height:14px;stroke-width:2.6}
+.numgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.nbtn{position:relative;aspect-ratio:1;display:grid;place-items:center;border-radius:14px;border:1px solid var(--card-line);background:var(--card);font:600 24px var(--display);font-variant-numeric:tabular-nums;color:var(--accent);text-align:center}
+.nbtn.on{border-color:var(--accent);box-shadow:0 0 28px rgba(220,192,132,.35);color:#fff}
+.nbtn i{position:absolute;top:5px;right:5px}
+.nrev,.ftheme,.fdone,.ndone,.nclock{display:flex;flex-direction:column;gap:10px;padding:18px;border-radius:14px;background:var(--card);border:1px solid var(--card-line);position:relative}
+.nrev,.ftheme{border-color:var(--accent);box-shadow:0 0 40px rgba(220,192,132,.14)}
+.nrev p,.ftheme p{color:var(--on-card-soft)}
+.nrev .x{position:absolute;top:8px;right:8px;width:40px;height:40px;display:grid;place-items:center;color:var(--soft);font-size:16px;text-align:center}
+.nrev .big{font:600 64px/1 var(--display);color:var(--accent)}
+.nclock{align-items:center;text-align:center;gap:4px}
+.nclock b{font:600 44px/1 var(--display);color:var(--accent);font-variant-numeric:tabular-nums}
+.clist{display:flex;flex-direction:column;gap:10px}
+.crow{display:grid;grid-template-columns:72px minmax(0,1fr);gap:12px;align-items:center;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel)}
+.crow b{font:600 26px var(--display);color:var(--accent);font-variant-numeric:tabular-nums}
+.crow h3{font-size:18px}
+.nform{display:flex;flex-direction:column;gap:12px}
+.dates{display:grid;grid-template-columns:1fr 1fr 1.6fr;gap:8px}
+.dates input{width:100%;min-height:50px;text-align:center;border-radius:10px;border:1px solid var(--card-line);background:var(--card);font-size:18px;letter-spacing:.06em}
+.dates input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(220,192,132,.18)}
+.err{color:#ffb4a8;font-size:13px}
+.ndone{align-items:center;text-align:center;gap:12px}
+.ndone.ok{border-color:var(--accent);box-shadow:0 0 40px rgba(220,192,132,.2)}
+.ndone .btn{max-width:320px}
+.fdone{flex-direction:row;align-items:center;gap:14px;border-color:var(--ok)}
+.fdone .ok{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:var(--ok);border:2px solid var(--ok)}
+.fdone .ok svg{width:22px;height:22px;stroke-width:2.6}
+.fdone b{display:block;font:600 19px/1.25 var(--display)}
+.fopt{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;padding:10px 14px;border-radius:12px;border:1px solid var(--card-line);background:var(--card);font-size:14.5px;line-height:1.3}
+.fopt span{flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--card-line);display:grid;place-items:center}
+.fopt.on{border-color:var(--accent);background:rgba(220,192,132,.1)}
+.fopt.on span{background:var(--accent);border-color:var(--accent);color:var(--on-btn)}
+.fopt span svg{width:13px;height:13px;stroke-width:3}
+#unlock blockquote{max-width:340px;text-align:left}
+.video iframe{position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:inherit}
+.soon{padding:16px;display:flex;flex-direction:column;gap:6px}
 </style>
 
 <div id="sky" aria-hidden="true"></div>
@@ -363,6 +410,7 @@ const THEME_PAGE={
  sub:{10:"Une base plus solide pour une foi calme et résiliente."},
  intro:{10:["Rester spirituellement stable quand la vie, elle, ne l'est pas.","Ce mois-ci, vous découvrirez comment la confiance en Dieu devient le socle de l'équilibre, de la clarté et de la résilience."]},
  learn:{10:["Garder l'équilibre au milieu de l'incertitude","Apaiser l'anxiété et lâcher le contrôle","Bâtir une paix qui ne dépend pas des circonstances","Fortifier vos racines par la prière quotidienne"]},
+ vid:{10:["1DxbqsmDJYiEumCDmbn2Z0b7KRb0ap2PC","1u1pp5Vk05OhosYC_eFBgSeAVJBFmnl1n","1PyjP4vrGCoOcRxesdfeVIVLckBppoKzu","1H9s55U1M-1eGM0ByjsFnm1rZfEstMsT-","14RVTTaX_YrMORbTL76szEeKE4lGvFqbF"]},
  eps:{10:[["La vérité qui blesse avant de libérer","Comment la vérité bouscule avant d'apporter clarté et liberté."],["Le coût invisible de vouloir tout contrôler","Ce que le contrôle fait à la paix, et pourquoi l'abandon fait grandir."],["Temps, attente et maturité","Comment l'attente façonne le caractère."],["Peur, contrôle et confiance","Comment la confiance rétablit l'équilibre."],["Identité, valeur et comparaison","La liberté de ne plus se comparer."]]}
 };
 const DAILY=__DAILY__.map(([t,d,p,v,r,x])=>({t,d,p,v,r,x}));
@@ -374,6 +422,41 @@ const SA=[
  {k:'Prière sacrée',t:'Prière pour les Finances',img:'img/sa4.jpg',p:["Source de toute abondance, je m'ouvre à Ton flux.","Bénis mon travail, multiplie ce que je sème, ordonne mes pas vers les portes qui doivent s'ouvrir.","Que je sois canal de Ta prospérité, non pour amasser mais pour bénir.","Je reçois avec gratitude ce que Tu prépares déjà pour moi.","Amen."]},
  {k:'Prière sacrée',t:'Prière de Guérison',img:'img/sa5.jpg',p:["Souffle divin, touche ce qui en moi demande à être restauré.","Guéris le corps, apaise la mémoire, relève l'âme.","Là où il y a fatigue, dépose Ta force. Là où il y a blessure, dépose Ta lumière.","Je me remets entièrement entre Tes mains, avec confiance.","Amen."]}
 ];
+
+// Nombres Puissants — Fréquence Divine (contenu original : invitation à la prière, pas une prédiction)
+const NUMS=[
+ {n:'111',t:'Un nouveau commencement',m:"Une porte s'ouvre. Faites une pause, remerciez, et demandez à Dieu de vous montrer le premier pas.",v:"Au commencement, Dieu créa les cieux et la terre.",r:'Genèse 1, 1'},
+ {n:'222',t:'La paix dans l\'attente',m:"Quelque chose grandit en silence. Gardez confiance et ne forcez rien aujourd'hui.",v:"Là où deux ou trois sont assemblés en mon nom, je suis au milieu d'eux.",r:'Matthieu 18, 20'},
+ {n:'333',t:'Une invitation à prier',m:"Dieu vous invite à Lui parler. Dites-Lui simplement ce que vous portez dans votre cœur.",v:"Invoque-moi, et je te répondrai ; je t'annoncerai de grandes choses, des choses cachées, que tu ne connais pas.",r:'Jérémie 33, 3'},
+ {n:'444',t:'Une présence qui protège',m:"Vous n'êtes pas seul(e). Confiez à Dieu ce qui vous inquiète, puis respirez doucement.",v:"L'ange de l'Éternel campe autour de ceux qui le craignent, et il les arrache au danger.",r:'Psaume 34, 8'},
+ {n:'555',t:'Un changement qui vient',m:"Quelque chose se transforme. Accueillez le changement avec douceur et gardez la prière près de vous.",v:"Voici, je fais une chose nouvelle, sur le point d'arriver : ne la connaîtrez-vous pas ?",r:'Ésaïe 43, 19'},
+ {n:'777',t:'Le repos en Dieu',m:"Le septième jour est celui du repos. Aujourd'hui, déposez votre fardeau et laissez-vous porter.",v:"Dieu acheva au septième jour son œuvre, qu'il avait faite.",r:'Genèse 2, 2'},
+ {n:'888',t:'La grâce qui déborde',m:"Dieu donne plus que nous n'osons demander. Dites merci pour tout ce que vous avez déjà reçu.",v:"À celui qui peut faire, par la puissance qui agit en nous, infiniment au delà de tout ce que nous demandons ou pensons.",r:'Éphésiens 3, 20'},
+ {n:'999',t:'Un chapitre qui se ferme',m:"Une étape se termine. Remerciez pour le chemin parcouru et confiez la suite à Dieu.",v:"Je suis l'alpha et l'oméga, le commencement et la fin.",r:'Apocalypse 21, 6'}
+];
+const CLOCK=[['01:01','Un premier pas',"Seigneur, montre-moi le premier pas."],['02:02','Garder la paix',"Seigneur, donne-moi ta paix."],['03:03','Parler à Dieu',"Seigneur, je Te confie ce que je porte."],['04:04','Se savoir protégé',"Seigneur, garde-moi sous ta protection."],['05:05','Accueillir le changement',"Seigneur, aide-moi à accueillir ce qui vient."],['10:10','Remercier',"Seigneur, merci pour ce que j'ai déjà reçu."],['11:11','Faire une pause',"Seigneur, je m'arrête et je T'écoute."],['12:12','Confier la journée',"Seigneur, je remets cette journée entre tes mains."]];
+const LIFE={1:['Le commencement',"Vous aimez ouvrir des chemins. Priez pour avancer avec humilité."],2:['La paix',"Vous construisez des liens. Priez pour la douceur et l'écoute."],3:['La parole',"Vous portez la joie et la parole. Priez pour dire des mots qui élèvent."],4:['Le fondement',"Vous aimez ce qui est solide. Priez pour la patience et la fidélité."],5:['Le mouvement',"Vous vivez le changement. Priez pour rester ancré(e) dans la confiance."],6:['Le soin',"Vous prenez soin des autres. Priez pour ne pas vous oublier."],7:['Le silence',"Vous cherchez le sens et l'intériorité. Priez pour une foi paisible."],8:['La mesure',"Vous portez des responsabilités. Priez pour la droiture et la générosité."],9:['Le don',"Vous avez le sens du service. Priez pour offrir sans vous épuiser."],11:['La lumière',"Un nombre de sensibilité. Priez pour garder votre paix intérieure."],22:['La construction',"Un nombre de bâtisseur. Priez pour construire avec sagesse."]};
+const root=d=>{const sum=x=>String(x).split('').reduce((a,c)=>a+ +c,0);let n=sum(d);while(n>9&&n!==11&&n!==22)n=sum(n);return n};
+const nmDone=()=>S.nm.o.length>0&&S.nm.c&&!!S.nm.n;
+const nmSteps=()=>(S.nm.o.length>0)+(S.nm.c?1:0)+(S.nm.n?1:0);
+// Focus du Jour : un thème par jour, trois intentions proposées, ou la sienne.
+const FOC=[
+ {t:'Gratitude',d:"Remercier change le regard. Aujourd'hui, cherchez ce qui est déjà donné.",i:["Remercier pour trois choses simples avant midi","Dire merci à une personne aujourd'hui","Noter ce soir une grâce reçue"],v:"Rendez grâces en toutes choses.",r:'1 Thessaloniciens 5, 18'},
+ {t:'Paix du cœur',d:"La paix ne dépend pas du bruit autour de vous. Elle se choisit, un instant à la fois.",i:["Prendre cinq minutes de silence avant de commencer","Respirer et prier avant chaque réponse difficile","Ne pas m'inquiéter de ce que je ne contrôle pas"],v:"Je vous laisse la paix, je vous donne ma paix.",r:'Jean 14, 27'},
+ {t:'Confiance',d:"Faire confiance, c'est avancer d'un pas sans voir tout le chemin.",i:["Confier à Dieu ce qui me pèse, dès le matin","Faire un pas que je repousse depuis longtemps","Remettre mon plan du jour entre ses mains"],v:"Confie-toi en l'Éternel de tout ton cœur, et ne t'appuie pas sur ta sagesse.",r:'Proverbes 3, 5'},
+ {t:'Pardon',d:"Pardonner libère d'abord celui qui pardonne. Un petit pas suffit aujourd'hui.",i:["Prier pour une personne qui m'a blessé(e)","Laisser tomber un reproche que je garde","Dire une parole douce à quelqu'un de proche"],v:"Si vous pardonnez aux hommes leurs offenses, votre Père céleste vous pardonnera aussi.",r:'Matthieu 6, 14'},
+ {t:'Courage',d:"Le courage n'est pas l'absence de peur, c'est avancer avec Dieu malgré elle.",i:["Faire aujourd'hui une chose qui me fait un peu peur","Dire la vérité avec douceur","Ne pas remettre à demain ce qui compte"],v:"Fortifie-toi et prends courage.",r:'Josué 1, 9'},
+ {t:'Service',d:"Servir quelqu'un, même discrètement, ouvre le cœur.",i:["Rendre un service sans qu'on me le demande","Appeler une personne seule","Écouter vraiment quelqu'un, sans l'interrompre"],v:"Que chacun de vous, au lieu de considérer ses propres intérêts, considère aussi ceux des autres.",r:'Philippiens 2, 4'},
+ {t:'Espérance',d:"L'espérance est une lumière douce qui tient même quand tout est incertain.",i:["Écrire une chose que j'espère, et la confier à Dieu","Lire un psaume ce matin","Dire à voix haute : « Dieu est avec moi »"],v:"Que le Dieu de l'espérance vous remplisse de toute joie et de toute paix dans la foi.",r:'Romains 15, 13'},
+ {t:'Patience',d:"Ce qui doit mûrir prend du temps. Aujourd'hui, ne forcez rien.",i:["Respirer avant de réagir","Accepter un retard sans m'agacer","Prier au lieu de me précipiter"],v:"Ceux qui se confient en l'Éternel renouvellent leur force.",r:'Ésaïe 40, 31'},
+ {t:'Générosité',d:"Donner, même peu, rappelle que tout nous a d'abord été donné.",i:["Donner quelque chose de simple à quelqu'un","Offrir mon temps à une personne proche","Faire un don discret à ceux qui en ont besoin"],v:"Il y a plus de bonheur à donner qu'à recevoir.",r:'Actes 20, 35'},
+ {t:'Lumière de la Parole',d:"Un verset lu lentement peut éclairer toute une journée.",i:["Lire un passage de la Bible ce matin","Apprendre un verset par cœur","Relire un verset ce soir avant de dormir"],v:"Ta parole est une lampe à mes pieds, et une lumière sur mon sentier.",r:'Psaume 119, 105'},
+ {t:'Présence',d:"Dieu est là, dans les gestes les plus ordinaires. Soyez là, vous aussi.",i:["Faire une chose à la fois, avec toute mon attention","Poser mon téléphone pendant un repas","Dire une courte prière entre deux tâches"],v:"Voici, je suis avec vous tous les jours, jusqu'à la fin du monde.",r:'Matthieu 28, 20'},
+ {t:'Joie',d:"La joie profonde n'est pas un éclat, c'est une force tranquille.",i:["Faire une chose qui me réjouit simplement","Sourire à trois personnes aujourd'hui","Chanter ou écouter un cantique"],v:"La joie de l'Éternel sera votre force.",r:'Néhémie 8, 10'}
+];
+const fcToday=()=>FOC[(dayN()-1)%FOC.length],fcTomorrow=()=>FOC[dayN()%FOC.length];
+const fcDone=()=>S.fc.last===TODAY;
+const fcStreak=()=>(S.fc.last===TODAY||S.fc.last===dstr(-1))?S.fc.streak:0;
 const MOODS=['Reconnaissant','Paisible','Plein d\'espoir','En quête','Joyeux'];
 const SUGG=["Par où commencer aujourd'hui ?","Je n'arrive pas à ouvrir une vidéo","J'ai besoin d'une parole d'encouragement"];
 
@@ -381,11 +464,12 @@ const SUGG=["Par où commencer aujourd'hui ?","Je n'arrive pas à ouvrir une vid
 const dstr=(off=0)=>{const d=new Date();d.setDate(d.getDate()+off);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 const TODAY=dstr(),NOW=new Date();
 const fdate=s=>new Date(s+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
-const seed=()=>({user:null,start:TODAY,lessons:{},journal:[],sa:null,saRead:[],gift:false,owned:[],rgift:false,refund:false});
+const seed=()=>({user:null,start:TODAY,lessons:{},journal:[],sa:null,saRead:[],gift:false,owned:[],rgift:false,refund:false,nm:{o:[],c:false,n:null,g:false},fc:{last:'',streak:0,days:[],f:{}}});
 let S;try{S=JSON.parse(localStorage.getItem('ta10'))}catch(e){}
 if(!S||!S.start)S=seed();
+S.nm=S.nm||{o:[],c:false,n:null,g:false};S.fc=S.fc||{last:'',streak:0,days:[],f:{}};
 const save=()=>{try{localStorage.setItem('ta10',JSON.stringify(S))}catch(e){}};
-const fresh=()=>({tab:'home',prog:null,cur:0,mood:null,chat:[],busy:false,play:false,pos:0,saI:0,saBack:'home',off:null,offBack:'shop',ep:null,day:false,menu:false,rform:false,fresh:false,t0:''});
+const fresh=()=>({tab:'home',prog:null,cur:0,mood:null,chat:[],busy:false,play:false,pos:0,saI:0,saBack:'home',off:null,offBack:'shop',ep:null,day:false,menu:false,rform:false,fresh:false,t0:'',nt:'o',nsel:null,fm:false,fsel:-1,fown:''});
 let V=fresh(),timer=null,sample=null,D=DAILY[0];
 window.claude?.use?.('sample').then(s=>{sample=s}).catch(()=>{});
 
@@ -448,12 +532,16 @@ function vLib(){
  const pray=SA.map((x,i)=>i<open
   ?pcard(`data-a="sacard" data-i="${i}"`,`<span class="cv" style="background-image:url(${x.img})">${S.saRead.includes(i)?'<span class="badge">Lue ✓</span>':''}</span>`,x.t,S.saRead.includes(i)?'Lue':'À lire','Lire')
   :pcard('data-a="salock"',`<span class="cv lockd" style="background-image:url(${x.img})"><span class="lk">${ic('lock')}${wait(i)}</span></span>`,x.t,`S'ouvre ${wait(i).toLowerCase()}`,'Verrouillée','off'));
+
+ const nmCard=pcard('data-a="numopen"',`<span class="cv" style="background-image:url(img/nombres.jpg)">${S.nm.g?`<span class="done">${ic('check')}<small>Sceau obtenu</small></span>`:''}</span>`,'Nombres Puissants — Fréquence Divine',nmDone()?'Module terminé':`${nmSteps()} sur 3 étapes`,'Ouvrir');
+ const fcCard=pcard('data-a="focusopen"',`<span class="cv" style="background-image:url(img/focus.jpg)">${fcDone()?`<span class="done">${ic('check')}<small>Fait aujourd'hui</small></span>`:''}</span>`,'Focus du Jour',fcDone()?`${fcStreak()} ${fcStreak()>1?'jours':'jour'} de suite`:'Votre intention divine',fcDone()?`${ic('check')} Fait aujourd'hui`:'Ouvrir','',fcDone()?'dim':'');
  const more=S.refund?[]:offersLeft().filter(o=>!o.top).map(card)
   .concat([pcard('data-a="later"',`<span class="cv typo">${ic('lock')}<b>Nouveau programme</b><small>Bientôt</small></span>`,'Nouveau programme','Bientôt disponible','Bientôt','off')]);
  return `<div class="head"><h1>Programmes</h1></div>
  ${V.fresh?`<p class="unlockline">✦ ${P.find(p=>p.gift).l.length} nouvelles leçons débloquées</p>`:''}
  ${rail('Mes programmes',progs)}
  ${rail('Prières de Saint Antoine',pray)}
+ ${rail('Pratiques divines',[nmCard,fcCard])}
  ${more.length>1?rail('À découvrir',more):''}`}
 
 function vProg(){const p=P.find(x=>x.id===V.prog),done=S.lessons[p.id]||[];return `${back('lib')}
@@ -492,9 +580,10 @@ function vTheme(){const m=NOW.getMonth(),T=THEME_PAGE,t=THEMES[m],eps=T.eps[m]||
  <div class="brand"><span class="eyebrow">${esc(THEME_LABEL)}</span><h1>${esc(t)}</h1>${T.sub[m]?`<span class="soft" style="font-style:italic">${esc(T.sub[m])}</span>`:''}</div>
  <div class="sa">${(T.intro[m]||[`Ce mois-ci, nous avançons ensemble sur ce thème, jour après jour, par la prière et la réflexion.`]).map(p=>`<p>${esc(p)}</p>`).join('')}</div>
  ${T.learn[m]?`<details class="panel"><summary>Ce que vous apprendrez</summary><ol class="list">${T.learn[m].map((x,i)=>`<li><span class="n">${i+1}</span><span>${esc(x)}</span></li>`).join('')}</ol></details>`:''}
+ ${!eps.length?`<div class="panel soon"><span class="eyebrow">Bientôt</span><p class="small soft">Les vidéos du thème de ${esc(MONTH)} seront ajoutées ici. Le thème change automatiquement chaque mois.</p></div>`:''}
  ${eps.length?`<span class="eyebrow" style="margin-top:6px">Écritures Vivantes · ${eps.length} vidéos</span>
   <div class="ep">${eps.map((e,i)=>`<button class="mc" data-a="ep" data-i="${i}" aria-expanded="${V.ep===i}">${tile(V.ep===i?'pause':'play')}<span class="grow"><span class="t">${esc(e[0])}</span>${V.ep===i?`<span class="s">${esc(e[1])}</span>`:''}</span></button>
-   ${V.ep===i?`<div class="video"><span class="small soft" style="position:relative">Vidéo de l'épisode ${i+1} à ajouter</span></div>`:''}`).join('')}</div>`:''}`}
+   ${V.ep===i?((T.vid[m]||[])[i]?`<div class="video"><iframe src="https://drive.google.com/file/d/${T.vid[m][i]}/preview" allow="autoplay;fullscreen" allowfullscreen title="${esc(e[0])}"></iframe></div>`:`<div class="video"><span class="small soft" style="position:relative">Vidéo de l'épisode ${i+1} à ajouter</span></div>`):''}`).join('')}</div>`:''}`}
 
 function vShop(){const total=BONUS.length+1;
  return `<div class="bhead"><span class="gbox">${GIFT}</span><div class="grow"><h1>Bonus</h1><p class="soft">${BONUS.length} bonus débloqués sur ${total}</p></div></div>
@@ -545,6 +634,65 @@ function dayModal(){const d=dayN(),from=Math.max(1,d-3),ds=Array.from({length:7}
   <div class="days">${ds.map(n=>`<span class="dd ${n<d?'ok':n===d?'now':''}">${n<d?ic('check'):n}</span>`).join('')}</div>
   <button class="btn gold" data-a="daygo">Continuer mon chemin</button></div></div>`}
 // Déblocage gamifié : le cadenas s'ouvre, puis l'application emmène la personne voir ses nouvelles leçons.
+
+function vNum(){const nm=S.nm,t=V.nt,sel=NUMS.find(x=>x.n===V.nsel),done=nmDone();
+ const tabs=[['o','Oracle',nm.o.length>0],['c','Horloge',nm.c],['n','Mon nombre',!!nm.n]];
+ const now=new Date(),H=now.getHours(),M=now.getMinutes();let nx=null;
+ for(let k=0;k<1440&&!nx;k++){const t0=(H*60+M+k)%1440,h=Math.floor(t0/60),m=t0%60;if(h===m)nx={h,m,k}}
+ const pad=n=>String(n).padStart(2,'0');
+ let body='';
+ if(t==='o')body=`<p class="soft">Chaque nombre est une porte de réflexion. Touchez celui que vous voyez souvent, et recevez une parole.</p>
+  <div class="numgrid">${NUMS.map(x=>`<button class="nbtn ${V.nsel===x.n?'on':''}" data-a="numpick" data-n="${x.n}" aria-pressed="${V.nsel===x.n}">${x.n}${nm.o.includes(x.n)?`<i>${ic('check')}</i>`:''}</button>`).join('')}</div>
+  ${sel?`<div class="nrev"><button class="x" data-a="numclose" aria-label="Fermer">✕</button><span class="eyebrow">${sel.n}</span><h3>${esc(sel.t)}</h3><p>${esc(sel.m)}</p><blockquote>« ${esc(sel.v)} »<cite>${esc(sel.r)}</cite></blockquote></div>`:`<p class="small soft center">Touchez un nombre pour voir sa parole.</p>`}`;
+ else if(t==='c')body=`<p class="soft">Quand une heure double apparaît, prenez une seconde pour prier. Voici ce que chacune vous invite à dire.</p>
+  ${nx?`<div class="nclock"><span class="eyebrow">Prochaine heure double</span><b>${pad(nx.h)}:${pad(nx.m)}</b><span class="small soft">${nx.k===0?"C'est maintenant":'dans '+(nx.k<60?nx.k+' min':Math.floor(nx.k/60)+' h '+pad(nx.k%60))}</span></div>`:''}
+  <div class="clist">${CLOCK.map(c=>`<div class="crow"><b>${c[0]}</b><div><h3>${esc(c[1])}</h3><p class="small soft">${esc(c[2])}</p></div></div>`).join('')}</div>`;
+ else body=`<p class="soft">Chaque date de naissance cache un nombre. On l'obtient en additionnant tous ses chiffres jusqu'à n'en garder qu'un seul.</p>
+  <form class="nform" id="numf" autocomplete="off"><label class="field">Votre date de naissance<span class="dates"><input id="nd" inputmode="numeric" maxlength="2" placeholder="JJ" aria-label="Jour"><input id="nmo" inputmode="numeric" maxlength="2" placeholder="MM" aria-label="Mois"><input id="ny" inputmode="numeric" maxlength="4" placeholder="AAAA" aria-label="Année"></span></label>
+  <p class="err" id="nerr" hidden>Veuillez entrer une date de naissance valide.</p>
+  <button class="btn gold" type="button" data-a="numgo">Révéler mon nombre</button></form>
+  ${nm.n?`<div class="nrev res"><span class="eyebrow">Votre nombre · ${esc(nm.n.d)}</span><b class="big">${nm.n.n}</b><h3>${esc(LIFE[nm.n.n][0])}</h3><p>${esc(LIFE[nm.n.n][1])}</p></div>`:''}`;
+ return `${back('lib')}
+ <div class="head"><span class="eyebrow">Programme · Fréquence Divine</span><h1>Nombres Puissants</h1><p class="soft">Le langage caché du ciel</p></div>
+ <div class="ntabs" role="tablist">${tabs.map(x=>`<button role="tab" aria-selected="${t===x[0]}" class="${t===x[0]?'on':''}" data-a="ntab" data-t="${x[0]}">${x[1]}${x[2]?`<i>${ic('check')}</i>`:''}</button>`).join('')}</div>
+ ${body}
+ <p class="small soft center">Ces textes sont une invitation à la prière. Ils ne prédisent pas l'avenir.</p>
+ <div class="ndone ${done?'ok':''}"><div class="days">${[0,1,2].map(i=>`<span class="dd ${i<nmSteps()?'now':''}">${i<nmSteps()?ic('check'):i+1}</span>`).join('')}</div>
+  ${done?(nm.g?`<p class="count">Sceau de la Fréquence Divine obtenu ✓</p>`:`<h3>Vous avez terminé ce module</h3><p class="small soft">Votre cadeau vous attend.</p><button class="btn gold" data-a="numgift">Recevoir mon cadeau</button>`)
+   :`<p class="small soft">${nmSteps()} étape${nmSteps()>1?'s':''} sur 3 : ouvrez un nombre, visitez l'horloge, révélez votre nombre.</p>`}</div>`}
+function vFocus(){const f=fcToday(),done=fcDone(),st=fcStreak(),mine=S.fc.f[TODAY];
+ return `${back('lib')}
+ <div class="head"><span class="eyebrow">Pratique du jour · ${esc(fdate(TODAY))}</span><h1>Focus du Jour</h1><p class="soft">Votre intention divine pour aujourd'hui.</p></div>
+ <div class="ftheme"><span class="eyebrow">Thème du jour</span><h2>${esc(f.t)}</h2><p>${esc(f.d)}</p><blockquote>« ${esc(f.v)} »<cite>${esc(f.r)}</cite></blockquote></div>
+ ${done?`<div class="fdone"><span class="ok">${ic('check')}</span><div><span class="eyebrow">Fait aujourd'hui</span><b>${esc(mine||'Focus posé')}</b></div></div>
+  <p class="count center">${st} ${st>1?'jours':'jour'} de suite</p>
+  <div class="invite"><i style="background-image:url(img/focus.jpg)"></i><div><span class="eyebrow">Demain</span><b>${esc(fcTomorrow().t)}</b><span class="small soft">Revenez poser votre focus.</span></div></div>`
+ :`<p class="soft">Choisissez une intention simple. Une seule suffit pour la journée.</p><button class="btn gold" data-a="fopen">Définir mon focus du jour</button>`}`}
+function focusModal(){const f=fcToday();
+ return `<div class="scrim low" data-a="fclose"><div class="sheet" role="dialog" aria-modal="true" aria-label="Définir mon focus" data-a="noop">
+  <span class="eyebrow">Thème · ${esc(f.t)}</span><h2>Mon focus pour aujourd'hui</h2>
+  ${f.i.map((x,i)=>`<button class="fopt ${V.fsel===i?'on':''}" data-a="fpick" data-i="${i}" aria-pressed="${V.fsel===i}"><span>${V.fsel===i?ic('check'):''}</span>${esc(x)}</button>`).join('')}
+  <label class="field">Ou écrivez le vôtre<span class="inp"><input id="fown" maxlength="90" placeholder="Mon intention du jour" value="${esc(V.fown)}"></span></label>
+  <button class="btn gold" data-a="fset">Confirmer mon focus</button><button class="linkbtn" data-a="fclose">Plus tard</button></div></div>`}
+function numGiftShow(){$('#unlock')?.remove();const u=document.createElement('div');u.id='unlock';u.className='bravo';
+ const sparks=Array.from({length:14},(_,i)=>{const a=i/14*6.283,r=90+Math.random()*60;return `<span class="spark" style="--x:${Math.round(Math.cos(a)*r)}px;--y:${Math.round(Math.sin(a)*r)}px"></span>`}).join('');
+ u.innerHTML=`<div class="rays"></div><div class="ulock">${ic('lock')}${sparks}</div>
+  <span class="eyebrow rev">✦ Cadeau débloqué ✦</span><h1 class="rev d2">Sceau de la Fréquence Divine</h1>
+  <div class="ucard rev d3"><i style="background-image:url(img/nombres.jpg)"></i><div><h3>Nombres Puissants</h3><p class="small soft">Module terminé. Le sceau est ajouté à votre carte.</p></div></div>
+  <p class="soft rev d3">Gardez un nombre en tête aujourd'hui, et priez-le.</p>
+  <button class="btn gold rev d4" data-a="bravolib" style="max-width:340px">Voir mes programmes</button><button class="linkbtn rev d4" data-a="bravoclose">Rester ici</button>`;
+ document.body.appendChild(u);setTimeout(()=>{u.classList.add('open');const l=u.querySelector('.ulock svg');if(l)l.outerHTML=ic('unlock')},900)}
+function focusDoneShow(){$('#unlock')?.remove();const u=document.createElement('div');u.id='unlock';u.className='bravo';
+ const f=fcToday(),st=fcStreak(),sparks=Array.from({length:14},(_,i)=>{const a=i/14*6.283,r=90+Math.random()*60;return `<span class="spark" style="--x:${Math.round(Math.cos(a)*r)}px;--y:${Math.round(Math.sin(a)*r)}px"></span>`}).join('');
+ const dots=[6,5,4,3,2,1,0].map(k=>{const d=dstr(-k),on=S.fc.days.includes(d);return `<span class="dd ${k===0?'now':on?'open':''}">${on||k===0?ic('check'):''}</span>`}).join('');
+ u.innerHTML=`<div class="rays"></div><div class="ulock">${ic('check')}${sparks}</div>
+  <span class="eyebrow rev">✦ Pratique du jour accomplie ✦</span><h1 class="rev d2">Bravo, ${esc(first())} !</h1>
+  <div class="days rev d2">${dots}</div>
+  <p class="count rev d3">${st} ${st>1?'jours':'jour'} de suite</p>
+  <blockquote class="rev d3">« ${esc(f.v)} »<cite>${esc(f.r)}</cite></blockquote>
+  <div class="invite rev d3"><i style="background-image:url(img/focus.jpg)"></i><div><span class="eyebrow">Demain</span><b>${esc(fcTomorrow().t)}</b><span class="small soft">Revenez poser votre focus.</span></div></div>
+  <button class="btn gold rev d4" data-a="bravoclose" style="max-width:340px">À demain</button>`;
+ document.body.appendChild(u);setTimeout(()=>u.classList.add('open'),120)}
 function unlockShow(){const p=P.find(x=>x.gift),u=document.createElement('div');u.id='unlock';
  const sparks=Array.from({length:14},(_,i)=>{const a=i/14*6.283,r=90+Math.random()*60;return `<span class="spark" style="--x:${Math.round(Math.cos(a)*r)}px;--y:${Math.round(Math.sin(a)*r)}px"></span>`}).join('');
  u.innerHTML=`<div class="rays"></div><div class="ulock">${ic('lock')}${sparks}</div>
@@ -589,13 +737,13 @@ function welcome(name,done){const w=document.createElement('div');w.id='welcome'
 function render(){
  D=DAILY[(dayN()-1)%DAILY.length];
  const app=$('#app');if(!S.user){app.innerHTML=vLogin();return}
- const views={home:vHome,lib:vLib,prog:vProg,pray:vPray,sa:vSA,journal:vJournal,theme:vTheme,shop:vShop,offer:vOffer,script:vScript,guide:vGuide,refund:vRefund};
+ const views={home:vHome,lib:vLib,prog:vProg,pray:vPray,sa:vSA,journal:vJournal,theme:vTheme,shop:vShop,offer:vOffer,script:vScript,guide:vGuide,refund:vRefund,num:vNum,focus:vFocus};
  const tabs=[['home','Accueil','home'],['lib','Programmes','book'],['pray','Prières Quotidiennes','pray'],['shop','Bonus','gift'],['guide','Père Michel','chat']];
- const cur={prog:'lib',sa:V.saBack,journal:'pray',theme:'shop',offer:V.offBack,script:'shop',refund:'home'}[V.tab]||V.tab;
+ const cur={prog:'lib',sa:V.saBack,journal:'pray',theme:'shop',offer:V.offBack,script:'shop',refund:'home',num:'lib',focus:'lib'}[V.tab]||V.tab;
  const enter=render.last!==V.tab;render.last=V.tab;
  app.innerHTML=`<main class="gut ${V.tab==='guide'?'chat':''} ${enter?'enter':''}" id="view">${views[V.tab]()}</main>
   <nav class="tabs" aria-label="Navigation">${tabs.map(t=>`<button data-a="tab" data-t="${t[0]}" ${cur===t[0]?'aria-current="page"':''}>${ic(t[2])}<span>${t[1]}</span></button>`).join('')}</nav>
-  ${V.day?dayModal():''}${V.menu?menuSheet():''}`;
+  ${V.day?dayModal():''}${V.menu?menuSheet():''}${V.fm?focusModal():''}`;
  if(V.tab==='guide'){const v=$('#view');v.scrollTop=v.scrollHeight}
  watchGift();
 }
@@ -615,12 +763,12 @@ function watchGift(){clearInterval(giftTimer);if(V.tab!=='sa'||S.gift)return;let
   if(seen>=1500&&Date.now()-V.saT>=GIFT_MIN){clearInterval(giftTimer);showGift()}},500)}
 // Liens directs pour les e-mails : #saint-antoine, #priere, #programmes, #bonus, #guide
 function applyHash(){const h=location.hash.slice(1);if(!S.user||!h)return;
- if(h==='saint-antoine')openSA();else{const t={priere:'pray',programmes:'lib',bonus:'shop',guide:'guide'}[h];if(t)V.tab=t}}
+ if(h==='saint-antoine')openSA();else{const t={priere:'pray',programmes:'lib',bonus:'shop',guide:'guide',nombres:'num',focus:'focus'}[h];if(t)V.tab=t}}
 
 const GUIDE_RULES=`Tu es l'assistant virtuel du ${PERE}, dans l'application Temps d'Abondance (prières et vidéos de spiritualité chrétienne). Tu écris comme dans une messagerie : messages courts, chaleureux, simples, 60 mots maximum, sans titres ni listes.
 Tu es un assistant automatique : tu n'es ni un prêtre ni une personne. Ne prétends jamais être le ${PERE} lui-même ni un être humain, et si on te demande qui tu es, dis-le clairement. Tu ne donnes pas de sacrements, d'absolution ni de direction spirituelle personnelle.
 Réponds dans la langue de la personne (français par défaut).
-L'application : Accueil (Prière de Saint Antoine, Mes programmes, Bonus) ; Programmes (vidéos et prières à faire glisser) ; Prières Quotidiennes (prière du jour, thème du mois, journal) ; Bonus. Une nouvelle prière de Saint Antoine s'ouvre chaque jour. Le compte et le remboursement sont dans le rond en haut à droite de l'Accueil.
+L'application : Accueil (Prière de Saint Antoine, Mes programmes, Bonus) ; Programmes (vidéos et prières à faire glisser) ; Prières Quotidiennes (prière du jour, thème du mois, journal) ; dans Programmes : Nombres Puissants (oracle des nombres, horloge, votre nombre) et Focus du Jour (une intention par jour) ; Bonus. Une nouvelle prière de Saint Antoine s'ouvre chaque jour. Le compte et le remboursement sont dans le rond en haut à droite de l'Accueil.
 Programmes vidéo : ${P.map(p=>p.t).join(' ; ')}.
 Règles : pour une commande, un paiement ou un accès perdu, n'invente rien et oriente vers l'équipe à hello@timeofabundance.com (réponse sous 24 heures) ; pour un remboursement, indique le rond en haut à droite de l'Accueil et ne propose aucun achat. Ne promets jamais de résultat financier, de guérison ou de délai ; aucun conseil médical, juridique ou financier. En cas de détresse grave, invite avec douceur à contacter un proche ou les services d'urgence. Si tu ne sais pas, dis-le.`;
 function fallback(q){q=q.toLowerCase();
@@ -676,6 +824,22 @@ document.addEventListener('click',e=>{
  else if(a==='bravolib'){bravoClose();V.tab='lib'}
  else if(a==='unlockgo'){unlockGo();return}
  else if(a==='lockgo'){const l=LOCKS[+b.dataset.i];if(l.url){const k=document.createElement('a');k.href=l.url;k.target='_blank';k.rel='noopener';k.click()}else toast('Lien de la page de vente à ajouter');return}
+ else if(a==='numopen'){V.tab='num';V.nt='o'}
+ else if(a==='ntab'){V.nt=b.dataset.t;if(V.nt==='c'){S.nm.c=true;save()}}
+ else if(a==='numpick'){V.nsel=b.dataset.n;if(!S.nm.o.includes(V.nsel)){S.nm.o.push(V.nsel);save()}}
+ else if(a==='numclose')V.nsel=null;
+ else if(a==='numgo'){const d=+$('#nd').value,m=+$('#nmo').value,y=+$('#ny').value,dt=new Date(y,m-1,d);
+   if(!(y>=1900&&y<=NOW.getFullYear()&&m>=1&&m<=12&&d>=1&&dt.getMonth()===m-1&&dt.getDate()===d)){$('#nerr').hidden=false;return}
+   S.nm.n={n:root(`${d}${m}${y}`),d:`${String(d).padStart(2,'0')}/${String(m).padStart(2,'0')}/${y}`};save()}
+ else if(a==='numgift'){S.nm.g=true;save();render();setTimeout(numGiftShow,200);return}
+ else if(a==='focusopen')V.tab='focus';
+ else if(a==='fopen'){V.fm=true;V.fsel=-1;V.fown=''}
+ else if(a==='fclose')V.fm=false;
+ else if(a==='fpick'){const o=$('#fown');V.fown=o?o.value:'';V.fsel=+b.dataset.i}
+ else if(a==='fset'){const own=($('#fown')?.value||'').trim(),txt=own.length>=3?own:(V.fsel>=0?fcToday().i[V.fsel]:'');
+   if(!txt){toast('Choisissez une intention ou écrivez la vôtre');return}
+   const wasYest=S.fc.last===dstr(-1);S.fc.streak=wasYest?S.fc.streak+1:1;S.fc.last=TODAY;S.fc.f[TODAY]=txt;
+   if(!S.fc.days.includes(TODAY))S.fc.days.push(TODAY);S.fc.days=S.fc.days.slice(-60);save();V.fm=false;render();setTimeout(focusDoneShow,300);return}
  else if(a==='ep'){const i=+b.dataset.i;V.ep=V.ep===i?null:i}
  else if(a==='rstart'){V.tab='home';toast('Commencez par le pas affiché ici')}
  else if(a==='rgift'){S.rgift=true;if(!S.owned.includes(REFUND_GIFT))S.owned.push(REFUND_GIFT);save();V.tab='shop';toast('Votre cadeau est dans Bonus')}
