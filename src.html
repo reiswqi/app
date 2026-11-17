@@ -754,8 +754,9 @@ function vScript(){return `${back('shop')}
  ${['La Lecture de l\'Âme','L\'Ordre de Restitution','Le Bouclier de Lignée','Le Renouveau de la Vie','Le Sceau du Repos'].map(t=>mc('data-a="soon"',tile('scroll'),t,'')).join('')}`}
 
 // Remboursement : procédure officielle en 3 étapes (e-mail → motif → confirmation), puis traitement et confirmation.
-// REFUND_HOOK : adresse (webhook) qui reçoit chaque demande en JSON. Vide = la demande reste seulement sur l'appareil du client.
-const REFUND_HOOK='';
+// REFUND_HOOK : chaque demande est envoyée par FormSubmit à l'e-mail de Lucas (activation : cliquer une fois le lien reçu au 1er envoi).
+// Après activation, on peut remplacer l'adresse par le code aléatoire donné par FormSubmit pour la cacher.
+const REFUND_HOOK='https://formsubmit.co/ajax/lr.bussine@gmail.com';
 const RWHY=[['🤔',"Ce n'était pas ce que j'attendais"],['⏰',"Je n'ai pas eu le temps de l'utiliser"],['⚙️','Problème technique'],['💛','Raisons personnelles ou financières'],['🔄','Achat par erreur'],['✏️','Autre raison']];
 function vRefund(){const R=V.r=V.r||{s:1,mail:S.user.email,why:-1,det:'',ok:false};
  const top=`${back('home')}<div class="rhead"><span class="eyebrow">Procédure officielle</span><h1>Demande de remboursement</h1><p class="soft">Suivez ces trois étapes pour traiter votre remboursement.</p></div>`;
@@ -782,7 +783,10 @@ function vRefund(){const R=V.r=V.r||{s:1,mail:S.user.email,why:-1,det:'',ok:fals
   <button class="btn redb" data-a="rsend" ${R.ok?'':'disabled'}>Confirmer et demander le remboursement</button><button class="btn line" data-a="rprev">← Retour</button></div>`}
 function refundSend(){const R=V.r;R.s=4;render();
  const req={mail:R.mail,why:RWHY[R.why][1],det:R.det,name:S.user.name,date:new Date().toISOString()};
- if(REFUND_HOOK)fetch(REFUND_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(req)}).catch(()=>{});
+ if(REFUND_HOOK)fetch(REFUND_HOOK,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({
+  _subject:'Demande de remboursement — '+req.name,_template:'table',_captcha:'false',
+  'Nom':req.name,'E-mail d\'achat':req.mail,'E-mail de connexion':S.user.email,'Motif':req.why,'Précisions':req.det||'—',
+  'Date':new Date().toLocaleString('fr-FR'),'Jour dans l\'app':dayN()})}).catch(()=>{});
  setTimeout(()=>{S.refund=req;save();R.s=5;if(V.tab==='refund')render()},2700)}
 
 const hhmm=()=>new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
