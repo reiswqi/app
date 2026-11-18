@@ -327,6 +327,42 @@ button.mc.bonus:hover{border-color:var(--bo);box-shadow:0 0 32px rgba(111,227,19
 /* unlock celebration */
 #unlock{position:fixed;inset:0;z-index:42;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center;background:radial-gradient(90% 60% at 50% 35%,#12203d,#060b18 75%);animation:fadein .5s both;transition:opacity .5s;overflow:hidden}
 #unlock.out{opacity:0}
+.pdc{position:relative;display:flex;align-items:center;gap:16px;width:100%;padding:18px 16px;border-radius:14px;text-align:left;overflow:hidden;
+ background:radial-gradient(120% 140% at 0% 0%,rgba(220,192,132,.22),transparent 55%),linear-gradient(135deg,#2a2350,#1a2445 60%,#14203c);border:1px solid rgba(220,192,132,.6);box-shadow:0 0 34px rgba(220,192,132,.16)}
+.pdc::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,236,190,.16) 50%,transparent 60%);transform:translateX(-130%);animation:sheen 5.5s ease-in-out infinite}
+.pdc .pdseal{flex:none;width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#f6e2a6,#c99a41 60%,#9a7128);color:#4a3510;
+ box-shadow:0 0 0 4px rgba(220,192,132,.18),0 6px 22px rgba(0,0,0,.4),inset 0 -4px 8px rgba(0,0,0,.25);animation:sealp 2.6s ease-in-out infinite}
+.pdc .pdseal b{font-size:28px;line-height:1;text-shadow:0 1px 0 rgba(255,255,255,.4)}
+.pdc .pdseal svg.ic{width:26px;height:26px;stroke-width:2.4}
+@keyframes sealp{0%,100%{box-shadow:0 0 0 4px rgba(220,192,132,.18),0 6px 22px rgba(0,0,0,.4),inset 0 -4px 8px rgba(0,0,0,.25)}50%{box-shadow:0 0 0 12px rgba(220,192,132,.07),0 6px 22px rgba(0,0,0,.4),inset 0 -4px 8px rgba(0,0,0,.25)}}
+.pdc .eyebrow{font-size:10px}
+.pdc .t{display:block;font-family:var(--display);font-size:22px;font-weight:600;line-height:1.15;margin-top:2px}
+.pdc .s{display:block;font-size:13px;color:var(--soft);margin-top:4px}
+.pdc .pdgo{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:8px 14px;border-radius:999px;background:linear-gradient(90deg,#ecd28a,#b98f3c);color:var(--on-btn);font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.pdc .pdgo svg.ic{width:14px;height:14px}
+.pdc.done{background:linear-gradient(135deg,#1d3252,#152640);border-color:var(--card-line);box-shadow:none}
+.pdc.done::after{display:none}
+.pdc.done .pdseal{width:48px;height:48px;animation:none;box-shadow:0 0 0 3px rgba(220,192,132,.15)}
+.pdc .chev{flex:none;color:var(--accent)}
+#unlock .pdseal{border:0;width:110px;height:110px;color:#4a3510;background:radial-gradient(circle at 35% 30%,#f6e2a6,#c99a41 60%,#9a7128);box-shadow:0 0 50px rgba(220,192,132,.55)}
+#unlock .pdseal b{font-size:44px;line-height:1}
+#unlock.open .pdseal{animation:sealbreak .7s both}
+@keyframes sealbreak{0%{transform:scale(1)}40%{transform:scale(1.25);box-shadow:0 0 90px rgba(255,230,170,.95)}100%{transform:scale(.82);opacity:.9}}
+#unlock .pdt{font-family:var(--display);font-size:28px;line-height:1.15;max-width:340px;text-shadow:0 0 26px rgba(220,192,132,.4)}
+#unlock .pdex{max-width:340px;padding:18px;border-radius:12px;background:var(--ivory);color:var(--ivory-ink);text-align:center;font-family:var(--display);font-size:19px;line-height:1.4}
+#unlock .pdex p{margin:0}
+#unlock.pdrev>*{flex:none}
+#unlock.pdrev{justify-content:flex-start;overflow-y:auto;padding-top:max(40px,env(safe-area-inset-top,0px));padding-bottom:40px}
+#unlock .pdday{max-width:340px;display:flex;flex-direction:column;gap:6px;padding:16px;border-radius:12px;background:rgba(29,50,82,.85);border:1px solid rgba(220,192,132,.45);text-align:left;font-size:15px;line-height:1.5}
+#unlock .pdday p{margin:0;color:var(--on-card)}
+.modal.pdpop{gap:12px}
+.modal.pdpop .pdc{width:auto;padding:0;background:none;border:0;box-shadow:none;overflow:visible}
+.modal.pdpop .pdc::after{display:none}
+.modal.pdpop .pdseal{width:84px;height:84px}
+.modal.pdpop .pdseal b{font-size:36px}
+.modal.pdpop h2{font-size:26px}
+#unlock .pdex .ref{margin-top:10px;font-size:15px;font-style:italic;border-top:1px solid rgba(150,116,40,.35);padding-top:10px}
+#unlock .pdex .ref b{display:block;font-family:var(--body);font-style:normal;font-weight:900;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ivory-gold);margin-top:4px}
 #unlock .rays{position:absolute;left:50%;top:38%;width:560px;height:560px;margin:-280px 0 0 -280px;border-radius:50%;opacity:0;background:repeating-conic-gradient(from 0deg,rgba(220,192,132,.2) 0 7deg,transparent 7deg 20deg);-webkit-mask:radial-gradient(circle,#000 0,transparent 68%);mask:radial-gradient(circle,#000 0,transparent 68%);transition:opacity .8s}
 #unlock.open .rays{opacity:1;animation:spin 14s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -361,7 +397,7 @@ button.mc.bonus:hover{border-color:var(--bo);box-shadow:0 0 32px rgba(111,227,19
 .typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
 @keyframes blink{0%,60%,100%{opacity:.25}30%{opacity:1}}
 /* tabs */
-nav.tabs{position:relative;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));padding:10px 2px max(12px,env(safe-area-inset-bottom,0px));background:none}
+nav.tabs{position:relative;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:10px 2px max(12px,env(safe-area-inset-bottom,0px));background:none}
 /* fond et filet de la barre sur toute la largeur de l'écran (tablette, ordinateur), même si la colonne de l'app est plus étroite */
 nav.tabs::before{content:"";position:absolute;top:0;bottom:0;left:50%;width:100vw;transform:translateX(-50%);background:var(--bg);border-top:1px solid var(--line);z-index:-1}
 nav.tabs button{position:relative}
@@ -741,6 +777,32 @@ async function loginSubmit(){if(L.busy)return;const btn=$('#lbtn'),err=m=>{L.err
   if(r.status===200)return enterApp(L.name,L.mail,L.tok);
   return err(r.j.error||'Une erreur est survenue. Réessayez.')}}
 
+// Prière du jour « biscuit de la chance » : choisie pour chaque personne et chaque jour, révélée en touchant le sceau
+function pdIdx(){const k=((S.user&&S.user.email)||'')+'|'+TODAY;let h=2166136261;for(let i=0;i<k.length;i++){h^=k.charCodeAt(i);h=Math.imul(h,16777619)>>>0}return h%DAILY.length}
+const pdDone=()=>S.pdr===TODAY;
+function pdCard(){const d=DAILY[pdIdx()];return pdDone()
+ ?`<button class="pdc done" data-a="pdopen"><span class="pdseal">${ic('check')}</span><span class="grow"><span class="eyebrow">Révélée pour vous aujourd'hui</span><span class="t">${esc(d.t)}</span><span class="s">Un nouveau message vous attend demain ✦</span></span><span class="chev">${ic('chev')}</span></button>`
+ :`<button class="pdc" data-a="pdopen"><span class="pdseal"><b>✦</b></span><span class="grow"><span class="eyebrow">Votre message du jour</span><span class="t">Quelle prière vous attend aujourd'hui ?</span><span class="s">Touchez le sceau : une prière choisie pour votre journée vous sera révélée.</span><span class="pdgo">Découvrir ma prière ${ic('arrow')}</span></span></button>`}
+function pdReveal(){const d=DAILY[pdIdx()];S.pdr=TODAY;save();track('pdreveal',{titre:d.t});
+ $('#unlock')?.remove();const u=document.createElement('div');u.id='unlock';u.className='pdrev';
+ const sparks=Array.from({length:16},(_,i)=>{const a=i/16*6.283,r=90+Math.random()*70;return `<span class="spark" style="--x:${Math.round(Math.cos(a)*r)}px;--y:${Math.round(Math.sin(a)*r)}px"></span>`}).join('');
+ const ex=(d.p.match(/^.*?[.!?](\s|$)/)||[d.p])[0].trim();
+ u.innerHTML=`<div class="rays"></div><div class="ulock pdseal"><b>✦</b>${sparks}</div>
+  <span class="eyebrow rev">✦ Votre prière du jour ✦</span><h2 class="rev d2 pdt">${esc(d.t)}</h2>
+  <div class="pdex rev d3"><p>«&nbsp;${esc(ex)}&nbsp;»</p><p class="ref">${esc(d.v)}<b>${esc(d.r)}</b></p></div>
+  <div class="pdday rev d3"><span class="eyebrow">✦ Pour votre journée</span><p><b>${esc(d.d)}</b></p><p>${esc(d.x)}</p></div>
+  <button class="btn gold rev d4" data-a="pdread" style="max-width:340px">Lire ma prière</button><button class="linkbtn rev d4" data-a="pdclose">Plus tard</button>`;
+ document.body.appendChild(u);setTimeout(()=>u.classList.add('open'),1150)}
+// Une fois par jour, à l'ouverture : pop-up qui invite à révéler la prière du jour
+function pdPopup(){if($('#pdpop')||$('#unlock'))return;const u=document.createElement('div');u.id='pdpop';u.className='scrim';
+ u.innerHTML=`<div class="modal pdpop" role="dialog" aria-modal="true" aria-label="Votre prière du jour"><div class="pdc"><span class="pdseal"><b>✦</b></span></div>
+  <span class="eyebrow">Votre message du jour</span><h2>Votre prière du jour est prête</h2>
+  <p class="soft">Une prière a été choisie pour vous aujourd'hui, avec ce qu'elle signifie pour votre journée. Touchez le sceau pour la découvrir.</p>
+  <button class="btn gold" data-a="pdpopgo">Découvrir ma prière ✦</button><button class="linkbtn" data-a="pdpopno">Plus tard</button></div>`;
+ document.body.appendChild(u);track('pdpopup',{})}
+function pdMaybePopup(){if(!S.user||pdDone()||S.pdp===TODAY||V.day||V.menu||V.fm||V.tab!=='home'||$('#unlock')||$('#pdpop')||$('#welcome'))return;
+ S.pdp=TODAY;save();setTimeout(pdPopup,700)}
+function pdClose(){const u=$('#unlock');if(!u)return;u.classList.add('out');setTimeout(()=>u.remove(),550)}
 function vHome(){const open=saOpen(),nx=SA.findIndex((x,j)=>j<open&&!S.saRead.includes(j)),x=SA[nx<0?0:nx];
  return `<div class="topbar"><span class="mark">${ic('crown')}<span class="wordmark">Temps d'Abondance</span></span><button class="avatar" data-a="menu" aria-label="Mon compte">${esc(first()[0].toUpperCase())}</button></div>
  <h1 class="welcome">Bienvenue, <em>${esc(first())}</em>,<br>dans votre Royaume Sacré</h1>
@@ -748,6 +810,7 @@ function vHome(){const open=saOpen(),nx=SA.findIndex((x,j)=>j<open&&!S.saRead.in
    <span class="btxt"><span class="eyebrow">${open>1?`${open} prières ouvertes sur ${SA.length}`:'Votre prière sacrée'}</span><h2>${esc(x.t)}</h2>
    <span class="s">${nx<0?"Une nouvelle prière s'ouvre demain.":S.gift?"Ouverte pour vous aujourd'hui.":'Lisez-la pour débloquer de nouvelles leçons.'}</span></span>
   <span class="access">Ouvrir la prière ${ic('arrow')}</span></button>
+ ${pdCard()}
  ${mc('data-a="tab" data-t="lib"',tile('book'),'Mes programmes','Accédez à ce qui est déjà débloqué pour vous.','gold')}
  ${LOCKS.map((l,i)=>`<button class="mc lockrow" data-a="lockgo" data-i="${i}">${l.tag?`<span class="tag">${esc(l.tag)}</span>`:''}${tile('lock')}<span class="grow"><span class="eyebrow">${esc(l.eb)}</span><span class="t">${esc(l.t)}</span><span class="s">${esc(l.s)}</span></span><span class="chev">${ic('lock')}</span></button>`).join('')}
  <button class="mc bhome" data-a="tab" data-t="shop"><span class="tile">${GIFT}</span><span class="grow"><span class="t">Bonus</span><span class="s">Du contenu en plus pour approfondir votre parcours.</span><span class="bprog">${Array.from({length:BONUS.length+1},(_,i)=>`<i class="${i<BONUS.length?'on':''}"></i>`).join('')}<span style="margin-left:4px">${BONUS.length} sur ${BONUS.length+1} débloqués</span></span></span><span class="chev">${ic('chev')}</span></button>
@@ -812,7 +875,7 @@ function vProg(){const p=P.find(x=>x.id===V.prog),done=S.lessons[p.id]||[];if(p.
  <button class="btn ${done.includes(V.cur)?'line':''}" data-a="mark">${done.includes(V.cur)?'Vidéo terminée ✓':'Marquer comme terminée'}</button>
  <section>${p.l.map((t,i)=>`<button class="lesson ${i===V.cur?'cur':''} ${done.includes(i)?'ok':''}" data-a="lesson" data-i="${i}"><span class="dot">${ic('check')}</span><span class="grow">${esc(t)}</span></button>`).join('')}</section>`}
 
-function vPray(){const open=saOpen();return `<div class="brand"><span class="eyebrow">${esc(NOW.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'}))}</span><h1>Prière du jour</h1><span class="rule"></span></div>
+function vPray(){const open=saOpen();return `${back('home')}<div class="brand"><span class="eyebrow">${esc(NOW.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'}))}</span><h1>Votre prière du jour</h1><span class="rule"></span></div>
  <section class="ivory"><h2>${esc(D.t)}</h2><span class="rule"></span><p>${esc(D.p)}</p><p class="ref">« ${esc(D.v)} »<b>${esc(D.r)}</b></p></section>
  <details class="panel"><summary>Réflexion du jour</summary><p class="soft">${esc(D.x)}</p></details>
  ${mc('data-a="sa"',tile('pray'),'Prières de Saint Antoine',`${open} sur ${SA.length} ouvertes`)}
@@ -1074,18 +1137,18 @@ function welcome(name,done){const w=document.createElement('div');w.id='welcome'
 
 /* ---------- engine ---------- */
 function render(){
- D=DAILY[(dayN()-1)%DAILY.length];
+ D=DAILY[pdIdx()];
  const app=$('#app');if(!S.user||(API_URL&&!S.tok&&!V.offline)){app.innerHTML=vLogin();logView.last=null;return}
  logView();
  const views={home:vHome,lib:vLib,prog:vProg,pray:vPray,sa:vSA,journal:vJournal,theme:vTheme,shop:vShop,offer:vOffer,script:vScript,guide:vGuide,refund:vRefund,num:vNum,focus:vFocus};
- const tabs=[['home','Accueil','home'],['lib','Programmes','book'],['pray','Prières Quotidiennes','pray'],['shop','Bonus','gift'],['guide','Père Michel','chat'],['refund','Rembourser','card']];
- const cur={prog:'lib',sa:V.saBack,journal:'pray',theme:'shop',offer:V.offBack,script:'shop',num:'lib',focus:'lib'}[V.tab]||V.tab;
+ const tabs=[['home','Accueil','home'],['lib','Programmes','book'],['shop','Bonus','gift'],['guide','Père Michel','chat'],['refund','Rembourser','card']];
+ const cur={pray:'home',prog:'lib',sa:V.saBack==='pray'?'home':V.saBack,journal:'home',theme:'shop',offer:V.offBack,script:'shop',num:'lib',focus:'lib'}[V.tab]||V.tab;
  const enter=render.last!==V.tab;render.last=V.tab;
  app.innerHTML=`<main class="gut ${V.tab==='guide'?'chat':''} ${enter?'enter':''}" id="view">${views[V.tab]()}</main>
   <nav class="tabs" aria-label="Navigation">${tabs.map(t=>`<button data-a="tab" data-t="${t[0]}" ${cur===t[0]?'aria-current="page"':''}>${ic(t[2])}<span>${t[1]}</span></button>`).join('')}</nav>
   ${V.day?dayModal():''}${V.menu?menuSheet():''}${V.fm?focusModal():''}`;
  if(V.tab==='guide'){const v=$('#view');v.scrollTop=v.scrollHeight}
- vtLoad();
+ vtLoad();pdMaybePopup();
  watchGift();
 }
 function stopPlay(){V.play=false;clearInterval(timer)}
@@ -1139,6 +1202,11 @@ document.addEventListener('click',e=>{
  if(a==='tab'){stopPlay();if(b.dataset.t!=='lib')V.fresh=false;V.tab=b.dataset.t;V.menu=false;V.rform=false}
  else if(a==='menu')V.menu=true;
  else if(a==='menuclose')V.menu=false;
+ else if(a==='pdopen'){if(!pdDone()){render();pdReveal();return}V.tab='pray'}
+ else if(a==='pdread'){pdClose();V.tab='pray'}
+ else if(a==='pdclose'){pdClose();render();return}
+ else if(a==='pdpopgo'){$('#pdpop')?.remove();pdReveal();render();return}
+ else if(a==='pdpopno'){$('#pdpop')?.remove();return}
  else if(a==='legal'){openLegal(b.dataset.k);return}
  else if(a==='legalclose'){closeLegal();return}
  else if(a==='open'){stopPlay();openProg(b.dataset.id)}
