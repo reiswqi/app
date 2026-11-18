@@ -96,3 +96,15 @@ create table if not exists purchases (
 );
 create index if not exists purchases_email_idx on purchases (email);
 create index if not exists purchases_received_idx on purchases (received_at desc);
+
+-- E-mails envoyés aux clients (Brevo) : évite d'envoyer deux fois le même e-mail
+create table if not exists email_log (
+  id         bigint generated always as identity primary key,
+  sent_at    timestamptz not null default now(),
+  email      text not null,
+  kind       text not null,        -- acces = annonce du nouvel accès ; test = essai envoyé à Lucas
+  status     text not null,        -- sent | failed
+  message_id text,
+  error      text
+);
+create index if not exists email_log_email_idx on email_log (email, kind);

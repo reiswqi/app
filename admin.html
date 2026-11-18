@@ -149,7 +149,7 @@ const ST={tab:'clients',q:'',f:'all',clients:null,recent:null,refunds:null,sales
 async function load(){ST.err='';try{
  if(ST.tab==='recent'&&!ST.recent)ST.recent=await api('recent?limit=300');
  if(ST.tab==='refunds'&&!ST.refunds)ST.refunds=await api('recent?type=refund&limit=1000');
- if(ST.tab==='sales'&&!ST.sales){ST.sales=await api('sales?limit=1000');ST.cfg=await api('config')}
+ if(ST.tab==='sales'&&!ST.sales){ST.sales=await api('sales?limit=1000');ST.cfg=await api('config');ST.mail=await api('mail/status').catch(()=>null)}
  if(!ST.clients)ST.clients=await api('clients');
 }catch(e){ST.err=e.message}draw()}
 async function openClient(email){ST.detail={email,loading:true};draw();window.scrollTo(0,0);try{
@@ -179,6 +179,18 @@ function draw(){const app=$('#app');
  ${ST.tab==='sales'?salesTab():''}`;
  const q=$('#q');if(q){q.oninput=()=>{ST.q=q.value;const p=q.selectionStart;draw();const n=$('#q');n.focus();n.setSelectionRange(p,p)}}
  const f=$('#f');if(f)f.onchange=()=>{ST.f=f.value;draw()}}
+function mailPanel(){const m=ST.mail;if(!m)return '';const n=Math.min(m.pending,m.remainingToday);
+ return `<div class="panel"><h3>E-mail de acesso aos compradores (Brevo)</h3>
+  ${m.ready?`<p>Remetente: <b>${esc(m.senderName)} &lt;${esc(m.sender)}&gt;</b> · respostas chegam em lr.bussine@gmail.com</p>`:'<p><span class="tag">falta configurar</span> Adicione no Railway (serviço app → Variables): <b>BREVO_API_KEY</b> e <b>BREVO_SENDER</b>.</p>'}
+  <div class="facts" style="margin:10px 0"><div><b>${m.pending}</b><span>compradores esperando o e-mail (liberados, sem conta)</span></div><div><b>${m.sent}</b><span>já receberam</span></div>
+   <div><b>${m.sentToday} / ${m.limit}</b><span>enviados nas últimas 24 h (limite diário)</span></div><div><b style="color:${m.failed?'var(--bad)':'inherit'}">${m.failed}</b><span>falharam</span></div></div>
+  ${m.lastErrors&&m.lastErrors.length?`<p class="err" style="font-size:12px">Últimas falhas: ${m.lastErrors.map(e=>esc(e.email+' — '+e.error)).join(' · ')}</p>`:''}
+  <p style="display:flex;gap:8px;flex-wrap:wrap;margin:0"><button class="btn" data-a="mprev">👁️ Ver o e-mail</button>
+   <button class="btn" data-a="mtest" ${m.ready?'':'disabled'}>✉️ Enviar teste para mim</button>
+   <button class="btn gold" data-a="msend" data-n="${n}" ${m.ready&&n?'':'disabled'}>Enviar para os próximos ${n}</button></p>
+  ${m.pending>m.remainingToday&&m.ready?`<p class="muted" style="margin:8px 0 0">O limite gratuito do Brevo é ${m.limit} por dia: o resto você envia amanhã, com o mesmo botão. Ninguém recebe duas vezes.</p>`:''}
+  <p id="mres" class="muted" style="margin:8px 0 0"></p>
+  <div id="mprevbox"></div></div>`}
 function salesTab(){if(!ST.sales)return '<p class="muted">Carregando…</p>';const c=ST.cfg||{},S2=ST.sales;
  const paid=S2.filter(x=>x.event==='order.paid'),never=paid.filter(x=>!x.in_app),tot=paid.reduce((a,x)=>a+(x.amount||0),0),cur=(paid[0]||{}).currency;
  return `<div class="panel"><h3>Integração KashPay</h3>
@@ -188,6 +200,7 @@ function salesTab(){if(!ST.sales)return '<p class="muted">Carregando…</p>';con
  <div class="panel"><h3>Liberar acesso manualmente</h3><p class="muted">Cole um ou vários e-mails (um por linha, ou separados por vírgula, ou a coluna inteira de uma planilha). Cada um poderá criar a conta no app com esse e-mail.</p>
   <textarea id="gl" rows="4" style="width:100%;padding:12px;border-radius:8px;border:1px solid var(--line);background:rgba(8,16,32,.6);font:inherit;color:inherit" placeholder="cliente1@exemplo.com&#10;cliente2@exemplo.com"></textarea>
   <p style="margin:10px 0 0"><button class="btn gold" data-a="grantmany">Liberar acesso</button> <span id="glr" class="muted"></span></p></div>
+ ${mailPanel()}
  <div class="kpis"><div class="kpi"><b>${paid.length}</b><span>vendas aprovadas</span></div><div class="kpi"><b>${money(tot,cur)}</b><span>total aprovado</span></div>
   <div class="kpi"><b style="color:var(--bad)">${never.length}</b><span>compraram e nunca entraram no app</span></div>
   <div class="kpi"><b style="color:var(--bad)">${S2.filter(x=>x.event==='order.refunded').length} / ${S2.filter(x=>x.event==='order.chargeback').length}</b><span>reembolsos / chargebacks</span></div></div>
@@ -274,6 +287,14 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b
   fetch(API+'/api/admin/grant',{method:'POST',headers:{Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'},body:JSON.stringify({emails:v})})
    .then(r=>r.json().then(j=>({ok:r.ok,j}))).then(({ok,j})=>{b.disabled=false;b.textContent='Liberar acesso';if(!ok)return alert(j.error||'Erro');
     $('#gl').value='';$('#glr').textContent=`✓ ${j.added} liberado(s)`+(j.already?` · ${j.already} já tinham acesso`:'');ST.clients=null;const keep=$('#glr').textContent;ST.sales=null;load().then(()=>{const e=$('#glr');if(e)e.textContent=keep})})}
+ else if(a==='mprev'){api('mail/preview').then(j=>{const box=$('#mprevbox');box.innerHTML=`<p style="margin:12px 0 6px"><b>Assunto:</b> ${esc(j.subject)} <span class="muted">(exemplo com uma cliente fictícia)</span></p><iframe style="width:100%;height:900px;border:1px solid var(--line);border-radius:10px;background:#fff"></iframe>`;box.querySelector('iframe').srcdoc=j.html})}
+ else if(a==='mtest'){const to=prompt('Enviar o e-mail de teste para qual endereço?','lr.bussine@gmail.com');if(!to)return;b.disabled=true;
+  fetch(API+'/api/admin/mail/test',{method:'POST',headers:{Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'},body:JSON.stringify({email:to})})
+   .then(r=>r.json().then(j=>({ok:r.ok,j}))).then(({ok,j})=>{b.disabled=false;$('#mres').textContent=ok?'✓ Teste enviado para '+to+'. Confira a caixa de entrada (e o spam).':'✗ '+(j.error||'Erro')})}
+ else if(a==='msend'){const n=+b.dataset.n;if(!confirm('Enviar o e-mail de acesso para '+n+' comprador(es) agora?'))return;b.disabled=true;b.textContent='Enviando… (não feche esta página)';
+  fetch(API+'/api/admin/mail/send',{method:'POST',headers:{Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'},body:JSON.stringify({max:n})})
+   .then(r=>r.json().then(j=>({ok:r.ok,j}))).then(async({ok,j})=>{if(!ok){b.disabled=false;b.textContent='Tentar de novo';return $('#mres').textContent='✗ '+(j.error||'Erro')}
+    ST.mail=await api('mail/status').catch(()=>ST.mail);draw();const e=$('#mres');if(e)e.textContent=`✓ ${j.sent} enviado(s)`+(j.failed?` · ✗ ${j.failed} falharam: ${j.errors.join(' · ')}`:'')+` · faltam ${j.left}`})}
  else if(a==='grant'){if(!confirm('Liberar o acesso de '+b.dataset.e+' manualmente (como se tivesse comprado)?'))return;
   fetch(API+'/api/admin/grant',{method:'POST',headers:{Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'},body:JSON.stringify({email:b.dataset.e})})
    .then(r=>r.json().then(j=>({ok:r.ok,j}))).then(({ok,j})=>{if(!ok)return alert(j.error||'Erro');ST.sales=null;ST.clients=null;openClient(b.dataset.e)})}

@@ -136,6 +136,60 @@ async function accessOf(email) {
   const v = [...orders.values()], paid = v.includes('paid');
   return { paid, blocked: !paid && (v.includes('refunded') || v.includes('chargeback')), reason: v.includes('chargeback') ? 'chargeback' : v.includes('refunded') ? 'refunded' : null };
 }
+// ---------- e-mail d'accès aux acheteurs (Brevo) ----------
+const MAIL = require('./mail');
+// acheteurs avec accès, sans compte, qui n'ont pas encore reçu l'e-mail (les achats de test KashPay sont ignorés)
+async function mailPending() {
+  const r = await pool.query(`select p.email, (array_agg(p.name order by p.received_at desc) filter (where p.name is not null))[1] as name
+    from purchases p
+    where p.email is not null and p.event in ('order.paid','subscription.created','subscription.renewed','manual.grant')
+      and p.email !~ '@example\\.(com|org|net)$' and coalesce(p.kp_id,'') not like 'test\\_%'
+      and not exists (select 1 from users u where u.email = p.email)
+      and not exists (select 1 from email_log l where l.email = p.email and l.kind = 'acces' and l.status = 'sent')
+    group by p.email order by min(p.received_at)`);
+  const out = []; for (const x of r.rows) if (!(await accessOf(x.email)).blocked) out.push(x); return out;
+}
+async function sentToday() { const r = await pool.query("select count(*)::int n from email_log where status = 'sent' and sent_at > now() - interval '24 hours'"); return r.rows[0].n; }
+async function mailOne(email, name, kind) {
+  try { const id = await MAIL.brevoSend(email, name, MAIL.accessEmail(email, name), kind);
+    await pool.query('insert into email_log (email, kind, status, message_id) values ($1,$2,$3,$4)', [email, kind, 'sent', id]); return true; }
+  catch (e) { await pool.query('insert into email_log (email, kind, status, error) values ($1,$2,$3,$4)', [email, kind, 'failed', e.message]); return e.message; }
+}
+let mailBusy = false;
+async function adminMail(req, res, url) {
+  if (!okToken(req)) return send(res, 401, { error: 'Sessão expirada' });
+  const c = MAIL.cfg(), ready = !!(c.key && c.sender);
+  if (url.pathname === '/api/admin/mail/status' && req.method === 'GET') {
+    const pend = await mailPending(), today = await sentToday();
+    const t = await pool.query("select count(*) filter (where status='sent' and kind='acces')::int sent, count(*) filter (where status='failed')::int failed from email_log");
+    const lastErr = await pool.query("select email, error, sent_at from email_log where status='failed' order by id desc limit 3");
+    return send(res, 200, { ready, sender: c.sender, senderName: c.senderName, limit: c.limit, sentToday: today, remainingToday: Math.max(0, c.limit - today),
+      pending: pend.length, sent: t.rows[0].sent, failed: t.rows[0].failed, lastErrors: lastErr.rows, busy: mailBusy });
+  }
+  if (url.pathname === '/api/admin/mail/preview' && req.method === 'GET') {
+    const m = MAIL.accessEmail(url.searchParams.get('email') || 'marie.dupont@gmail.com', url.searchParams.get('name') || 'Marie Dupont');
+    return send(res, 200, { subject: m.subject, html: m.html });
+  }
+  if (!ready) return send(res, 503, { error: 'Falta configurar BREVO_API_KEY e BREVO_SENDER no Railway.' });
+  let b = {}; try { b = JSON.parse(await readBody(req, 4096)); } catch (e) {}
+  if (url.pathname === '/api/admin/mail/test' && req.method === 'POST') {
+    const to = String(b.email || '').trim().toLowerCase(); if (!EMAIL_RE.test(to)) return send(res, 400, { error: 'E-mail inválido.' });
+    const ok = await mailOne(to, b.name || 'Lucas', 'test'); return ok === true ? send(res, 200, { ok: true }) : send(res, 502, { error: 'Brevo recusou: ' + ok });
+  }
+  if (url.pathname === '/api/admin/mail/send' && req.method === 'POST') {
+    if (mailBusy) return send(res, 409, { error: 'Um envio já está em andamento.' });
+    const room = Math.max(0, c.limit - await sentToday()), want = Math.min(room, Math.max(1, +b.max || room));
+    if (!want) return send(res, 429, { error: 'Limite de hoje atingido. Continue amanhã.' });
+    const list = (await mailPending()).slice(0, want); mailBusy = true; let sent = 0, failed = 0; const errors = [];
+    try { for (let i = 0; i < list.length; i += 5) {          // 5 à la fois
+        const rs = await Promise.all(list.slice(i, i + 5).map(x => mailOne(x.email, x.name, 'acces')));
+        rs.forEach((r, k) => { if (r === true) sent++; else { failed++; if (errors.length < 5) errors.push(list[i + k].email + ' : ' + r); } });
+        if (failed >= 10 && !sent) break;                    // clé ou expéditeur invalide : on arrête tout de suite
+      } } finally { mailBusy = false; }
+    return send(res, 200, { sent, failed, errors, left: (await mailPending()).length });
+  }
+  send(res, 404, { error: 'introuvable' });
+}
 const BLOCK_MSG = r => r === 'chargeback'
   ? "L'accès à ce compte est suspendu suite à une contestation de paiement. Écrivez-nous pour le rétablir."
   : "L'accès à ce compte a été clôturé suite au remboursement de votre achat.";
@@ -301,6 +355,7 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'OPTIONS') return send(res, 204, '', { ...CORS, 'Access-Control-Max-Age': '86400' });
     if (url.pathname === '/api/events' && req.method === 'POST') return await postEvents(req, res);
     if (url.pathname === '/api/admin/login' && req.method === 'POST') return await adminLogin(req, res);
+    if (url.pathname.startsWith('/api/admin/mail/')) return await adminMail(req, res, url);
     if (url.pathname.startsWith('/api/admin/') && req.method === 'GET') return await adminGet(req, res, url);
     if (url.pathname === '/api/admin/reset' && req.method === 'POST') {      // mot de passe temporaire pour un client qui l'a oublié
       if (!okToken(req)) return send(res, 401, { error: 'Sessão expirada' });
