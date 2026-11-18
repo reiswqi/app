@@ -32,7 +32,7 @@ function accessEmail(email, name) {
 <tr><td style="padding:22px 26px 0">
  <div style="background:#fbf6ea;border:2px solid #dcc084;border-radius:12px;padding:16px;text-align:center">
   <div style="font-size:17px;color:#5b4a22;font-family:Arial,sans-serif">Votre e-mail d'accès :</div>
-  <div style="font-size:22px;font-weight:bold;margin-top:6px;word-break:break-all;font-family:Arial,sans-serif;color:#1c2540">${h(email)}</div>
+  <div style="font-size:22px;font-weight:bold;margin-top:6px;word-break:break-all;font-family:Arial,sans-serif;color:#1c2540"><a href="${h(link)}" style="color:#1c2540;text-decoration:none">${h(email)}</a></div>
   <div style="font-size:15px;color:#6b6b6b;margin-top:6px;font-family:Arial,sans-serif">(l'adresse utilisée lors de votre achat)</div>
  </div>
 </td></tr>
