@@ -170,6 +170,7 @@ textarea{min-height:110px;resize:vertical;line-height:1.5}
 .epc:not(.seen) .epseen{display:none}
 .epup{position:absolute;top:12px;right:12px;padding:5px 10px;border-radius:999px;background:linear-gradient(90deg,#ecd28a,#b98f3c);color:var(--on-btn);font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;animation:pulse 2.4s ease-in-out infinite}
 .vtbox{background:#000;min-height:120px}
+.vtbox.vert{padding:12px 0;background:radial-gradient(80% 60% at 50% 30%,rgba(220,192,132,.18),transparent 70%),#07040c}
 .epc.seen .epplay{animation:none;background:rgba(10,20,38,.75);color:var(--accent);box-shadow:0 0 0 1.5px var(--accent)}
 .epv{position:relative;aspect-ratio:16/9;background:#000}
 .epv video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
@@ -636,7 +637,22 @@ const P=[
   d:["Le chant qui appelle saint Michel à se tenir devant vous, contre toute peur et toute attaque.","Réveillez la présence de l'ange que Dieu a placé à vos côtés depuis votre naissance.","La prière de l'archange Raphaël pour le corps fatigué, le cœur blessé et ceux que vous aimez.","Avec l'archange Uriel, ouvrez la porte aux bénédictions matérielles et à la sagesse pour les recevoir."],
   learn:["Un chant de protection à écouter chaque jour","La présence de votre ange gardien","Une prière de guérison pour vous et les vôtres","Un appel aux bénédictions financières"]},
  {id:'freq',t:"Les 7 Fréquences de l'Accélération Divine",img:'img/freq.jpg',poster:'img/freq-video.jpg',
-  l:["La Puissance des Fréquences Divines","01. L'Éveil","02. La Percée du Désert","03. Le Code d'Isaac","04. La Résonance de Jéricho","05. Le Flux de Pierre","06. La Fréquence du Trône","07. Le Sceau de la Manifestation"],video:['','','','','','','','']},
+  l:["La Puissance des Fréquences Divines","01. L'Éveil","02. La Percée du Désert","03. Le Code d'Isaac","04. La Résonance de Jéricho","05. Le Flux de Pierre","06. La Fréquence du Trône","07. Le Sceau de la Manifestation"],video:['','','','','','','',''],
+  // vidéos vturb : 0 = introduction (verticale 9:16, voix du « sage de la bibliothèque »), 1–7 = les fréquences (à écouter avec des écouteurs)
+  vt:['6afe04c84e411c851d85a6f3','6afe05cef9043a224ab97b54','6afe05a1375e4d0a929aca63','6afe05dec5d07a6e9c534a8e','6afe05ab34f8ad5c632563f6','6afe05b96db58e633f715cbb','6afe0785aab29724886183b2','6afe082eaab297248861849c'],
+  ar:[177.78,56.25,56.25,56.25,56.25,56.25,54.96,56.25],th:['img/freq-0.jpg','img/freq-1.jpg','img/freq-2.jpg','img/freq-3.jpg','img/freq-4.jpg','img/freq-5.jpg','img/freq-6.jpg','img/freq-7.jpg'],
+  hero:'img/freq-video.jpg',hpos:'92% 30%',intro:1,unit:'Fréquence',badge:'7 fréquences sacrées · 🎧',
+  sub:"Ce qui prendrait dix ans, l'Esprit peut l'accélérer en quelques semaines.",
+  quote:"Ici, un jour est comme mille ans.",
+  d:["Le sage de la bibliothèque cachée vous ouvre le portail : comment écouter les 7 fréquences pour qu'elles agissent vraiment.",
+   "La première fréquence brise le cycle des retards et réveille ce qui dormait en vous.",
+   "Quand tout semble sec et immobile, cette fréquence ouvre un chemin dans le désert.",
+   "La fréquence de la promesse tenue : recevoir ce que l'on attendait depuis longtemps.",
+   "Faites tomber les murailles qui bloquent votre abondance, comme à Jéricho.",
+   "Laissez circuler à nouveau la provision et la paix, comme l'eau qui jaillit du rocher.",
+   "Entrez dans la présence du Trône : l'autorité et la confiance d'un enfant du Roi.",
+   "La dernière fréquence scelle votre miracle et le rend permanent."],
+  learn:["Briser le cycle des retards","Une impulsion pour chaque domaine de votre vie","Un rituel simple : au réveil ou avant de dormir","Sceller votre miracle pour qu'il demeure"]},
  {id:'salomon',t:"Les Secrets Cachés de la Prospérité du Roi Salomon",img:'img/salomon.jpg',poster:'img/salomon-video.jpg',
   l:["01. Ce Qui a Fait de Salomon l'Homme le Plus Riche du Monde","02. Les Connaissances Secrètes qui ont fait de Salomon le plus Sage"],video:['','']}
 ];
@@ -1101,23 +1117,23 @@ const VT_ACC='f6647e7e-ca7e-45b0-a540-5bf8ca46db4a'; // compte vturb
 function vtLoad(){document.querySelectorAll('vturb-smartplayer').forEach(el=>{if(el.dataset.ld)return;el.dataset.ld=1;const id=el.id.slice(4);
  document.querySelectorAll('script[data-vt="'+id+'"]').forEach(s=>s.remove());
  const s=document.createElement('script');s.src=`https://scripts.converteai.net/${VT_ACC}/players/${id}/v4/player.js`;s.async=true;s.dataset.vt=id;document.head.appendChild(s)})}
-function vProgVt(p){const done=S.lessons[p.id]||[],n=p.l.length,nx=p.l.findIndex((_,i)=>!done.includes(i)),all=nx<0,open=V.pop;
+function vProgVt(p){const LB=k=>p.intro?(k===0?'Introduction':`${p.unit} ${k}`):`Leçon ${k+1}`,T=k=>p.intro?String(p.l[k]).replace(/^\d+\.\s*/,''):p.l[k];const done=S.lessons[p.id]||[],n=p.l.length,nx=p.l.findIndex((_,i)=>!done.includes(i)),all=nx<0,open=V.pop;
  return `${back('lib')}
  ${p.split?`<section class="thero split"><div class="thimg" style="background-image:url(${p.hero})"></div>`:`<section class="thero" style="background-image:url(${p.hero||p.poster});background-position:${p.hpos||'center'}">`}<div class="thero-in">
   <span class="tbadge">${ic('spark')}${esc(p.badge||'Programme débloqué')}</span>
   <h1>${esc(p.t)}</h1>${p.sub?`<span class="tsub">${esc(p.sub)}</span>`:''}
-  <div class="tmeta"><span>${ic('play')}${n} leçons vidéo</span><span>${ic('pray')}À votre rythme</span></div>
+  <div class="tmeta"><span>${ic('play')}${p.intro?`${n-1} ${p.unit.toLowerCase()}s + intro`:`${n} leçons vidéo`}</span><span>${ic('pray')}À votre rythme</span></div>
   <div class="tprog"><span class="bar"><i style="width:${done.length/n*100}%"></i></span><b>${done.length}/${n}</b></div>
-  <button class="btn gold" data-a="pgo" data-i="${all?0:nx}">${ic('play')}${all?'Revoir la leçon 1':done.length?`Continuer · Leçon ${nx+1}`:'Commencer la leçon 1'}</button>
+  <button class="btn gold" data-a="pgo" data-i="${all?0:nx}">${ic('play')}${all?`Revoir · ${LB(0)}`:done.length?`Continuer · ${LB(nx)}`:p.intro?'Commencer par l\'introduction':'Commencer la leçon 1'}</button>
  </div></section>
  ${p.quote?`<p class="tquote">${esc(p.quote)}</p>`:''}
  ${p.learn?`<div class="tsec"><span class="eyebrow">Ce que vous allez recevoir</span></div><ul class="tlearn" style="margin:0;padding:0">${p.learn.map(x=>`<li><span class="k">${ic('check')}</span>${esc(x)}</li>`).join('')}</ul>`:''}
- <div class="tsec"><span class="eyebrow">Vos leçons</span><h2>${n} leçons sacrées</h2></div>
+ <div class="tsec"><span class="eyebrow">${p.intro?'Votre parcours':'Vos leçons'}</span><h2>${p.intro?`${n-1} ${p.unit.toLowerCase()}s sacrées`:`${n} leçons sacrées`}</h2></div>
  <div class="eps">${p.l.map((t,i)=>{const on=open===i,seen=done.includes(i),up=!on&&i===nx&&done.length>0;return `<article class="epc ${on?'on':''} ${seen?'seen':''}" id="pl${i}">
-  ${on?`<div class="vtbox"><vturb-smartplayer id="vid-${p.vt[i]}" style="display:block;margin:0 auto;width:100%"><div class="vturb-player-placeholder" style="position:relative;width:100%;padding:56.25% 0 0;z-index:0;background-color:black"></div></vturb-smartplayer></div>`
-   :`<button class="epthumb" data-a="pep" data-i="${i}" style="background-image:url(${(p.th||[])[i]||p.poster})" aria-label="Regarder la leçon ${i+1} : ${esc(t)}"><span class="epnum">Leçon ${i+1}</span><span class="epseen">${ic('check')}Vue</span>${up?'<span class="epup">À suivre</span>':''}<span class="epplay">${ic('play')}</span></button>`}
-  <button class="epbody" data-a="pep" data-i="${i}" aria-expanded="${on}"><span class="eyebrow">Leçon ${i+1}${seen?' · Vue ✓':''}</span><span class="ept">${esc(t)}</span>${(p.d||[])[i]?`<span class="epd">${esc(p.d[i])}</span>`:''}</button>
-  ${on?`<div class="epnext">${seen?(i<n-1?`<button class="btn line" data-a="pgo" data-i="${i+1}">Leçon suivante ${ic('arrow')}</button>`:''):`<button class="btn gold" data-a="pmark" data-i="${i}">${ic('check')} J'ai terminé cette leçon</button>`}</div>`:''}
+  ${on?`<div class="vtbox ${(p.ar||[])[i]>100?'vert':''}"><vturb-smartplayer id="vid-${p.vt[i]}" style="display:block;margin:0 auto;width:100%${(p.ar||[])[i]>100?';max-width:340px':''}"><div class="vturb-player-placeholder" style="position:relative;width:100%;padding:${(p.ar||[])[i]||56.25}% 0 0;z-index:0;background-color:black"></div></vturb-smartplayer></div>`
+   :`<button class="epthumb" data-a="pep" data-i="${i}" style="background-image:url(${(p.th||[])[i]||p.poster})" aria-label="Regarder ${LB(i)} : ${esc(T(i))}"><span class="epnum">${LB(i)}</span><span class="epseen">${ic('check')}Vue</span>${up?'<span class="epup">À suivre</span>':''}<span class="epplay">${ic('play')}</span></button>`}
+  <button class="epbody" data-a="pep" data-i="${i}" aria-expanded="${on}"><span class="eyebrow">${LB(i)}${seen?' · Vue ✓':''}</span><span class="ept">${esc(T(i))}</span>${(p.d||[])[i]?`<span class="epd">${esc(p.d[i])}</span>`:''}</button>
+  ${on?`<div class="epnext">${seen?(i<n-1?`<button class="btn line" data-a="pgo" data-i="${i+1}">${p.intro?`${LB(i+1)}`:'Leçon suivante'} ${ic('arrow')}</button>`:''):`<button class="btn gold" data-a="pmark" data-i="${i}">${ic('check')} ${p.intro&&i>0?'J\'ai écouté cette fréquence':'J\'ai terminé cette leçon'}</button>`}</div>`:''}
  </article>`}).join('')}</div>
  ${all?`<div class="tdone">${ic('spark')}<h3>Programme terminé</h3><p class="small">Vous avez reçu les ${n} leçons. Revenez les prier aussi souvent que vous le souhaitez.</p></div>`:''}`}
 function vProg(){const p=P.find(x=>x.id===V.prog),done=S.lessons[p.id]||[];if(p.vt)return vProgVt(p);return `${back('lib')}
