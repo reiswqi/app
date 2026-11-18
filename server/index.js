@@ -88,6 +88,58 @@ function okToken(req) {
 const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type' };
 const TYPE_RE = /^[a-z_]{2,40}$/;
 
+// ---------- ventes KashPay ----------
+// Variables Railway : KASHPAY_WEBHOOK_SECRET (clé de signature copiée dans KashPay → Intégrations → Webhooks)
+//                     ACCESS_MODE = open (défaut : tout le monde peut créer un compte) | buyers (seulement les acheteurs)
+const KP_SECRET = process.env.KASHPAY_WEBHOOK_SECRET || '';
+const ACCESS_MODE = process.env.ACCESS_MODE === 'buyers' ? 'buyers' : 'open';
+const PAID_EV = new Set(['order.paid', 'subscription.created', 'subscription.renewed', 'manual.grant']);
+let lastWebhook = null;
+function readRaw(req, max = 256 * 1024) {
+  return new Promise((ok, ko) => { let size = 0, chunks = [];
+    req.on('data', c => { size += c.length; if (size > max) { ko(new Error('trop gros')); req.destroy(); } else chunks.push(c); });
+    req.on('end', () => ok(Buffer.concat(chunks))); req.on('error', ko); });
+}
+const tsOrNull = v => { const d = new Date(v); return v && !isNaN(d) ? d.toISOString() : null; };
+async function savePurchase(ev, ip) {
+  const d = ev.data || {}, c = d.customer || {}, pd = d.payment_details || {};
+  const r = await pool.query(`insert into purchases (event, kp_id, status, email, name, phone, amount, net_amount, currency, offers, payment_id, card_holder,
+      paid_at, refunded_at, chargeback_at, event_at, tracking, raw, ip)
+    values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19) on conflict (event, kp_id) do nothing returning id`,
+    [str(ev.event, 60), str(d.id, 100), str(d.status, 40), c.email ? String(c.email).trim().toLowerCase().slice(0, 200) : null, str(c.name, 200), str(c.phone, 40),
+     Number.isFinite(+d.amount) ? Math.round(+d.amount) : null, Number.isFinite(+d.net_amount) ? Math.round(+d.net_amount) : null, str(d.currency, 10),
+     JSON.stringify(Array.isArray(d.offers) ? d.offers : []), str(pd.id, 100), str(pd.card_holder_name, 200),
+     tsOrNull(d.paid_at), tsOrNull(d.refunded_at), tsOrNull(d.chargeback_at), tsOrNull(ev.created_at), JSON.stringify(d.tracking || {}), JSON.stringify(ev), ip]);
+  return r.rowCount > 0;
+}
+async function kashpayWebhook(req, res) {
+  const { ip } = clientIp(req);
+  if (!KP_SECRET) { console.error('Webhook KashPay reçu mais KASHPAY_WEBHOOK_SECRET manque'); return send(res, 503, { error: 'secret manquant' }); }
+  let raw; try { raw = await readRaw(req); } catch (e) { return send(res, 413, { error: 'trop gros' }); }
+  const sig = String(req.headers['x-kashpay-signature'] || ''), exp = 'sha256=' + crypto.createHmac('sha256', KP_SECRET).update(raw).digest('hex');
+  const a = Buffer.from(sig), b = Buffer.from(exp);
+  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) { console.warn('Webhook KashPay : signature invalide depuis', ip); return send(res, 401, { error: 'signature invalide' }); }
+  let ev; try { ev = JSON.parse(raw.toString('utf8')); } catch (e) { return send(res, 400, { error: 'JSON invalide' }); }
+  try { const fresh = await savePurchase(ev, ip); lastWebhook = { at: new Date().toISOString(), event: ev.event, fresh };
+    console.log('Webhook KashPay', ev.event, (ev.data || {}).id, fresh ? 'enregistré' : 'déjà reçu'); }
+  catch (e) { console.error('purchase', e.message); return send(res, 500, { error: 'base' }); }   // KashPay renverra
+  send(res, 200, { received: true });
+}
+// accès d'un e-mail : payé (au moins une commande payée non remboursée), bloqué (tout remboursé / contesté)
+async function accessOf(email) {
+  const r = await pool.query('select event, kp_id from purchases where email = $1 order by received_at, id', [email]);
+  const orders = new Map();
+  for (const p of r.rows) {
+    const st = PAID_EV.has(p.event) ? 'paid' : p.event === 'order.refunded' ? 'refunded' : p.event === 'order.chargeback' ? 'chargeback' : null;
+    if (st) orders.set(p.kp_id, st);
+  }
+  const v = [...orders.values()], paid = v.includes('paid');
+  return { paid, blocked: !paid && (v.includes('refunded') || v.includes('chargeback')), reason: v.includes('chargeback') ? 'chargeback' : v.includes('refunded') ? 'refunded' : null };
+}
+const BLOCK_MSG = r => r === 'chargeback'
+  ? "L'accès à ce compte est suspendu suite à une contestation de paiement. Écrivez-nous pour le rétablir."
+  : "L'accès à ce compte a été clôturé suite au remboursement de votre achat.";
+
 // ---------- comptes clients (mot de passe) ----------
 const EMAIL_RE = /^[^\s@]{1,100}@[^\s@]{1,100}\.[^\s@]{2,30}$/;
 const scryptP = (pw, salt) => new Promise((ok, ko) => crypto.scrypt(pw, salt, 64, { N: 16384, r: 8, p: 1 }, (e, k) => e ? ko(e) : ok(k)));
@@ -130,9 +182,13 @@ async function authRoute(req, res, url) {
     if (!EMAIL_RE.test(email)) return R(400, { error: 'Adresse e-mail invalide.' });
     if (name.length < 2) return R(400, { error: 'Indiquez votre nom.' });
     if (pw.length < 6 || pw.length > 200) return R(400, { error: 'Le mot de passe doit contenir au moins 6 caractères.' });
+    const acc = await accessOf(email);
+    if (acc.blocked) { await serverEvent(req, 'access_denied', email, null, { raison: acc.reason, etape: 'inscription' }, b); return R(403, { error: BLOCK_MSG(acc.reason), blocked: true }); }
+    if (ACCESS_MODE === 'buyers' && !acc.paid) { await serverEvent(req, 'access_denied', email, null, { raison: 'pas_achat', etape: 'inscription' }, b);
+      return R(403, { error: "Nous ne trouvons pas d'achat avec cet e-mail. Utilisez l'adresse e-mail de votre achat ou écrivez-nous.", nobuy: true }); }
     const h = await hashPass(pw);
-    const r = await pool.query(`insert into users (email, name, pass_hash, created_ip, created_country, created_ua, created_device)
-      values ($1,$2,$3,$4,$5,$6,$7) on conflict (email) do nothing returning id, email, name`, [email, name, h, ip, country(ip), str(req.headers['user-agent'], 400), str(b.device, 64)]);
+    const r = await pool.query(`insert into users (email, name, pass_hash, created_ip, created_country, created_ua, created_device, last_login_at)
+      values ($1,$2,$3,$4,$5,$6,$7, now()) on conflict (email) do nothing returning id, email, name`, [email, name, h, ip, country(ip), str(req.headers['user-agent'], 400), str(b.device, 64)]);
     if (!r.rowCount) return R(409, { error: 'Un compte existe déjà avec cet e-mail. Entrez votre mot de passe.', exists: true });
     const u = r.rows[0]; await serverEvent(req, 'register', email, u.id, { consent: str(b.consent, 40) }, { ...b, name });
     return R(200, { tok: userTok(u.id), ...pub(u) });
@@ -141,9 +197,17 @@ async function authRoute(req, res, url) {
     if (limited('log:' + ip, 15, 15 * 60e3) || limited('logm:' + email, 10, 15 * 60e3)) return R(429, { error: 'Trop de tentatives. Réessayez dans 15 minutes.' });
     const r = await pool.query('select * from users where email = $1', [email]); const u = r.rows[0];
     if (!u || !(await checkPass(pw, u.pass_hash))) { await serverEvent(req, 'login_fail', email, null, { compte: !!u }, b); return R(401, { error: 'E-mail ou mot de passe incorrect.' }); }
+    const acc = await accessOf(email);
+    if (acc.blocked) { await serverEvent(req, 'access_denied', email, u.id, { raison: acc.reason, etape: 'connexion' }, b); return R(403, { error: BLOCK_MSG(acc.reason), blocked: true }); }
     await pool.query('update users set last_login_at = now() where id = $1', [u.id]);
     await serverEvent(req, 'login_ok', email, u.id, { temporaire: u.pass_by === 'admin' }, { ...b, name: u.name });
     return R(200, { tok: userTok(u.id), ...pub(u), temp: u.pass_by === 'admin' });
+  }
+  if (url.pathname === '/api/auth/me') {          // à l'ouverture de l'app : le compte est-il toujours actif ?
+    const uid = tokUid(b.tok); if (!uid) return R(401, { error: 'Session expirée.' });
+    const u = await userById(uid); if (!u) return R(401, { error: 'Compte introuvable.' });
+    const acc = await accessOf(u.email); if (acc.blocked) return R(200, { ok: false, blocked: true, error: BLOCK_MSG(acc.reason) });
+    return R(200, { ok: true });
   }
   if (url.pathname === '/api/auth/password') {      // nouveau mot de passe (après un mot de passe temporaire)
     const uid = tokUid(b.tok); if (!uid) return R(401, { error: 'Session expirée, reconnectez-vous.' });
@@ -194,7 +258,13 @@ async function adminGet(req, res, url) {
   const q = url.searchParams, lim = Math.min(+q.get('limit') || 200, 1000);
   try {
     if (url.pathname === '/api/admin/clients') {
-      const r = await pool.query(`select c.*, u.created_at as account_at, u.last_login_at, u.pass_by from clients c left join users u on u.email = c.email order by c.last_seen desc limit 10000`);
+      const r = await pool.query(`select c.*, u.created_at as account_at, u.last_login_at, u.pass_by, p.paid, p.refunded, p.chargeback, p.first_paid
+        from clients c left join users u on u.email = c.email
+        left join (select email, bool_or(event in ('order.paid','subscription.created','subscription.renewed','manual.grant')) as paid,
+                          bool_or(event = 'order.refunded') as refunded, bool_or(event = 'order.chargeback') as chargeback,
+                          min(coalesce(paid_at, received_at)) filter (where event in ('order.paid','manual.grant')) as first_paid
+                   from purchases group by email) p on p.email = c.email
+        order by c.last_seen desc limit 10000`);
       return send(res, 200, r.rows);
     }
     if (url.pathname === '/api/admin/recent') {
@@ -210,8 +280,17 @@ async function adminGet(req, res, url) {
       // tout ce que ce client a fait, y compris avant de se connecter sur ses appareils
       const r = await pool.query('select * from events where email = $1 or (device = any($2) and (email is null or email = $1)) order by created_at asc, id asc limit 20000', [email, devs]);
       const a = await pool.query('select id, email, name, pass_by, pass_changed_at, created_at, created_ip, created_country, created_ua, created_device, last_login_at from users where email = $1', [email]);
-      return send(res, 200, { email, devices: devs, events: r.rows, account: a.rows[0] || null });
+      const pu = await pool.query('select id, received_at, event, kp_id, status, email, name, phone, amount, net_amount, currency, offers, payment_id, card_holder, paid_at, refunded_at, chargeback_at, event_at, tracking from purchases where email = $1 order by received_at, id', [email]);
+      return send(res, 200, { email, devices: devs, events: r.rows, account: a.rows[0] || null, purchases: pu.rows, access: await accessOf(email) });
     }
+    if (url.pathname === '/api/admin/sales') {
+      const r = await pool.query(`select p.id, p.received_at, p.event, p.kp_id, p.status, p.email, p.name, p.amount, p.currency, p.offers, p.paid_at, p.tracking,
+          exists(select 1 from events e where e.email = p.email) as in_app, exists(select 1 from users u where u.email = p.email) as has_account
+        from purchases p order by p.received_at desc limit $1`, [lim]);
+      return send(res, 200, r.rows);
+    }
+    if (url.pathname === '/api/admin/config') return send(res, 200, { mode: ACCESS_MODE, webhookSecret: !!KP_SECRET, lastWebhook,
+      webhookUrl: 'https://' + (req.headers['x-forwarded-host'] || req.headers.host) + '/api/webhooks/kashpay' });
     send(res, 404, { error: 'introuvable' });
   } catch (e) { console.error('admin', e.message); send(res, 500, { error: 'base : ' + e.message }); }
 }
@@ -233,6 +312,15 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { password: pw });
     }
     if (url.pathname.startsWith('/api/auth/') && req.method === 'POST') return await authRoute(req, res, url);
+    if (url.pathname === '/api/webhooks/kashpay' && req.method === 'POST') return await kashpayWebhook(req, res);
+    if (url.pathname === '/api/admin/grant' && req.method === 'POST') {      // libérer l'accès à la main (achat ancien, autre moyen de paiement…)
+      if (!okToken(req)) return send(res, 401, { error: 'Sessão expirada' });
+      let b = {}; try { b = JSON.parse(await readBody(req, 4096)); } catch (e) {}
+      const email = String(b.email || '').trim().toLowerCase(); if (!EMAIL_RE.test(email)) return send(res, 400, { error: 'E-mail inválido.' });
+      await savePurchase({ event: 'manual.grant', created_at: new Date().toISOString(), data: { id: 'manual-' + Date.now(), status: 'paid', customer: { email }, paid_at: new Date().toISOString() } }, clientIp(req).ip);
+      await serverEvent(req, 'grant_admin', email, null, { par: 'admin' });
+      return send(res, 200, { ok: true });
+    }
     if (url.pathname === '/health') { try { await pool.query('select 1'); return send(res, 200, 'ok'); } catch (e) { return send(res, 503, 'base indisponible'); } }
     if (url.pathname === '/admin' || url.pathname === '/admin/' || url.pathname === '/admin.html') {
       return send(res, 200, fs.readFileSync(ADMIN_HTML, 'utf8'), { 'Content-Type': 'text/html; charset=utf-8', 'X-Robots-Tag': 'noindex, nofollow', 'X-Frame-Options': 'DENY', 'Referrer-Policy': 'no-referrer' });
@@ -247,5 +335,5 @@ const server = http.createServer(async (req, res) => {
     try { await pool.query(fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8')); console.log('Base prête.'); break; }
     catch (e) { console.error(`Base pas encore prête (essai ${i}) :`, e.message); await new Promise(r => setTimeout(r, 3000)); }
   }
-  server.listen(PORT, () => console.log('Serveur sur le port ' + PORT));
+  server.listen(PORT, () => console.log('Serveur sur le port ' + PORT + ' · accès : ' + ACCESS_MODE + ' · webhook KashPay : ' + (KP_SECRET ? 'prêt' : 'clé manquante')));
 })();

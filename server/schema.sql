@@ -68,3 +68,31 @@ create table if not exists users (
 alter table events add column if not exists uid bigint;
 alter table events add column if not exists verified boolean not null default false;
 create index if not exists events_uid_idx on events (uid);
+
+-- Ventes KashPay (webhooks signés). Une ligne par événement reçu ; les renvois du même événement sont ignorés.
+create table if not exists purchases (
+  id            bigint generated always as identity primary key,
+  received_at   timestamptz not null default now(),
+  event         text not null,              -- order.paid, order.refunded, order.chargeback, subscription.*, manual.grant…
+  kp_id         text,                       -- data.id (transaction KashPay)
+  status        text,
+  email         text,
+  name          text,
+  phone         text,
+  amount        integer,                    -- en centimes
+  net_amount    integer,
+  currency      text,
+  offers        jsonb,
+  payment_id    text,                       -- id Stripe (pi_…)
+  card_holder   text,
+  paid_at       timestamptz,
+  refunded_at   timestamptz,
+  chargeback_at timestamptz,
+  event_at      timestamptz,
+  tracking      jsonb,
+  raw           jsonb not null,
+  ip            text,
+  unique (event, kp_id)
+);
+create index if not exists purchases_email_idx on purchases (email);
+create index if not exists purchases_received_idx on purchases (received_at desc);

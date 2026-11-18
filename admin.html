@@ -109,8 +109,19 @@ function logout(){TOKEN=null;try{sessionStorage.removeItem('ta_admin')}catch(e){
 /* ---------- nomes legíveis ---------- */
 const TABS={home:'Início',lib:'Programas',pray:'Orações diárias',shop:'Bônus',guide:'Père Michel',refund:'Reembolso',theme:'Tema do mês',prog:'Programa (vídeos)',sa:'Oração de Santo Antônio',offer:'Página de oferta',script:'Script Divino',num:'Números Poderosos',focus:'Foco do Dia',journal:'Diário'};
 const ACTS={open:'Abriu um programa',offer:'Abriu uma oferta',buy:'Clicou em COMPRAR',later:'Clicou em conteúdo “em breve”',soon:'Clicou em conteúdo “em breve”',lesson:'Escolheu uma lição',mark:'Marcou vídeo como concluído',play:'Play / pausa no vídeo do programa',mood:'Escolheu o humor do dia',savej:'Salvou o diário',logout:'Saiu da conta',reset:'Reiniciou a demonstração',ask:'Pergunta pronta ao Père Michel',rask:'Pergunta de ajuda',daygo:'Abriu o caminho do dia',sa:'Abriu a oração de Santo Antônio',sacard:'Abriu uma oração de Santo Antônio',sago:'Avançou na oração',salock:'Tentou abrir oração bloqueada',saread:'Concluiu a leitura da oração',bravoclose:'Fechou o “Bravo”',bravonext:'Continuou após “Bravo”',bravolib:'Foi para Programas após “Bravo”',unlockgo:'Abriu lições desbloqueadas',lockgo:'Clicou em conteúdo bloqueado (venda)',numopen:'Abriu Números Poderosos',ntab:'Trocou aba em Números',numclose:'Fechou Números',numgo:'Calculou seu número',numgift:'Recebeu o presente de Números',focusopen:'Abriu Foco do Dia',fopen:'Abriu escolha de intenção',fclose:'Fechou escolha de intenção',fset:'Definiu a intenção do dia',rnext:'Reembolso: passou para a confirmação',rprev:'Reembolso: voltou uma etapa',rsend:'Reembolso: clicou em CONFIRMAR',epgo:'Abriu uma aula do tema',pep:'Abriu/fechou uma aula de programa',pgo:'Botão Começar/Continuar do programa',pmark:'Marcou aula do programa como concluída',menu:'Abriu o menu da conta'};
-const ICO={register:'🆕',login_ok:'🔐',login_fail:'⛔',password_set:'🔁',reset_admin:'🛠️',open:'📲',login:'🔑',view:'👁️',act:'👆',video:'🎬',priere:'🙏',lecon:'✅',cadeau:'🎁',chat:'💬',refund:'💸',away:'⏸️',back:'▶️',error:'⚠️'};
+const ICO={purchase:'💳',access_denied:'🚫',grant_admin:'🛠️',logout_auto:'🚪',register:'🆕',login_ok:'🔐',login_fail:'⛔',password_set:'🔁',reset_admin:'🛠️',open:'📲',login:'🔑',view:'👁️',act:'👆',video:'🎬',priere:'🙏',lecon:'✅',cadeau:'🎁',chat:'💬',refund:'💸',away:'⏸️',back:'▶️',error:'⚠️'};
+const money=(c,cur)=>c==null?'—':(c/100).toLocaleString('pt-BR',{style:'currency',currency:cur||'EUR'});
+const PEV={'order.paid':['pago','ok'],'subscription.created':['assinatura','ok'],'subscription.renewed':['renovação','ok'],'manual.grant':['liberado por você','gold'],
+ 'order.refunded':['reembolsado',''],'order.chargeback':['CHARGEBACK',''],'order.created':['iniciou checkout','gold'],'order.awaiting_payment':['aguardando','gold'],
+ 'order.abandoned':['abandonou','gold'],'order.failed':['recusado',''],'subscription.failed':['renovação recusada',''],'subscription.canceled':['assinatura cancelada','']};
+const ptag=ev=>{const x=PEV[ev]||[ev,'gold'];return `<span class="tag ${x[1]}">${esc(x[0])}</span>`};
+const offersTxt=o=>(Array.isArray(o)?o:[]).map(x=>x.name).filter(Boolean).join(' + ')||'—';
 function label(e){const d=e.detail||{};switch(e.type){
+ case 'purchase':return [({'order.paid':'💳 COMPRA APROVADA','manual.grant':'Acesso liberado manualmente por você','order.refunded':'REEMBOLSO PROCESSADO na KashPay','order.chargeback':'CHARGEBACK aberto na Stripe'}[d.event]||('KashPay: '+d.event)),
+   [offersTxt(d.offers),money(d.amount,d.currency),d.payment_id&&'pagamento '+d.payment_id,d.card_holder&&'titular do cartão: '+d.card_holder].filter(Boolean).join(' · ')];
+ case 'access_denied':return ['Acesso NEGADO',({chargeback:'compra em chargeback',refunded:'compra reembolsada',pas_achat:'nenhuma compra com este e-mail'}[d.raison]||d.raison)+' · '+(d.etape||'')];
+ case 'grant_admin':return ['Você liberou o acesso manualmente pelo painel','(IP e aparelho deste registro são os seus)'];
+ case 'logout_auto':return ['Desconectado automaticamente',d.raison==='bloque'?'compra reembolsada ou contestada':'sessão expirada'];
  case 'open':return ['Abriu o app',[d.pwa?'app instalado':'navegador',d.utm_source&&'origem: '+d.utm_source,d.hash&&'#'+d.hash,d.ref&&'veio de '+d.ref].filter(Boolean).join(' · ')];
  case 'register':return ['CRIOU A CONTA com senha própria','aceitou o registro de atividade (versão '+(d.consent||'')+')'];
  case 'login_ok':return ['Entrou com e-mail e SENHA CORRETA',d.temporaire?'senha temporária enviada por você':''];
@@ -134,15 +145,16 @@ function uaName(ua){ua=ua||'';const os=/iPhone/.test(ua)?'iPhone':/iPad/.test(ua
  const br=/Edg\//.test(ua)?'Edge':/OPR\//.test(ua)?'Opera':/Instagram/.test(ua)?'Instagram':/FBAN|FBAV/.test(ua)?'Facebook':/CriOS|Chrome\//.test(ua)?'Chrome':/FxiOS|Firefox/.test(ua)?'Firefox':/Safari/.test(ua)?'Safari':'?';return os+' · '+br}
 
 /* ---------- estado / telas ---------- */
-const ST={tab:'clients',q:'',f:'all',clients:null,recent:null,refunds:null,detail:null,err:''};
+const ST={tab:'clients',q:'',f:'all',clients:null,recent:null,refunds:null,sales:null,cfg:null,detail:null,err:''};
 async function load(){ST.err='';try{
  if(ST.tab==='recent'&&!ST.recent)ST.recent=await api('recent?limit=300');
  if(ST.tab==='refunds'&&!ST.refunds)ST.refunds=await api('recent?type=refund&limit=1000');
+ if(ST.tab==='sales'&&!ST.sales){ST.sales=await api('sales?limit=1000');ST.cfg=await api('config')}
  if(!ST.clients)ST.clients=await api('clients');
 }catch(e){ST.err=e.message}draw()}
 async function openClient(email){ST.detail={email,loading:true};draw();window.scrollTo(0,0);try{
  const j=await api('client?email='+encodeURIComponent(email));const ev=j.events,devs=j.devices,acc=j.account;
- ST.detail={email,ev,devs,acc};}catch(e){ST.detail={email,err:e.message}}draw()}
+ ST.detail={email,ev,devs,acc,pur:j.purchases||[],access:j.access||{}};}catch(e){ST.detail={email,err:e.message}}draw()}
 
 function draw(){const app=$('#app');
  if(API===null){app.innerHTML=`<div class="login"><h2>Painel no Railway</h2><p class="muted">O painel admin agora fica no servidor do Railway. Abra o endereço do seu serviço « app » no Railway seguido de <b>/admin</b>.</p></div>`;return}
@@ -156,16 +168,30 @@ function draw(){const app=$('#app');
  app.innerHTML=`<div class="top"><h1><small>Temps d'Abondance</small>Painel Admin</h1><button class="btn" data-a="reload">↻ Atualizar</button><button class="btn" data-a="logout">Sair</button></div>
  <div class="kpis"><div class="kpi"><b>${C.length}</b><span>clientes que entraram</span></div><div class="kpi"><b>${act(24)}</b><span>ativos nas últimas 24 h</span></div>
   <div class="kpi"><b>${act(168)}</b><span>ativos nos últimos 7 dias</span></div><div class="kpi"><b>${dur(Math.round(avg))}</b><span>tempo médio no app</span></div><div class="kpi"><b style="color:var(--bad)">${rf}</b><span>pediram reembolso</span></div></div>
- <div class="tabs">${[['clients','Clientes'],['recent','Atividade recente'],['refunds','Reembolsos']].map(t=>`<button data-a="tab" data-t="${t[0]}" aria-current="${ST.tab===t[0]}">${t[1]}</button>`).join('')}</div>
+ <div class="tabs">${[['clients','Clientes'],['sales','Vendas'],['recent','Atividade recente'],['refunds','Reembolsos']].map(t=>`<button data-a="tab" data-t="${t[0]}" aria-current="${ST.tab===t[0]}">${t[1]}</button>`).join('')}</div>
  ${ST.err?`<p class="err">${esc(ST.err)}</p>`:''}
  ${ST.tab==='clients'?`<div class="bar"><input id="q" placeholder="Buscar por nome ou e-mail…" value="${esc(ST.q)}"><select id="f">${[['all','Todos'],['7d','Ativos (7 dias)'],['idle','Sumidos (+7 dias)'],['refund','Pediram reembolso']].map(o=>`<option value="${o[0]}" ${ST.f===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div>
   <div class="list"><div class="row head"><span>Cliente</span><span>Último acesso</span><span class="c3">Primeiro acesso</span><span class="c4">Sessões</span><span class="c5">Tempo</span><span></span></div>
-  ${!ST.clients?'<p class="muted">Carregando…</p>':list.length?list.map(c=>`<button class="row" data-a="client" data-e="${esc(c.email)}"><span><span class="nm">${esc(c.name||'—')}</span> ${(c.refund?'<span class="tag">reembolso</span>':'')+(c.account_at?' <span class="tag ok">conta ✓</span>':'')}<span class="em">${esc(c.email)}</span></span>
+  ${!ST.clients?'<p class="muted">Carregando…</p>':list.length?list.map(c=>`<button class="row" data-a="client" data-e="${esc(c.email)}"><span><span class="nm">${esc(c.name||'—')}</span> ${(c.refund?'<span class="tag">reembolso</span>':'')+(c.account_at?' <span class="tag ok">conta ✓</span>':'')+(c.chargeback?' <span class="tag">CHARGEBACK</span>':c.refunded&&!c.paid?' <span class="tag">reembolsado</span>':c.paid?' <span class="tag gold">pago</span>':'')}<span class="em">${esc(c.email)}</span></span>
    <span>${ago(c.last_seen)}<span class="k">${fmtDT(c.last_seen)}</span></span><span class="c3">${fmtD(c.first_seen)}<span class="k">${esc(c.country||'')}</span></span><span class="c4">${c.sessions}<span class="k">${c.devices} aparelho(s)</span></span><span class="c5">${dur(c.secs)}</span><span class="muted">›</span></button>`).join(''):'<p class="muted">Nenhum cliente encontrado.</p>'}</div>`:''}
  ${ST.tab==='recent'?feed(ST.recent,true):''}
- ${ST.tab==='refunds'?feed(ST.refunds,true):''}`;
+ ${ST.tab==='refunds'?feed(ST.refunds,true):''}
+ ${ST.tab==='sales'?salesTab():''}`;
  const q=$('#q');if(q){q.oninput=()=>{ST.q=q.value;const p=q.selectionStart;draw();const n=$('#q');n.focus();n.setSelectionRange(p,p)}}
  const f=$('#f');if(f)f.onchange=()=>{ST.f=f.value;draw()}}
+function salesTab(){if(!ST.sales)return '<p class="muted">Carregando…</p>';const c=ST.cfg||{},S2=ST.sales;
+ const paid=S2.filter(x=>x.event==='order.paid'),never=paid.filter(x=>!x.in_app),tot=paid.reduce((a,x)=>a+(x.amount||0),0),cur=(paid[0]||{}).currency;
+ return `<div class="panel"><h3>Integração KashPay</h3>
+  <p>Webhook: ${c.webhookSecret?'<span class="tag ok">chave configurada</span>':'<span class="tag">falta a chave KASHPAY_WEBHOOK_SECRET no Railway</span>'} · último aviso recebido: <b>${c.lastWebhook?fmtDT(c.lastWebhook.at)+' ('+esc(c.lastWebhook.event)+')':'nenhum desde a última publicação'}</b></p>
+  <p>Endereço para colar na KashPay: <b style="user-select:all">${esc(c.webhookUrl||'')}</b></p>
+  <p>Modo de acesso: <b>${c.mode==='buyers'?'só compradores podem criar conta':'aberto (qualquer e-mail cria conta; reembolso e chargeback bloqueiam)'}</b></p></div>
+ <div class="kpis"><div class="kpi"><b>${paid.length}</b><span>vendas aprovadas</span></div><div class="kpi"><b>${money(tot,cur)}</b><span>total aprovado</span></div>
+  <div class="kpi"><b style="color:var(--bad)">${never.length}</b><span>compraram e nunca entraram no app</span></div>
+  <div class="kpi"><b style="color:var(--bad)">${S2.filter(x=>x.event==='order.refunded').length} / ${S2.filter(x=>x.event==='order.chargeback').length}</b><span>reembolsos / chargebacks</span></div></div>
+ <div class="list">${S2.length?S2.map(x=>`<button class="row" data-a="client" data-e="${esc(x.email||'')}" style="grid-template-columns:1.6fr 1.4fr .8fr .9fr auto">
+  <span><span class="nm">${esc(x.name||'—')}</span> ${ptag(x.event)}<span class="em">${esc(x.email||'')}</span></span>
+  <span>${esc(offersTxt(x.offers))}<span class="k">${fmtDT(x.paid_at||x.received_at)}</span></span><span>${money(x.amount,x.currency)}<span class="k">${esc((x.tracking||{}).utm_source||'')}</span></span>
+  <span>${x.in_app?'<span class="tag ok">entrou no app</span>':'<span class="tag">nunca entrou</span>'}</span><span class="muted">›</span></button>`).join(''):'<p class="muted">Nenhuma venda recebida ainda. Configure o webhook na KashPay.</p>'}</div>`}
 function feed(evs,who){if(!evs)return '<p class="muted">Carregando…</p>';if(!evs.length)return '<p class="muted">Nada por aqui ainda.</p>';
  return `<div class="panel tl">${evs.map(e=>{const [t,d]=label(e);return `<div class="ev ${e.type==='refund'?'bad':['login','video','priere'].includes(e.type)?'imp':''}"><time>${fmtD(e.created_at).slice(0,5)}<br>${fmtT(e.created_at).slice(0,5)}</time><span>${ICO[e.type]||'•'}</span>
   <span><span class="t">${esc(t)}</span>${who&&e.email?` · <button data-a="client" data-e="${esc(e.email)}" style="color:var(--accent);font-weight:700">${esc(e.name||e.email)}</button>`:''}<br><span class="d">${esc(d)}${e.ip?' · IP '+esc(e.ip):''}</span></span></div>`}).join('')}</div>`}
@@ -174,6 +200,11 @@ function drawClient(){const D=ST.detail,app=$('#app');
  const top=`<div class="top noprint"><button class="btn" data-a="back">← Voltar</button><h1 style="font-size:22px">${esc(D.email)}</h1>${D.ev?`<button class="btn" data-a="csv">Exportar CSV</button><button class="btn gold" data-a="print">Imprimir dossiê / PDF</button>`:''}</div>`;
  if(D.loading){app.innerHTML=top+'<p class="muted">Carregando histórico…</p>';return}
  if(D.err){app.innerHTML=top+`<p class="err">${esc(D.err)}</p>`;return}
+ const A=D.access||{},purPanel=`<div class="panel"><h3>Compras (KashPay)</h3>
+  <p>Acesso ao app: ${A.blocked?`<span class="tag">BLOQUEADO (${A.reason==='chargeback'?'chargeback':'reembolso'})</span>`:A.paid?'<span class="tag ok">liberado (compra ativa)</span>':'<span class="tag gold">sem compra registrada</span>'}
+  ${!A.paid?` <button class="btn noprint" data-a="grant" data-e="${esc(D.email)}" style="margin-left:6px">🛠️ Liberar acesso manualmente</button>`:''}</p>
+  ${(D.pur||[]).length?`<div class="scroll"><table><tr><th>Data</th><th>Evento</th><th>Oferta</th><th>Valor</th><th>Pagamento</th><th>Origem</th></tr>${D.pur.map(x=>`<tr><td>${fmtDT(x.paid_at||x.event_at||x.received_at)}</td><td>${ptag(x.event)}</td><td>${esc(offersTxt(x.offers))}</td><td>${money(x.amount,x.currency)}</td><td>${esc(x.payment_id||x.kp_id||'')}${x.card_holder?'<br><span class="muted">titular: '+esc(x.card_holder)+'</span>':''}</td><td>${esc(['utm_source','utm_campaign','utm_content'].map(k=>(x.tracking||{})[k]).filter(Boolean).join(' / ')||'—')}</td></tr>`).join('')}</table></div>`:'<p class="muted">Nenhum aviso da KashPay para este e-mail.</p>'}</div>`;
+ if(!D.ev.length){app.innerHTML=top+`<div class="panel"><h3>${esc((D.pur.find(x=>x.name)||{}).name||D.email)}</h3><p class="err">Este cliente ainda não entrou no app.</p></div>`+purPanel;return}
  const ev=D.ev,mine=ev.filter(e=>e.email===D.email),name=(mine.slice().reverse().find(e=>e.name)||{}).name||'—';
  const logins=ev.filter(e=>e.type==='login'),first=ev[0],last=ev[ev.length-1],ref=ev.filter(e=>e.type==='refund');
  const secs=ev.filter(e=>e.type==='away').reduce((a,e)=>a+Math.min(+(e.detail||{}).secs||0,21600),0);
@@ -189,14 +220,16 @@ function drawClient(){const D=ST.detail,app=$('#app');
  const byDev={};ev.forEach(e=>{const k=e.device||'?';const x=byDev[k]=byDev[k]||{ua:e.ua,first:e.created_at,last:e.created_at,ips:new Set(),cc:new Set(),n:0,tz:e.tz,lang:e.lang,screen:e.screen};x.last=e.created_at;x.n++;if(e.ip)x.ips.add(e.ip);if(e.country)x.cc.add(e.country)});
  const ips={};ev.forEach(e=>{if(!e.ip)return;const x=ips[e.ip]=ips[e.ip]||{first:e.created_at,last:e.created_at,n:0,cc:e.country};x.last=e.created_at;x.n++});
  // linha do tempo por dia
- let day='',tl='';ev.forEach(e=>{const d=fmtD(e.created_at);if(d!==day){day=d;tl+=`<div class="day">${new Date(e.created_at).toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>`}
-  const [t,x]=label(e);tl+=`<div class="ev ${e.type==='refund'?'bad':['login','video','priere','lecon'].includes(e.type)?'imp':''}"><time>${fmtT(e.created_at)}</time><span>${ICO[e.type]||'•'}</span><span><span class="t">${esc(t)}</span><br><span class="d">${esc(x)}${x?' · ':''}${e.ip?'IP '+esc(e.ip):''}${e.country?' ('+esc(e.country)+')':''} · ${esc(uaName(e.ua))}${e.email?'':' · antes do login'}</span></span></div>`});
+ const tlev=ev.concat((D.pur||[]).map(x=>({created_at:x.paid_at||x.event_at||x.received_at,type:'purchase',detail:x}))).sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));
+ let day='',tl='';tlev.forEach(e=>{const d=fmtD(e.created_at);if(d!==day){day=d;tl+=`<div class="day">${new Date(e.created_at).toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>`}
+  const [t,x]=label(e);tl+=`<div class="ev ${e.type==='refund'||e.type==='access_denied'||(e.type==='purchase'&&/refund|chargeback/.test(e.detail.event))?'bad':e.type==='purchase'?'imp':['login','video','priere','lecon'].includes(e.type)?'imp':''}"><time>${fmtT(e.created_at)}</time><span>${ICO[e.type]||'•'}</span><span><span class="t">${esc(t)}</span><br><span class="d">${esc(x)}${x?' · ':''}${e.type==='purchase'?'aviso assinado da KashPay':(e.ip?'IP '+esc(e.ip):'')+(e.country?' ('+esc(e.country)+')':'')+' · '+esc(uaName(e.ua))+(e.email?'':' · antes do login')}</span></span></div>`});
  app.innerHTML=top+`
  <div class="print-only"><h1>Dossiê de atividade do cliente</h1><p>Temps d'Abondance · gerado em ${fmtDT(new Date())} (fuso ${esc(TZ)}) · horários registrados pelo servidor</p></div>
- <div class="panel"><h3>${esc(name)} ${ref.length?'<span class="tag">pediu reembolso</span>':'<span class="tag ok">sem reembolso</span>'}</h3>
+ <div class="panel"><h3>${esc(name)} ${(D.pur||[]).some(x=>x.event==='order.chargeback')?'<span class="tag">CHARGEBACK</span>':(D.pur||[]).some(x=>x.event==='order.refunded')?'<span class="tag">reembolsado na KashPay</span>':ref.length?'<span class="tag">pediu reembolso pelo app</span>':'<span class="tag ok">sem reembolso</span>'}</h3>
   <div class="facts"><div><b>${fmtDT(first.created_at)}</b><span>primeiro acesso</span></div><div><b>${fmtDT(last.created_at)}</b><span>último acesso (${ago(last.created_at)})</span></div>
   <div><b>${logins.length}</b><span>logins</span></div><div><b>${sessions}</b><span>sessões (visitas)</span></div><div><b>${days}</b><span>dias diferentes com acesso</span></div>
   <div><b>${dur(secs)}</b><span>tempo ativo no app</span></div><div><b>${Object.keys(byDev).length}</b><span>aparelho(s)</span></div><div><b>${Object.keys(ips).length}</b><span>endereço(s) IP</span></div></div></div>
+ ${purPanel}
  <div class="grid2">
   <div class="panel"><h3>Conta com senha</h3>${D.acc?`<p>Conta criada pelo próprio cliente em <b>${fmtDT(D.acc.created_at)}</b>, a partir do IP <b>${esc(D.acc.created_ip||'—')}</b>${D.acc.created_country?' ('+esc(D.acc.created_country)+')':''}, aparelho ${esc(uaName(D.acc.created_ua))}.</p>
    <p>Último login com senha: <b>${fmtDT(D.acc.last_login_at)}</b> · senha ${D.acc.pass_by==='admin'?'<b>temporária</b> (gerada por você)':'escolhida pelo cliente'} · ${ev.filter(e=>e.verified).length} de ${ev.length} registros feitos com a conta conectada.</p>
@@ -215,7 +248,7 @@ function drawClient(){const D=ST.detail,app=$('#app');
   ${Object.entries(byDev).map(([k,x])=>`<tr><td><b>${esc(uaName(x.ua))}</b><br><span class="muted">${esc(k)}</span></td><td>${fmtDT(x.first)}</td><td>${fmtDT(x.last)}</td><td>${x.n}</td><td>${esc([...x.ips].join(', ')||'—')}<br>${esc([...x.cc].join(', '))}</td><td>${esc(x.lang||'')} · ${esc(x.tz||'')} · ${esc(x.screen||'')}</td></tr>`).join('')}</table></div></div>
  <div class="panel"><h3>Endereços IP</h3><div class="scroll"><table><tr><th>IP</th><th>País</th><th>Primeiro</th><th>Último</th><th>Registros</th></tr>
   ${Object.entries(ips).map(([k,x])=>`<tr><td>${esc(k)}</td><td>${esc(x.cc||'—')}</td><td>${fmtDT(x.first)}</td><td>${fmtDT(x.last)}</td><td>${x.n}</td></tr>`).join('')||'<tr><td colspan="5" class="muted">—</td></tr>'}</table></div></div>
- <div class="panel tl"><h3>Linha do tempo completa (${ev.length} registros)</h3><p class="muted" style="margin:0">Horários do servidor, mostrados no fuso ${esc(TZ)}.</p>${tl}</div>`}
+ <div class="panel tl"><h3>Linha do tempo completa (${tlev.length} registros)</h3><p class="muted" style="margin:0">Horários do servidor, mostrados no fuso ${esc(TZ)}.</p>${tl}</div>`}
 
 function csv(){const D=ST.detail,cols=['created_at','client_ts','type','acao','detalhes','email','name','ip','country','device','session','ua','lang','tz','screen'];
  const rows=D.ev.map(e=>{const [t,x]=label(e);return {...e,acao:t,detalhes:x}});
@@ -233,6 +266,9 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b
  else if(a==='back'){ST.detail=null;draw()}
  else if(a==='print')window.print();
  else if(a==='csv')csv()
+ else if(a==='grant'){if(!confirm('Liberar o acesso de '+b.dataset.e+' manualmente (como se tivesse comprado)?'))return;
+  fetch(API+'/api/admin/grant',{method:'POST',headers:{Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'},body:JSON.stringify({email:b.dataset.e})})
+   .then(r=>r.json().then(j=>({ok:r.ok,j}))).then(({ok,j})=>{if(!ok)return alert(j.error||'Erro');ST.sales=null;ST.clients=null;openClient(b.dataset.e)})}
  else if(a==='reset'){if(!confirm('Gerar uma senha temporária para '+b.dataset.e+'? A senha atual dele deixa de funcionar.'))return;
   fetch(API+'/api/admin/reset',{method:'POST',headers:{Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'},body:JSON.stringify({email:b.dataset.e})})
    .then(r=>r.json().then(j=>({ok:r.ok,j}))).then(({ok,j})=>{if(!ok)return alert(j.error||'Erro');openClient(b.dataset.e).then(()=>{ST.detail.temp=j.password;draw()})})}});

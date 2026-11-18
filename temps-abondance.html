@@ -1188,5 +1188,8 @@ document.addEventListener('submit',e=>{e.preventDefault();
 addEventListener('hashchange',()=>{applyHash();render()});
 {const u=new URLSearchParams(location.search),d={hash:location.hash.slice(1),ref:document.referrer.slice(0,200),pwa:matchMedia('(display-mode: standalone)').matches};
  ['utm_source','utm_medium','utm_campaign','src'].forEach(k=>{if(u.get(k))d[k]=u.get(k).slice(0,80)});track('open',d)}
+// compte toujours actif ? (remboursement / contestation → accès fermé)
+if(API_URL&&S.tok)authApi('me',{tok:S.tok}).then(r=>{if((r.status===200&&r.j.blocked)||r.status===401){track('logout_auto',{raison:r.j.blocked?'bloque':'session'});
+ S.tok=null;S.user=null;save();L.s='mail';L.err=r.j.error||'Session expirée, reconnectez-vous.';V=fresh();render()}});
 applyHash();render();
 </script>
