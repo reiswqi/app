@@ -400,6 +400,14 @@ main.chat{padding-bottom:0}
 .wbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,transparent,var(--accent));transition:width 1.9s ease}
 .scrim{position:fixed;inset:0;z-index:35;display:grid;place-items:center;padding:20px;background:rgba(5,10,22,.82);animation:fadein .4s both}
 .scrim.low{place-items:end center;padding:0}
+.sheet.legal{max-height:88vh;max-height:88dvh;gap:12px}
+.lghead{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.lghead h3{font-size:24px}
+.lgx{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:var(--soft);border:1px solid var(--line);flex:none}
+.lgbody{overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-right:4px;font-size:15px;line-height:1.55}
+.lgbody h4{margin:10px 0 0;font-family:var(--display);font-size:20px;font-weight:600;color:var(--accent)}
+.lgbody p{margin:0;color:var(--on-card)}
+.lglink{color:var(--accent);text-decoration:underline;text-underline-offset:3px;font:inherit;display:inline}
 .modal{width:100%;max-width:380px;display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center;padding:26px 20px;border-radius:12px;background:var(--card);border:1px solid var(--card-line);box-shadow:0 0 60px rgba(170,196,255,.14);animation:pop .45s both}
 .modal h2{font-size:28px;letter-spacing:.04em;text-transform:uppercase}
 .sheet{width:100%;max-width:460px;display:flex;flex-direction:column;gap:10px;padding:22px max(20px,env(safe-area-inset-right,0px)) calc(22px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));border-radius:16px 16px 0 0;background:var(--card);border-top:1px solid var(--card-line);animation:rise .35s both}
@@ -606,7 +614,7 @@ let V=fresh(),timer=null,sample=null,D=DAILY[0];
    Chaque action est envoyée à API_URL/api/events (voir server/index.js). Le serveur ajoute l'heure, l'IP et le pays.
    Les clients peuvent seulement ajouter ; seul le panneau admin (mot de passe) peut lire. */
 const API_URL='https://app-production-b4b778ce.up.railway.app';  // ex. https://app-production-xxxx.up.railway.app (sans / à la fin)
-const CONSENT_V='2026-11-v1';
+const CONSENT_V='2026-11-v2';   // v2 : acceptation des Conditions d'utilisation et de la Politique de confidentialité (voir LEGAL)
 const TK=(()=>{const rid=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36);
  let dev;try{dev=localStorage.getItem('ta_dev');if(!dev){dev=rid();localStorage.setItem('ta_dev',dev)}}catch(e){dev=rid()}
  let q=[];try{q=JSON.parse(localStorage.getItem('ta_q'))||[]}catch(e){}
@@ -625,7 +633,7 @@ function tkFlush(final){if(!API_URL||!TK.q.length||(TK.busy&&!final))return;
   .then(r=>{if(r.ok){TK.q.splice(0,batch.length);TK.keep();if(TK.q.length)setTimeout(tkFlush,300)}})
   .catch(()=>{}).finally(()=>{TK.busy=false})}
 // clics : on garde l'action et ses paramètres (id, numéro…), jamais de texte écrit par le client
-const TK_SKIP=new Set(['peye','noop','tab','menuclose','rwhy','rok','numpick','fpick','ep']);
+const TK_SKIP=new Set(['legal','legalclose','peye','noop','tab','menuclose','rwhy','rok','numpick','fpick','ep']);
 function logClick(a,b){if(TK_SKIP.has(a))return;const d={};for(const k in b.dataset)if(k!=='a')d[k]=String(b.dataset[k]).slice(0,120);track('act',{a,...d})}
 function logView(){const t=V.tab;if(logView.last===t)return;logView.last=t;
  const d={tab:t};if(t==='prog')d.prog=V.prog;if(t==='offer')d.offer=V.off;if(t==='sa')d.priere=V.saI;track('view',d)}
@@ -704,7 +712,7 @@ function vLogin(){if(!L.mail&&S.user){L.mail=S.user.email;L.name=S.user.name}
   ${body}
   <p id="lerr" class="small" style="color:#ffb4a8" ${L.err?'':'hidden'}>${esc(L.err)}</p>
   <p class="small soft center">Des difficultés ? <span style="color:var(--accent);user-select:all">${SUPPORT}</span></p>
-  <p class="soft center" style="font-size:11px;line-height:1.45;opacity:.8">En entrant, vous acceptez que votre activité dans l'application (connexions, appareil, adresse IP, contenus consultés) soit enregistrée pour sécuriser votre accès et le suivi de votre compte.</p></form>
+  <p class="soft center" style="font-size:12px;line-height:1.5">En continuant, vous acceptez nos <button type="button" class="lglink" data-a="legal" data-k="cgu">Conditions d'utilisation</button> et notre <button type="button" class="lglink" data-a="legal" data-k="conf">Politique de confidentialité</button>.</p></form>
  <p class="verse">« Cherchez premièrement le royaume et la justice de Dieu ; et toutes ces choses vous seront données par-dessus. »<br><span class="eyebrow" style="font-style:normal;font-family:var(--body);margin-top:6px">Matthieu 6:33</span></p></div>`}
 async function loginSubmit(){if(L.busy)return;const btn=$('#lbtn'),err=m=>{L.err=m;L.busy=false;render();setTimeout(()=>{const f=$('#lpw')||$('#lmail');f&&f.focus()},50)};
  const okMail=m=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m),pw=()=>($('#lpw')||{}).value||'';
@@ -1025,11 +1033,37 @@ function bravoShow(){$('#unlock')?.remove();const u=document.createElement('div'
  document.body.appendChild(u);setTimeout(()=>u.classList.add('open'),120)}
 function bravoClose(){const u=$('#unlock');if(!u)return;u.classList.add('out');setTimeout(()=>u.remove(),550)}
 function unlockGo(){clearTimeout(unlockShow.t);const u=$('#unlock');if(!u)return;stopPlay();V.tab='lib';V.fresh=true;render();u.classList.add('out');setTimeout(()=>u.remove(),550)}
+// Conditions d'utilisation et politique de confidentialité (affichées dans une fenêtre, sans quitter l'écran en cours).
+// Si le texte change, augmenter CONSENT_V : la version acceptée est enregistrée à chaque connexion.
+const LEGAL_DATE='18 novembre 2026';
+const LEGAL={
+ cgu:{t:"Conditions d'utilisation",s:[
+  ["Bienvenue","Ces conditions encadrent l'utilisation de l'application Prière Sacrée. En créant votre accès ou en vous connectant, vous les acceptez. Elles sont simples et pensées pour protéger votre espace."],
+  ["Votre accès","L'accès est personnel et réservé à la personne qui a effectué l'achat. Vous entrez avec l'adresse e-mail utilisée lors de votre achat et le mot de passe que vous avez choisi. Gardez votre mot de passe pour vous : ne le partagez pas, même avec un proche."],
+  ["Les contenus","Les prières, programmes, vidéos et bonus sont destinés à un usage personnel et spirituel. Ils ne remplacent pas l'avis d'un médecin, d'un psychologue ou d'un conseiller financier. Ils ne peuvent pas être copiés, revendus ou diffusés."],
+  ["Votre achat et le remboursement","Votre achat est traité par notre prestataire de paiement. Si l'application ne vous convient pas, vous pouvez demander un remboursement depuis l'onglet « Rembourser » ou en nous écrivant. Une fois le remboursement effectué, l'accès à l'application est clôturé. En cas de difficulté avec un paiement, écrivez-nous d'abord : nous trouvons presque toujours une solution rapidement."],
+  ["Sécurité et historique d'utilisation","Pour protéger votre compte et confirmer que votre accès fonctionne bien, l'application conserve un historique technique de vos connexions (date, appareil, adresse IP) et des contenus ouverts. En cas de contestation d'un paiement, cet historique peut être transmis à notre prestataire de paiement pour attester de l'accès au service. Le détail figure dans notre politique de confidentialité."],
+  ["Évolution du service","Nous enrichissons régulièrement l'application et pouvons faire évoluer ses contenus et ces conditions. La version en vigueur est toujours disponible dans l'application."],
+  ["Nous contacter","Pour toute question : "+SUPPORT+"."]]},
+ conf:{t:"Politique de confidentialité",s:[
+  ["En quelques mots","Vos données servent uniquement à vous donner accès à votre espace, à le sécuriser et à vous aider. Nous ne les vendons jamais et nous n'affichons aucune publicité."],
+  ["Ce que nous enregistrons","• Votre nom et votre adresse e-mail.\n• Votre mot de passe, sous une forme chiffrée que personne ne peut lire, pas même nous.\n• Les informations de votre achat transmises par notre prestataire de paiement (date, montant, produit, référence). Nous ne voyons jamais votre numéro de carte.\n• L'historique d'utilisation : connexions, appareil et navigateur, adresse IP et pays approximatif, écrans et contenus ouverts, temps passé dans l'application.\n• Les demandes que vous nous envoyez (remboursement, assistance). Le contenu de vos messages au Père Michel n'est pas conservé."],
+  ["Pourquoi","Pour vous donner accès à vos contenus et mémoriser votre progression, sécuriser votre compte et prévenir la fraude, répondre à vos demandes, et attester de l'accès au service en cas de contestation d'un paiement. Ces traitements reposent sur l'exécution de votre achat et sur notre intérêt légitime à protéger le service."],
+  ["Combien de temps","Pendant toute la durée de votre accès, puis jusqu'à 3 ans après votre dernière connexion. L'historique lié à un paiement peut être conservé tant qu'il est nécessaire pour répondre à une contestation."],
+  ["Avec qui","Uniquement avec les prestataires qui font fonctionner l'application : hébergement (Railway), paiement (KashPay et Stripe), envoi d'e-mails (Brevo) et lecture des vidéos (vturb). Certains sont situés hors de l'Union européenne ; ils n'utilisent vos données que pour le service rendu."],
+  ["Sur votre téléphone","L'application garde sur votre appareil votre session et votre progression pour que vous n'ayez pas à vous reconnecter. Elle n'utilise pas de cookies publicitaires."],
+  ["Vos droits","Vous pouvez à tout moment demander à consulter, corriger ou supprimer vos données, ou vous opposer à un traitement, en écrivant à "+SUPPORT+". Vous pouvez aussi adresser une réclamation à la CNIL (cnil.fr)."]]}};
+function openLegal(k){const L2=LEGAL[k];if(!L2)return;closeLegal();const d=document.createElement('div');d.id='legal';d.className='scrim low';d.dataset.a='legalclose';
+ d.innerHTML=`<div class="sheet legal" role="dialog" aria-modal="true" aria-label="${esc(L2.t)}" data-a="noop"><div class="lghead"><h3>${esc(L2.t)}</h3><button class="lgx" data-a="legalclose" aria-label="Fermer">✕</button></div>
+ <div class="lgbody"><p class="small soft">Mise à jour : ${LEGAL_DATE}</p>${L2.s.map(([h,p])=>`<h4>${esc(h)}</h4>${p.split('\n').map(x=>`<p>${esc(x)}</p>`).join('')}`).join('')}</div>
+ <button class="btn gold" data-a="legalclose">J'ai compris</button></div>`;document.body.appendChild(d);track('legal',{doc:k})}
+function closeLegal(){$('#legal')?.remove()}
 function menuSheet(){return `<div class="scrim low" data-a="menuclose"><div class="sheet" role="dialog" aria-modal="true" aria-label="Mon compte" data-a="noop">
  <div class="row"><span class="avatar">${esc(first()[0].toUpperCase())}</span><div class="grow"><h3>${esc(S.user.name)}</h3><p class="small soft">${esc(S.user.email)} · Jour ${dayN()}</p></div></div>
  ${mc('data-a="tab" data-t="guide"',tile('chat'),'Aide','')}
  ${mc('data-a="tab" data-t="refund"',tile('mail'),'Remboursement','')}
  ${mc('data-a="logout"',tile('user'),'Déconnexion','')}
+ <p class="small center" style="margin-top:4px"><button class="lglink" data-a="legal" data-k="cgu">Conditions d'utilisation</button> · <button class="lglink" data-a="legal" data-k="conf">Confidentialité</button></p>
  <button class="linkbtn" data-a="reset" style="margin-top:6px">Recommencer la démo</button></div></div>`}
 // écran de bienvenue animé entre la connexion et l'application
 function welcome(name,done){const w=document.createElement('div');w.id='welcome';
@@ -1105,6 +1139,8 @@ document.addEventListener('click',e=>{
  if(a==='tab'){stopPlay();if(b.dataset.t!=='lib')V.fresh=false;V.tab=b.dataset.t;V.menu=false;V.rform=false}
  else if(a==='menu')V.menu=true;
  else if(a==='menuclose')V.menu=false;
+ else if(a==='legal'){openLegal(b.dataset.k);return}
+ else if(a==='legalclose'){closeLegal();return}
  else if(a==='open'){stopPlay();openProg(b.dataset.id)}
  else if(a==='offer'&&OFFERS.find(x=>x.id===b.dataset.id).top){const o=OFFERS.find(x=>x.id===b.dataset.id);if(o.url){const l=document.createElement('a');l.href=o.url;l.target='_blank';l.rel='noopener';l.click()}else toast('Lien de la page de vente à ajouter');return}
  else if(a==='offer'){V.offBack=['home','lib'].includes(V.tab)?V.tab:'shop';V.off=b.dataset.id;V.tab='offer'}
