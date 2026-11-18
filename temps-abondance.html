@@ -653,7 +653,8 @@ const P=[
    "Entrez dans la présence du Trône : l'autorité et la confiance d'un enfant du Roi.",
    "La dernière fréquence scelle votre miracle et le rend permanent."],
   learn:["Briser le cycle des retards","Une impulsion pour chaque domaine de votre vie","Un rituel simple : au réveil ou avant de dormir","Sceller votre miracle pour qu'il demeure"]},
- {id:'salomon',t:"Les Secrets Cachés de la Prospérité du Roi Salomon",img:'img/salomon.jpg',poster:'img/salomon-video.jpg',
+ {id:'salomon',t:"Les Secrets Cachés de la Prospérité du Roi Salomon",img:'img/salomon.jpg',upd:'2 décembre',   // en préparation : carte « Mise à jour · 2 décembre » ; retirer upd quand les vidéos sont prêtes
+  poster:'img/salomon-video.jpg',
   l:["01. Ce Qui a Fait de Salomon l'Homme le Plus Riche du Monde","02. Les Connaissances Secrètes qui ont fait de Salomon le plus Sage"],video:['','']}
 ];
 // Programme annoncé, encore verrouillé (10 vidéos à venir).
@@ -1091,6 +1092,7 @@ function vLib(){
  const card=o=>pcard(`data-a="offer" data-id="${o.id}"`,`<span class="cv" ${o.img?`style="background-image:url(${o.img})"`:''}>${o.img?'':ic('spark')}</span>`,o.t,o.s,`Découvrir ${ic('spark')}`,'','prem');
  const progs=offersLeft().filter(o=>o.top).map(card).concat(P.map(p=>!has(p)
   ?pcard('data-a="sa"',`<span class="cv typo">${ic('lock')}<b>Leçons à débloquer</b><small>Verrouillé</small></span>`,'Leçons à débloquer','Lisez la Prière de Saint Antoine','Débloquer')
+  :p.upd?pcard(`data-a="upd" data-id="${p.id}"`,`<span class="cv tease" style="background-image:url(${p.img})"><span class="badge">Mise à jour</span><span class="seal">${ic('lock')}</span></span>`,p.t,`Disponible le ${p.upd}`,`${ic('lock')} ${p.upd}`,'','dim')
   :pcard(`data-a="open" data-id="${p.id}"`,`<span class="cv ${p.hook&&!p.banner?'hooked':''}" style="background-image:url(${p.img})">${p.hook&&!p.banner?`<span class="badge">${esc(p.tag)}</span><span class="cvh"><b>${esc(p.t)}</b><small>${esc(p.hook)}</small></span>`:''}${p.gift?`<span class="badge">${V.fresh?'Débloqué':'Cadeau offert'}</span>`:''}${ld(p.id)?`<span class="bar"><i style="width:${ld(p.id)/p.l.length*100}%"></i></span>`:''}</span>`,
     p.t,ld(p.id)===p.l.length?'Terminé':ld(p.id)?`${ld(p.id)} sur ${p.l.length} vidéos vues`:`${p.l.length} vidéos`,`${ic('play')} ${ld(p.id)&&ld(p.id)<p.l.length?'Continuer':'Regarder'}`,p.gift&&V.fresh?'fresh':'')))
   .concat([pcard('data-a="later"',`<span class="cv tease" style="background-image:url(${SOON.img})"><span class="badge">Bientôt</span><span class="seal">${ic('lock')}</span></span>`,SOON.t,SOON.s,`${ic('lock')} Bientôt`,'','dim')]);
@@ -1491,6 +1493,7 @@ document.addEventListener('click',e=>{
  else if(a==='offer'){V.offBack=['home','lib'].includes(V.tab)?V.tab:'shop';V.off=b.dataset.id;V.tab='offer'}
  else if(a==='buy'){const o=OFFERS.find(x=>x.id===b.dataset.id);if(o.url){const l=document.createElement('a');l.href=o.url;l.target='_blank';l.rel='noopener';l.click()}else toast('Lien de paiement à ajouter');return}
  else if(a==='later'){toast('Bientôt disponible');return}
+ else if(a==='upd'){const p=P.find(x=>x.id===b.dataset.id);toast(`Mise à jour en préparation · disponible le ${p.upd} ✦`);return}
  else if(a==='soon'){toast('Contenu à brancher dans la version finale');return}
  else if(a==='lesson'){stopPlay();V.cur=+b.dataset.i;V.pos=0}
  else if(a==='mark'){stopPlay();markLesson()}
