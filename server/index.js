@@ -315,11 +315,18 @@ const server = http.createServer(async (req, res) => {
     if (url.pathname === '/api/webhooks/kashpay' && req.method === 'POST') return await kashpayWebhook(req, res);
     if (url.pathname === '/api/admin/grant' && req.method === 'POST') {      // libérer l'accès à la main (achat ancien, autre moyen de paiement…)
       if (!okToken(req)) return send(res, 401, { error: 'Sessão expirada' });
-      let b = {}; try { b = JSON.parse(await readBody(req, 4096)); } catch (e) {}
-      const email = String(b.email || '').trim().toLowerCase(); if (!EMAIL_RE.test(email)) return send(res, 400, { error: 'E-mail inválido.' });
-      await savePurchase({ event: 'manual.grant', created_at: new Date().toISOString(), data: { id: 'manual-' + Date.now(), status: 'paid', customer: { email }, paid_at: new Date().toISOString() } }, clientIp(req).ip);
-      await serverEvent(req, 'grant_admin', email, null, { par: 'admin' });
-      return send(res, 200, { ok: true });
+      let b = {}; try { b = JSON.parse(await readBody(req, 512 * 1024)); } catch (e) {}
+      // un e-mail ({email}) ou une liste collée ({emails: "a@x.fr, b@y.fr …"} ou tableau) : jusqu'à 5000 d'un coup
+      const raw = Array.isArray(b.emails) ? b.emails.join(' ') : String(b.emails || b.email || '');
+      const list = [...new Set((raw.match(/[^\s,;<>"'()]+@[^\s,;<>"'()]+\.[^\s,;<>"'()]+/g) || []).map(x => x.trim().toLowerCase()).filter(x => EMAIL_RE.test(x)))].slice(0, 5000);
+      if (!list.length) return send(res, 400, { error: 'Nenhum e-mail válido encontrado.' });
+      let added = 0, already = 0; const ip = clientIp(req).ip;
+      for (const [i, email] of list.entries()) {
+        if ((await accessOf(email)).paid) { already++; continue; }
+        await savePurchase({ event: 'manual.grant', created_at: new Date().toISOString(), data: { id: 'manual-' + Date.now() + '-' + i, status: 'paid', customer: { email }, paid_at: new Date().toISOString() } }, ip);
+        await serverEvent(req, 'grant_admin', email, null, { par: 'admin', lot: list.length > 1 ? list.length : undefined }); added++;
+      }
+      return send(res, 200, { ok: true, total: list.length, added, already });
     }
     if (url.pathname === '/health') { try { await pool.query('select 1'); return send(res, 200, 'ok'); } catch (e) { return send(res, 503, 'base indisponible'); } }
     if (url.pathname === '/admin' || url.pathname === '/admin/' || url.pathname === '/admin.html') {

@@ -185,6 +185,9 @@ function salesTab(){if(!ST.sales)return '<p class="muted">Carregando…</p>';con
   <p>Webhook: ${c.webhookSecret?'<span class="tag ok">chave configurada</span>':'<span class="tag">falta a chave KASHPAY_WEBHOOK_SECRET no Railway</span>'} · último aviso recebido: <b>${c.lastWebhook?fmtDT(c.lastWebhook.at)+' ('+esc(c.lastWebhook.event)+')':'nenhum desde a última publicação'}</b></p>
   <p>Endereço para colar na KashPay: <b style="user-select:all">${esc(c.webhookUrl||'')}</b></p>
   <p>Modo de acesso: <b>${c.mode==='buyers'?'só compradores podem criar conta':'aberto (qualquer e-mail cria conta; reembolso e chargeback bloqueiam)'}</b></p></div>
+ <div class="panel"><h3>Liberar acesso manualmente</h3><p class="muted">Cole um ou vários e-mails (um por linha, ou separados por vírgula, ou a coluna inteira de uma planilha). Cada um poderá criar a conta no app com esse e-mail.</p>
+  <textarea id="gl" rows="4" style="width:100%;padding:12px;border-radius:8px;border:1px solid var(--line);background:rgba(8,16,32,.6);font:inherit;color:inherit" placeholder="cliente1@exemplo.com&#10;cliente2@exemplo.com"></textarea>
+  <p style="margin:10px 0 0"><button class="btn gold" data-a="grantmany">Liberar acesso</button> <span id="glr" class="muted"></span></p></div>
  <div class="kpis"><div class="kpi"><b>${paid.length}</b><span>vendas aprovadas</span></div><div class="kpi"><b>${money(tot,cur)}</b><span>total aprovado</span></div>
   <div class="kpi"><b style="color:var(--bad)">${never.length}</b><span>compraram e nunca entraram no app</span></div>
   <div class="kpi"><b style="color:var(--bad)">${S2.filter(x=>x.event==='order.refunded').length} / ${S2.filter(x=>x.event==='order.chargeback').length}</b><span>reembolsos / chargebacks</span></div></div>
@@ -266,6 +269,11 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b
  else if(a==='back'){ST.detail=null;draw()}
  else if(a==='print')window.print();
  else if(a==='csv')csv()
+ else if(a==='grantmany'){const v=$('#gl').value,n=(v.match(/@/g)||[]).length;if(!n)return alert('Cole pelo menos um e-mail.');if(!confirm('Liberar o acesso de '+n+' e-mail(s)?'))return;
+  b.disabled=true;b.textContent='Liberando…';
+  fetch(API+'/api/admin/grant',{method:'POST',headers:{Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'},body:JSON.stringify({emails:v})})
+   .then(r=>r.json().then(j=>({ok:r.ok,j}))).then(({ok,j})=>{b.disabled=false;b.textContent='Liberar acesso';if(!ok)return alert(j.error||'Erro');
+    $('#gl').value='';$('#glr').textContent=`✓ ${j.added} liberado(s)`+(j.already?` · ${j.already} já tinham acesso`:'');ST.clients=null;const keep=$('#glr').textContent;ST.sales=null;load().then(()=>{const e=$('#glr');if(e)e.textContent=keep})})}
  else if(a==='grant'){if(!confirm('Liberar o acesso de '+b.dataset.e+' manualmente (como se tivesse comprado)?'))return;
   fetch(API+'/api/admin/grant',{method:'POST',headers:{Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'},body:JSON.stringify({email:b.dataset.e})})
    .then(r=>r.json().then(j=>({ok:r.ok,j}))).then(({ok,j})=>{if(!ok)return alert(j.error||'Erro');ST.sales=null;ST.clients=null;openClient(b.dataset.e)})}
