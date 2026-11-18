@@ -328,8 +328,9 @@ button.mc.bonus:hover{border-color:var(--bo);box-shadow:0 0 32px rgba(111,227,19
 #unlock{position:fixed;inset:0;z-index:42;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center;background:radial-gradient(90% 60% at 50% 35%,#12203d,#060b18 75%);animation:fadein .5s both;transition:opacity .5s;overflow:hidden}
 #unlock.out{opacity:0}
 .pdc{position:relative;display:flex;align-items:center;gap:16px;width:100%;padding:18px 16px;border-radius:14px;text-align:left;overflow:hidden;
- background:radial-gradient(120% 140% at 0% 0%,rgba(236,210,138,.28),transparent 55%),radial-gradient(90% 120% at 100% 100%,rgba(190,120,255,.35),transparent 60%),linear-gradient(135deg,#6a2bc4 0%,#4b1a9a 50%,#2f0f6b 100%);border:1px solid rgba(236,210,138,.75);box-shadow:0 10px 34px rgba(106,43,196,.45),0 0 0 1px rgba(255,255,255,.06) inset}
-.pdc::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,236,190,.16) 50%,transparent 60%);transform:translateX(-130%);animation:sheen 5.5s ease-in-out infinite}
+ border:1.5px solid transparent;background:radial-gradient(120% 90% at 88% 0%,rgba(176,112,255,.26),transparent 55%),radial-gradient(110% 120% at 0% 100%,rgba(220,192,132,.12),transparent 60%),linear-gradient(160deg,#3a1465 0%,#230a3f 55%,#14051f 100%) padding-box,linear-gradient(135deg,#f6e2a6 0%,#a07a2c 30%,#f3d98f 55%,#8a6420 80%,#e9cf86 100%) border-box;box-shadow:0 16px 40px rgba(12,2,26,.65),0 0 46px rgba(140,70,220,.16)}
+.pdc::before{content:"";position:absolute;inset:6px;border-radius:10px;border:1px solid rgba(236,210,138,.22);pointer-events:none}
+.pdc::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 42%,rgba(255,236,190,.10) 50%,transparent 58%);transform:translateX(-130%);animation:sheen 5.5s ease-in-out infinite}
 .pdc .pdseal{flex:none;width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#f6e2a6,#c99a41 60%,#9a7128);color:#4a3510;
  box-shadow:0 0 0 4px rgba(220,192,132,.18),0 6px 22px rgba(0,0,0,.4),inset 0 -4px 8px rgba(0,0,0,.25);animation:sealp 2.6s ease-in-out infinite}
 .pdc .pdseal b{font-size:28px;line-height:1;text-shadow:0 1px 0 rgba(255,255,255,.4)}
@@ -337,12 +338,12 @@ button.mc.bonus:hover{border-color:var(--bo);box-shadow:0 0 32px rgba(111,227,19
 @keyframes sealp{0%,100%{box-shadow:0 0 0 4px rgba(220,192,132,.18),0 6px 22px rgba(0,0,0,.4),inset 0 -4px 8px rgba(0,0,0,.25)}50%{box-shadow:0 0 0 12px rgba(220,192,132,.07),0 6px 22px rgba(0,0,0,.4),inset 0 -4px 8px rgba(0,0,0,.25)}}
 .pdc .eyebrow{font-size:10px}
 .pdc .t{display:block;font-family:var(--display);font-size:22px;font-weight:600;line-height:1.15;margin-top:2px}
-.pdc .s{display:block;font-size:13px;color:rgba(240,230,255,.9);margin-top:4px}
-.pdc .t{color:#fff;text-shadow:0 1px 8px rgba(30,0,60,.45)}
+.pdc .s{display:block;font-size:13px;color:rgba(232,222,245,.82);margin-top:4px}
+.pdc .t{color:#fbf3df;text-shadow:0 1px 10px rgba(20,0,40,.6)}
 .pdc .eyebrow{color:#f3d98f}
 .pdc .pdgo{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:8px 14px;border-radius:999px;background:linear-gradient(90deg,#ecd28a,#b98f3c);color:var(--on-btn);font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
 .pdc .pdgo svg.ic{width:14px;height:14px}
-.pdc.done{background:radial-gradient(90% 120% at 100% 100%,rgba(190,120,255,.22),transparent 60%),linear-gradient(135deg,#4a1f8c,#33136b 60%,#24104f);border-color:rgba(236,210,138,.45);box-shadow:0 6px 22px rgba(74,31,140,.35)}
+.pdc.done{background:radial-gradient(110% 90% at 88% 0%,rgba(176,112,255,.16),transparent 55%),linear-gradient(160deg,#2c0f4d,#1b0831 60%,#12051f) padding-box,linear-gradient(135deg,rgba(236,210,138,.7),rgba(138,100,32,.5),rgba(236,210,138,.7)) border-box;box-shadow:0 10px 28px rgba(12,2,26,.55)}
 .pdc.done::after{display:none}
 .pdc.done .pdseal{width:48px;height:48px;animation:none;box-shadow:0 0 0 3px rgba(220,192,132,.15)}
 .pdc .chev{flex:none;color:#f3d98f}
@@ -355,13 +356,14 @@ button.mc.bonus:hover{border-color:var(--bo);box-shadow:0 0 32px rgba(111,227,19
 #unlock .pdex p{margin:0}
 #unlock.pdrev>*{flex:none}
 #unlock.pdrev{justify-content:flex-start;overflow-y:auto;padding-top:max(40px,env(safe-area-inset-top,0px));padding-bottom:40px}
-#unlock .pdday{max-width:340px;display:flex;flex-direction:column;gap:6px;padding:16px;border-radius:12px;background:linear-gradient(135deg,#5a24ad,#3a1478);border:1px solid rgba(236,210,138,.6);box-shadow:0 8px 28px rgba(90,36,173,.45);text-align:left;font-size:15px;line-height:1.5}
-#unlock .pdday p{margin:0;color:#fff}
+#unlock .pdday{max-width:340px;display:flex;flex-direction:column;gap:6px;padding:16px 18px;border-radius:12px;border:1.5px solid transparent;background:radial-gradient(120% 90% at 88% 0%,rgba(176,112,255,.26),transparent 55%),radial-gradient(110% 120% at 0% 100%,rgba(220,192,132,.12),transparent 60%),linear-gradient(160deg,#3a1465 0%,#230a3f 55%,#14051f 100%) padding-box,linear-gradient(135deg,#f6e2a6 0%,#a07a2c 30%,#f3d98f 55%,#8a6420 80%,#e9cf86 100%) border-box;box-shadow:0 14px 34px rgba(12,2,26,.6);text-align:left;font-size:15px;line-height:1.5}
+#unlock .pdday p{margin:0;color:#f3ecdf}
 #unlock .pdday .eyebrow{color:#f3d98f}
-.modal.pdpop{gap:12px;background:radial-gradient(120% 90% at 50% 0%,rgba(236,210,138,.22),transparent 55%),linear-gradient(160deg,#6a2bc4,#3d1585 60%,#2a0e5e);border-color:rgba(236,210,138,.7);box-shadow:0 0 70px rgba(106,43,196,.5)}
-.modal.pdpop h2{color:#fff}
+.modal.pdpop{position:relative;gap:12px;border:1.5px solid transparent;background:radial-gradient(120% 70% at 50% 0%,rgba(236,210,138,.16),transparent 55%),radial-gradient(120% 90% at 88% 0%,rgba(176,112,255,.26),transparent 55%),radial-gradient(110% 120% at 0% 100%,rgba(220,192,132,.12),transparent 60%),linear-gradient(160deg,#3a1465 0%,#230a3f 55%,#14051f 100%) padding-box,linear-gradient(135deg,#f6e2a6 0%,#a07a2c 30%,#f3d98f 55%,#8a6420 80%,#e9cf86 100%) border-box;box-shadow:0 20px 60px rgba(8,0,20,.7),0 0 60px rgba(140,70,220,.22)}
+.modal.pdpop::before{content:"";position:absolute;inset:7px;border-radius:9px;border:1px solid rgba(236,210,138,.2);pointer-events:none}
+.modal.pdpop h2{color:#fbf3df}
 .modal.pdpop .eyebrow{color:#f3d98f}
-.modal.pdpop p.soft{color:rgba(240,230,255,.92)}
+.modal.pdpop p.soft{color:rgba(232,222,245,.85)}
 .modal.pdpop .linkbtn{color:rgba(240,230,255,.85)}
 .modal.pdpop .pdc{width:auto;padding:0;background:none;border:0;box-shadow:none;overflow:visible}
 .modal.pdpop .pdc::after{display:none}
