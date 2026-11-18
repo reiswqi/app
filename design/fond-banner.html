@@ -1,0 +1,39 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Lato:wght@700;900&display=swap">
+<style>
+*{box-sizing:border-box;margin:0}
+html,body{width:960px;height:1440px;background:#0a0614}
+.b{position:relative;width:960px;height:1440px;overflow:hidden;background:url(bn-photo.jpg) center 0%/cover}
+/* chaleur dorée + rayons depuis le haut */
+.b::before{content:"";position:absolute;inset:0;background:
+ radial-gradient(55% 32% at 85% 2%,rgba(255,206,120,.55),transparent 70%),
+ repeating-conic-gradient(from 200deg at 88% -6%,rgba(255,230,180,.07) 0 4deg,transparent 4deg 12deg);filter:blur(2px);
+ mix-blend-mode:screen;-webkit-mask:linear-gradient(180deg,#000 0%,#000 30%,transparent 62%);mask:linear-gradient(180deg,#000 0%,#000 30%,transparent 62%)}
+/* fondu sombre pour le texte */
+.b::after{content:"";position:absolute;inset:0;background:
+ linear-gradient(180deg,rgba(14,8,26,.45) 0%,rgba(14,8,26,0) 16%,rgba(14,8,26,0) 40%,rgba(18,10,34,.75) 50%,#120a26 64%,#0a0614 100%),
+ radial-gradient(120% 80% at 50% 40%,transparent 55%,rgba(0,0,0,.45))}
+.frame{position:absolute;inset:26px;border:2px solid rgba(236,206,140,.75);border-radius:14px;z-index:3;pointer-events:none}
+.frame::before{content:"";position:absolute;inset:10px;border:1px solid rgba(236,206,140,.3);border-radius:8px}
+.top{position:absolute;top:70px;left:0;right:0;z-index:4;text-align:center}
+.pill{display:inline-block;padding:16px 36px;border-radius:999px;background:linear-gradient(90deg,#f6e2a6,#c99a41);color:#24123a;font:900 34px Lato;letter-spacing:.2em}
+.txt{position:absolute;left:44px;right:44px;bottom:80px;z-index:4;text-align:center}
+.eyebrow{font:900 30px Lato;letter-spacing:.3em;color:#f3d98f;opacity:.9}
+.orn{display:flex;align-items:center;justify-content:center;gap:18px;margin:22px 0 18px;color:#f3d98f;font-size:26px}
+.orn i{height:2px;width:120px;background:linear-gradient(90deg,transparent,#e8c97c)}.orn i:last-child{transform:scaleX(-1)}
+h1{font:700 118px/0.95 'Cormorant Garamond';text-transform:uppercase;letter-spacing:.01em;
+ background:linear-gradient(180deg,#fff8e1 0%,#f6e2a6 45%,#d9a94c 78%,#a87b2c 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+ filter:drop-shadow(0 4px 18px rgba(0,0,0,.65))}
+h1 small{display:block;font-size:98px;margin-top:6px}
+.hook{margin-top:30px;font:italic 600 62px/1.12 'Cormorant Garamond';color:#fff3da;text-shadow:0 2px 14px rgba(0,0,0,.8)}
+  .hook b{font-style:normal;font:700 84px 'Cormorant Garamond';color:#f3d98f}
+</style></head><body><div class="b">
+<div class="frame"></div>
+<div class="top"><span class="pill">✦ GUIDE SECRET ✦</span></div>
+<div class="txt">
+ <div class="eyebrow">EN 4 SEMAINES</div>
+ <h1><span style="font-size:140px">Les</span><br>Fondements<small>de la Foi</small></h1>
+ <div class="orn"><i></i>✦<i></i></div>
+ <div class="hook">Absorbez <b>100 %</b><br>de la force de vos prières</div>
+</div>
+</div></body></html>

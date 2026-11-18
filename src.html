@@ -611,7 +611,8 @@ const mc=(attrs,lead,t,s,cls='',end='chev',eb='')=>`<button class="mc ${cls}" ${
 // video: code du lecteur vturb de chaque leçon (à renseigner). gift: programme offert par le pop-up de Saint Antoine.
 const P=[
  // Guide « Les Fondements de la Foi » (vidéos vturb d'un frère franciscain, série « Foi & Détermination », semaines 1 à 4)
- {id:'fond',t:"Les Fondements de la Foi",img:'img/fond.jpg',poster:'img/fond-hero.jpg',
+ {id:'fond',t:"Les Fondements de la Foi",img:'img/fond-banner.jpg',banner:1,   // banner avec texte intégré ; ancienne version : img:'img/fond.jpg' sans banner
+  poster:'img/fond-hero.jpg',
   hook:"Le guide secret pour absorber 100 % de la force de vos prières",tag:'Guide secret',badge:'Guide secret · 4 semaines',
   l:["Semaine 1 · La constance qui transforme","Semaine 2 · Le silence qui ouvre le cœur","Semaine 3 · La Parole qui vous guide","Semaine 4 · Vivre ce que l'on prie"],video:['','','',''],
   vt:['6afd3cbdb7298d486b667b38','6afd3cb5b7298d486b667b26','6afd3caed47be1f668f1391d','6afd3cc30fd9ff0764d13a13'],th:['img/fond-1.jpg','img/fond-2.jpg','img/fond-3.jpg','img/fond-4.jpg'],hero:'img/fond-3.jpg',split:1,
@@ -1074,7 +1075,7 @@ function vLib(){
  const card=o=>pcard(`data-a="offer" data-id="${o.id}"`,`<span class="cv" ${o.img?`style="background-image:url(${o.img})"`:''}>${o.img?'':ic('spark')}</span>`,o.t,o.s,`Découvrir ${ic('spark')}`,'','prem');
  const progs=offersLeft().filter(o=>o.top).map(card).concat(P.map(p=>!has(p)
   ?pcard('data-a="sa"',`<span class="cv typo">${ic('lock')}<b>Leçons à débloquer</b><small>Verrouillé</small></span>`,'Leçons à débloquer','Lisez la Prière de Saint Antoine','Débloquer')
-  :pcard(`data-a="open" data-id="${p.id}"`,`<span class="cv ${p.hook?'hooked':''}" style="background-image:url(${p.img})">${p.hook?`<span class="badge">${esc(p.tag)}</span><span class="cvh"><b>${esc(p.t)}</b><small>${esc(p.hook)}</small></span>`:''}${p.gift?`<span class="badge">${V.fresh?'Débloqué':'Cadeau offert'}</span>`:''}${ld(p.id)?`<span class="bar"><i style="width:${ld(p.id)/p.l.length*100}%"></i></span>`:''}</span>`,
+  :pcard(`data-a="open" data-id="${p.id}"`,`<span class="cv ${p.hook&&!p.banner?'hooked':''}" style="background-image:url(${p.img})">${p.hook&&!p.banner?`<span class="badge">${esc(p.tag)}</span><span class="cvh"><b>${esc(p.t)}</b><small>${esc(p.hook)}</small></span>`:''}${p.gift?`<span class="badge">${V.fresh?'Débloqué':'Cadeau offert'}</span>`:''}${ld(p.id)?`<span class="bar"><i style="width:${ld(p.id)/p.l.length*100}%"></i></span>`:''}</span>`,
     p.t,ld(p.id)===p.l.length?'Terminé':ld(p.id)?`${ld(p.id)} sur ${p.l.length} vidéos vues`:`${p.l.length} vidéos`,`${ic('play')} ${ld(p.id)&&ld(p.id)<p.l.length?'Continuer':'Regarder'}`,p.gift&&V.fresh?'fresh':'')))
   .concat([pcard('data-a="later"',`<span class="cv tease" style="background-image:url(${SOON.img})"><span class="badge">Bientôt</span><span class="seal">${ic('lock')}</span></span>`,SOON.t,SOON.s,`${ic('unlock')} Débloquer`,'','prem')]);
  const open=saOpen(),wait=i=>{const n=i-open+1;return n<=1?'Demain':`Dans ${n} jours`};
