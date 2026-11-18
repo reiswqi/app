@@ -712,7 +712,7 @@ function vLogin(){if(!L.mail&&S.user){L.mail=S.user.email;L.name=S.user.name}
   ${body}
   <p id="lerr" class="small" style="color:#ffb4a8" ${L.err?'':'hidden'}>${esc(L.err)}</p>
   <p class="small soft center">Des difficultés ? <span style="color:var(--accent);user-select:all">${SUPPORT}</span></p>
-  <p class="soft center" style="font-size:12px;line-height:1.5">En continuant, vous acceptez nos <button type="button" class="lglink" data-a="legal" data-k="cgu">Conditions d'utilisation</button> et notre <button type="button" class="lglink" data-a="legal" data-k="conf">Politique de confidentialité</button>.</p></form>
+  <p class="soft center" style="font-size:11px;line-height:1.45;opacity:.7">En continuant, vous acceptez nos conditions d'utilisation et notre politique de confidentialité.</p></form>
  <p class="verse">« Cherchez premièrement le royaume et la justice de Dieu ; et toutes ces choses vous seront données par-dessus. »<br><span class="eyebrow" style="font-style:normal;font-family:var(--body);margin-top:6px">Matthieu 6:33</span></p></div>`}
 async function loginSubmit(){if(L.busy)return;const btn=$('#lbtn'),err=m=>{L.err=m;L.busy=false;render();setTimeout(()=>{const f=$('#lpw')||$('#lmail');f&&f.focus()},50)};
  const okMail=m=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(m),pw=()=>($('#lpw')||{}).value||'';
