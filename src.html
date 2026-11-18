@@ -1188,6 +1188,12 @@ document.addEventListener('submit',e=>{e.preventDefault();
 addEventListener('hashchange',()=>{applyHash();render()});
 {const u=new URLSearchParams(location.search),d={hash:location.hash.slice(1),ref:document.referrer.slice(0,200),pwa:matchMedia('(display-mode: standalone)').matches};
  ['utm_source','utm_medium','utm_campaign','src'].forEach(k=>{if(u.get(k))d[k]=u.get(k).slice(0,80)});track('open',d)}
+// lien personnel envoyé par e-mail : ?e=adresse → l'e-mail est déjà rempli et on passe directement à « Créez votre accès » ou au mot de passe
+{const q=new URLSearchParams(location.search),em=(q.get('e')||q.get('email')||'').trim().toLowerCase();
+ if(em){history.replaceState(null,'',location.pathname+location.hash);
+  if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)&&!(S.user&&S.tok)){L.mail=em;track('lien_email',{});
+   if(API_URL){L.busy=true;authApi('check',{email:em}).then(r=>{L.busy=false;if(r.status===200){L.s=r.j.exists?'pass':'new'}else if(r.status===0){L.s='new'}render();
+    setTimeout(()=>($('#lname')||$('#lpw'))?.focus(),120)})}}}}
 // compte toujours actif ? (remboursement / contestation → accès fermé)
 if(API_URL&&S.tok)authApi('me',{tok:S.tok}).then(r=>{if((r.status===200&&r.j.blocked)||r.status===401){track('logout_auto',{raison:r.j.blocked?'bloque':'session'});
  S.tok=null;S.user=null;save();L.s='mail';L.err=r.j.error||'Session expirée, reconnectez-vous.';V=fresh();render()}});
