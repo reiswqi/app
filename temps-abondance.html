@@ -327,49 +327,55 @@ button.mc.bonus:hover{border-color:var(--bo);box-shadow:0 0 32px rgba(111,227,19
 /* unlock celebration */
 #unlock{position:fixed;inset:0;z-index:42;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center;background:radial-gradient(90% 60% at 50% 35%,#12203d,#060b18 75%);animation:fadein .5s both;transition:opacity .5s;overflow:hidden}
 #unlock.out{opacity:0}
-.pdc{position:relative;display:flex;align-items:center;gap:16px;width:100%;padding:18px 16px;border-radius:14px;text-align:left;overflow:hidden;
- border:1.5px solid transparent;background:radial-gradient(120% 90% at 88% 0%,rgba(176,112,255,.26),transparent 55%),radial-gradient(110% 120% at 0% 100%,rgba(220,192,132,.12),transparent 60%),linear-gradient(160deg,#3a1465 0%,#230a3f 55%,#14051f 100%) padding-box,linear-gradient(135deg,#f6e2a6 0%,#a07a2c 30%,#f3d98f 55%,#8a6420 80%,#e9cf86 100%) border-box;box-shadow:0 16px 40px rgba(12,2,26,.65),0 0 46px rgba(140,70,220,.16)}
-.pdc::before{content:"";position:absolute;inset:6px;border-radius:10px;border:1px solid rgba(236,210,138,.22);pointer-events:none}
-.pdc::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 42%,rgba(255,236,190,.10) 50%,transparent 58%);transform:translateX(-130%);animation:sheen 5.5s ease-in-out infinite}
-.pdc .pdseal{flex:none;width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#f6e2a6,#c99a41 60%,#9a7128);color:#4a3510;
- box-shadow:0 0 0 4px rgba(220,192,132,.18),0 6px 22px rgba(0,0,0,.4),inset 0 -4px 8px rgba(0,0,0,.25);animation:sealp 2.6s ease-in-out infinite}
-.pdc .pdseal b{font-size:28px;line-height:1;text-shadow:0 1px 0 rgba(255,255,255,.4)}
-.pdc .pdseal svg.ic{width:26px;height:26px;stroke-width:2.4}
-@keyframes sealp{0%,100%{box-shadow:0 0 0 4px rgba(220,192,132,.18),0 6px 22px rgba(0,0,0,.4),inset 0 -4px 8px rgba(0,0,0,.25)}50%{box-shadow:0 0 0 12px rgba(220,192,132,.07),0 6px 22px rgba(0,0,0,.4),inset 0 -4px 8px rgba(0,0,0,.25)}}
-.pdc .eyebrow{font-size:10px}
-.pdc .t{display:block;font-family:var(--display);font-size:22px;font-weight:600;line-height:1.15;margin-top:2px}
-.pdc .s{display:block;font-size:13px;color:rgba(232,222,245,.82);margin-top:4px}
-.pdc .t{color:#fbf3df;text-shadow:0 1px 10px rgba(20,0,40,.6)}
-.pdc .eyebrow{color:#f3d98f}
-.pdc .pdgo{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:8px 14px;border-radius:999px;background:linear-gradient(90deg,#ecd28a,#b98f3c);color:var(--on-btn);font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.pdc{position:relative;display:flex;flex-direction:column;align-items:center;width:100%;padding:28px 22px 22px;border-radius:14px;text-align:center;color:#2a1d3d;overflow:hidden;
+ background:radial-gradient(120% 80% at 50% 0%,#fffaf0,#f3e7cc 60%,#e7d5ad);box-shadow:0 18px 40px rgba(0,0,0,.55),inset 0 0 0 1px rgba(150,110,40,.35),inset 0 0 0 6px #f3e7cc,inset 0 0 0 7px rgba(150,110,40,.45)}
+.pdc::before{content:"";position:absolute;left:0;right:0;top:0;height:84px;pointer-events:none;background:linear-gradient(160deg,transparent 49.5%,rgba(150,110,40,.28) 50%,transparent 51%),linear-gradient(200deg,transparent 49.5%,rgba(150,110,40,.28) 50%,transparent 51%)}
+.wax{position:relative;width:78px;height:78px;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#a066e0,#5b1fa0 55%,#360e66);box-shadow:0 6px 16px rgba(54,14,102,.55),inset 0 -5px 10px rgba(0,0,0,.35),inset 0 3px 6px rgba(255,255,255,.25);clip-path:polygon(50% 0,61% 4%,72% 2%,79% 10%,90% 13%,92% 25%,100% 34%,96% 46%,100% 58%,93% 68%,92% 81%,81% 86%,73% 97%,61% 95%,50% 100%,39% 95%,27% 97%,19% 86%,8% 81%,7% 68%,0 58%,4% 46%,0 34%,8% 25%,10% 13%,21% 10%,28% 2%,39% 4%)}
+.wax b{font-size:30px;line-height:1;color:#f3d98f;text-shadow:0 1px 0 rgba(0,0,0,.35)}
+.pdc .wax{margin:-4px 0 12px;animation:waxb 2.6s ease-in-out infinite}
+@keyframes waxb{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.pdc .eyebrow{font-size:10px;color:#8a6420}
+.pdc .t{display:block;margin:6px 0 6px;font-family:var(--display);font-size:26px;font-weight:600;line-height:1.15;color:#2a1240}
+.pdc .s{display:block;font-size:14px;line-height:1.5;color:#5a4a6a}
+.pdc .pdgo{display:inline-flex;align-items:center;gap:8px;margin-top:16px;padding:13px 22px;border-radius:999px;background:linear-gradient(135deg,#5b1fa0,#360e66);color:#f3d98f;font-size:12px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 6px 16px rgba(54,14,102,.4)}
 .pdc .pdgo svg.ic{width:14px;height:14px}
-.pdc.done{background:radial-gradient(110% 90% at 88% 0%,rgba(176,112,255,.16),transparent 55%),linear-gradient(160deg,#2c0f4d,#1b0831 60%,#12051f) padding-box,linear-gradient(135deg,rgba(236,210,138,.7),rgba(138,100,32,.5),rgba(236,210,138,.7)) border-box;box-shadow:0 10px 28px rgba(12,2,26,.55)}
-.pdc.done::after{display:none}
-.pdc.done .pdseal{width:48px;height:48px;animation:none;box-shadow:0 0 0 3px rgba(220,192,132,.15)}
-.pdc .chev{flex:none;color:#f3d98f}
-#unlock .pdseal{border:0;width:110px;height:110px;color:#4a3510;background:radial-gradient(circle at 35% 30%,#f6e2a6,#c99a41 60%,#9a7128);box-shadow:0 0 50px rgba(220,192,132,.55)}
-#unlock .pdseal b{font-size:44px;line-height:1}
-#unlock.open .pdseal{animation:sealbreak .7s both}
-@keyframes sealbreak{0%{transform:scale(1)}40%{transform:scale(1.25);box-shadow:0 0 90px rgba(255,230,170,.95)}100%{transform:scale(.82);opacity:.9}}
+/* enveloppe ouverte : rabat relevé, cachet brisé, compte à rebours */
+.pdc.done{padding-top:24px;background:radial-gradient(120% 80% at 50% 0%,#fbf6ea,#efe3c6 60%,#e2cfa4)}
+.pdc.done::before{top:-42px;height:42px;background:none}
+.pdc.done .flap{position:absolute;left:0;right:0;top:0;height:40px;pointer-events:none;background:linear-gradient(20deg,transparent 49.5%,rgba(150,110,40,.25) 50%,transparent 51%) left/50% 100% no-repeat,linear-gradient(-20deg,transparent 49.5%,rgba(150,110,40,.25) 50%,transparent 51%) right/50% 100% no-repeat}
+.broken{position:relative;width:78px;height:56px;margin:0 0 10px}
+.broken i{position:absolute;top:0;width:78px;height:78px;background:radial-gradient(circle at 35% 30%,#a066e0,#5b1fa0 55%,#360e66);opacity:.9;clip-path:polygon(50% 0,61% 4%,72% 2%,79% 10%,90% 13%,92% 25%,100% 34%,96% 46%,100% 58%,93% 68%,92% 81%,81% 86%,73% 97%,61% 95%,50% 100%,39% 95%,27% 97%,19% 86%,8% 81%,7% 68%,0 58%,4% 46%,0 34%,8% 25%,10% 13%,21% 10%,28% 2%,39% 4%);transform-origin:50% 50%}
+.broken i:first-child{left:-10px;clip-path:polygon(50% 0,39% 4%,28% 2%,21% 10%,10% 13%,8% 25%,0 34%,4% 46%,0 58%,7% 68%,8% 81%,19% 86%,27% 97%,39% 95%,50% 100%,44% 70%,54% 50%,46% 30%);transform:rotate(-14deg) scale(.72)}
+.broken i:last-child{right:-10px;clip-path:polygon(50% 0,61% 4%,72% 2%,79% 10%,90% 13%,92% 25%,100% 34%,96% 46%,100% 58%,93% 68%,92% 81%,81% 86%,73% 97%,61% 95%,50% 100%,44% 70%,54% 50%,46% 30%);transform:rotate(16deg) scale(.72)}
+.broken::after{content:"✓";position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#149364;color:#fff;font-weight:900;font-size:15px;box-shadow:0 0 0 3px #f3e7cc}
+.pdc.done .eyebrow{color:#0f7a52}
+.pdc.done .t{font-size:24px;margin:4px 0 4px}
+.pdc .rd{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:13px;font-weight:900;color:#5b1fa0;text-decoration:underline;text-underline-offset:3px}
+.pdc .cd{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:14px;padding:11px 12px;border-radius:10px;background:rgba(91,31,160,.08);border:1px dashed rgba(91,31,160,.35);font-size:13px;color:#3a1478}
+.pdc .cd b{font-weight:900}
+.pdc .cd .hg{font-size:16px}
+#unlock .wax{width:116px;height:116px;box-shadow:0 0 60px rgba(160,102,224,.55)}
+#unlock .wax b{font-size:46px}
+#unlock.pdrev .btn.gold{background:linear-gradient(135deg,#6a2bc4,#360e66);color:#f3d98f;box-shadow:0 8px 22px rgba(91,31,160,.45)}
+#unlock.open .wax{animation:waxbreak .8s both}
+@keyframes waxbreak{0%{transform:scale(1)}35%{transform:scale(1.22) rotate(-6deg);filter:brightness(1.3)}100%{transform:scale(.8) rotate(8deg);opacity:.85}}
 #unlock .pdt{font-family:var(--display);font-size:28px;line-height:1.15;max-width:340px;text-shadow:0 0 26px rgba(220,192,132,.4)}
 #unlock .pdex{max-width:340px;padding:18px;border-radius:12px;background:var(--ivory);color:var(--ivory-ink);text-align:center;font-family:var(--display);font-size:19px;line-height:1.4}
 #unlock .pdex p{margin:0}
 #unlock.pdrev>*{flex:none}
 #unlock.pdrev{justify-content:flex-start;overflow-y:auto;padding-top:max(40px,env(safe-area-inset-top,0px));padding-bottom:40px}
-#unlock .pdday{max-width:340px;display:flex;flex-direction:column;gap:6px;padding:16px 18px;border-radius:12px;border:1.5px solid transparent;background:radial-gradient(120% 90% at 88% 0%,rgba(176,112,255,.26),transparent 55%),radial-gradient(110% 120% at 0% 100%,rgba(220,192,132,.12),transparent 60%),linear-gradient(160deg,#3a1465 0%,#230a3f 55%,#14051f 100%) padding-box,linear-gradient(135deg,#f6e2a6 0%,#a07a2c 30%,#f3d98f 55%,#8a6420 80%,#e9cf86 100%) border-box;box-shadow:0 14px 34px rgba(12,2,26,.6);text-align:left;font-size:15px;line-height:1.5}
-#unlock .pdday p{margin:0;color:#f3ecdf}
-#unlock .pdday .eyebrow{color:#f3d98f}
-.modal.pdpop{position:relative;gap:12px;border:1.5px solid transparent;background:radial-gradient(120% 70% at 50% 0%,rgba(236,210,138,.16),transparent 55%),radial-gradient(120% 90% at 88% 0%,rgba(176,112,255,.26),transparent 55%),radial-gradient(110% 120% at 0% 100%,rgba(220,192,132,.12),transparent 60%),linear-gradient(160deg,#3a1465 0%,#230a3f 55%,#14051f 100%) padding-box,linear-gradient(135deg,#f6e2a6 0%,#a07a2c 30%,#f3d98f 55%,#8a6420 80%,#e9cf86 100%) border-box;box-shadow:0 20px 60px rgba(8,0,20,.7),0 0 60px rgba(140,70,220,.22)}
-.modal.pdpop::before{content:"";position:absolute;inset:7px;border-radius:9px;border:1px solid rgba(236,210,138,.2);pointer-events:none}
-.modal.pdpop h2{color:#fbf3df}
-.modal.pdpop .eyebrow{color:#f3d98f}
-.modal.pdpop p.soft{color:rgba(232,222,245,.85)}
-.modal.pdpop .linkbtn{color:rgba(240,230,255,.85)}
-.modal.pdpop .pdc{width:auto;padding:0;background:none;border:0;box-shadow:none;overflow:visible}
-.modal.pdpop .pdc::after{display:none}
-.modal.pdpop .pdseal{width:84px;height:84px}
-.modal.pdpop .pdseal b{font-size:36px}
-.modal.pdpop h2{font-size:26px}
+.pdday{max-width:340px;display:flex;flex-direction:column;gap:6px;padding:16px 18px;border-radius:12px;text-align:left;font-size:15px;line-height:1.5;color:#2a1d3d;background:radial-gradient(120% 80% at 50% 0%,#fffaf0,#f0e2c2);box-shadow:inset 0 0 0 1px rgba(150,110,40,.4),0 12px 30px rgba(0,0,0,.45)}
+#unlock .pdday p{margin:0;color:#3a2a4a}
+#unlock .pdday .eyebrow{color:#5b1fa0}
+.modal.pdpop{position:relative;gap:12px;color:#2a1d3d;background:radial-gradient(120% 80% at 50% 0%,#fffaf0,#f3e7cc 60%,#e7d5ad);border:0;box-shadow:0 24px 60px rgba(0,0,0,.6),inset 0 0 0 1px rgba(150,110,40,.35),inset 0 0 0 6px #f3e7cc,inset 0 0 0 7px rgba(150,110,40,.45);overflow:hidden}
+.modal.pdpop::before{content:"";position:absolute;left:0;right:0;top:0;height:90px;pointer-events:none;background:linear-gradient(160deg,transparent 49.5%,rgba(150,110,40,.28) 50%,transparent 51%),linear-gradient(200deg,transparent 49.5%,rgba(150,110,40,.28) 50%,transparent 51%)}
+.modal.pdpop .wax{width:88px;height:88px;animation:waxb 2.6s ease-in-out infinite}
+.modal.pdpop .wax b{font-size:34px}
+.modal.pdpop .eyebrow{color:#8a6420}
+.modal.pdpop h2{font-size:26px;color:#2a1240;text-transform:none;letter-spacing:0}
+.modal.pdpop p{color:#5a4a6a;margin:0}
+.modal.pdpop .btn.gold{background:linear-gradient(135deg,#5b1fa0,#360e66);color:#f3d98f;box-shadow:0 8px 20px rgba(54,14,102,.4)}
+.modal.pdpop .linkbtn{color:#6a5a7a}
 #unlock .pdex .ref{margin-top:10px;font-size:15px;font-style:italic;border-top:1px solid rgba(150,116,40,.35);padding-top:10px}
 #unlock .pdex .ref b{display:block;font-family:var(--body);font-style:normal;font-weight:900;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ivory-gold);margin-top:4px}
 #unlock .rays{position:absolute;left:50%;top:38%;width:560px;height:560px;margin:-280px 0 0 -280px;border-radius:50%;opacity:0;background:repeating-conic-gradient(from 0deg,rgba(220,192,132,.2) 0 7deg,transparent 7deg 20deg);-webkit-mask:radial-gradient(circle,#000 0,transparent 68%);mask:radial-gradient(circle,#000 0,transparent 68%);transition:opacity .8s}
@@ -789,14 +795,18 @@ async function loginSubmit(){if(L.busy)return;const btn=$('#lbtn'),err=m=>{L.err
 // Prière du jour « biscuit de la chance » : choisie pour chaque personne et chaque jour, révélée en touchant le sceau
 function pdIdx(){const k=((S.user&&S.user.email)||'')+'|'+TODAY;let h=2166136261;for(let i=0;i<k.length;i++){h^=k.charCodeAt(i);h=Math.imul(h,16777619)>>>0}return h%DAILY.length}
 const pdDone=()=>S.pdr===TODAY;
+// temps restant avant la prochaine prière (minuit, heure du téléphone)
+function pdLeft(){const n=new Date(),m=new Date(n);m.setHours(24,0,0,0);const t=Math.max(0,Math.round((m-n)/60000));return t>=60?`${Math.floor(t/60)} h ${String(t%60).padStart(2,'0')} min`:`${t} min`}
 function pdCard(){const d=DAILY[pdIdx()];return pdDone()
- ?`<button class="pdc done" data-a="pdopen"><span class="pdseal">${ic('check')}</span><span class="grow"><span class="eyebrow">Révélée pour vous aujourd'hui</span><span class="t">${esc(d.t)}</span><span class="s">Un nouveau message vous attend demain ✦</span></span><span class="chev">${ic('chev')}</span></button>`
- :`<button class="pdc" data-a="pdopen"><span class="pdseal"><b>✦</b></span><span class="grow"><span class="eyebrow">Votre message du jour</span><span class="t">Quelle prière vous attend aujourd'hui ?</span><span class="s">Touchez le sceau : une prière choisie pour votre journée vous sera révélée.</span><span class="pdgo">Découvrir ma prière ${ic('arrow')}</span></span></button>`}
+ ?`<button class="pdc done" data-a="pdopen"><span class="flap"></span><span class="broken"><i></i><i></i></span><span class="eyebrow">✓ Message ouvert aujourd'hui</span><span class="t">${esc(d.t)}</span><span class="s">${esc(d.d)}</span>
+   <span class="rd">Relire ma prière ${ic('arrow')}</span><span class="cd"><span class="hg">⏳</span><span>Prochain message dans <b id="pdcd">${pdLeft()}</b></span></span></button>`
+ :`<button class="pdc" data-a="pdopen"><span class="wax"><b>✦</b></span><span class="eyebrow">Un message scellé pour vous</span><span class="t">Quelle prière vous attend aujourd'hui&nbsp;?</span><span class="s">Brisez le sceau pour découvrir la prière choisie pour votre journée.</span><span class="pdgo">Ouvrir mon message ${ic('arrow')}</span></button>`}
+setInterval(()=>{const e=document.getElementById('pdcd');if(!e)return;const n=new Date();if(dstr()!==TODAY){location.reload();return}e.textContent=pdLeft()},30000);
 function pdReveal(){const d=DAILY[pdIdx()];S.pdr=TODAY;save();track('pdreveal',{titre:d.t});
  $('#unlock')?.remove();const u=document.createElement('div');u.id='unlock';u.className='pdrev';
  const sparks=Array.from({length:16},(_,i)=>{const a=i/16*6.283,r=90+Math.random()*70;return `<span class="spark" style="--x:${Math.round(Math.cos(a)*r)}px;--y:${Math.round(Math.sin(a)*r)}px"></span>`}).join('');
  const ex=(d.p.match(/^.*?[.!?](\s|$)/)||[d.p])[0].trim();
- u.innerHTML=`<div class="rays"></div><div class="ulock pdseal"><b>✦</b>${sparks}</div>
+ u.innerHTML=`<div class="rays"></div><div style="position:relative"><div class="wax"><b>✦</b></div>${sparks}</div>
   <span class="eyebrow rev">✦ Votre prière du jour ✦</span><h2 class="rev d2 pdt">${esc(d.t)}</h2>
   <div class="pdex rev d3"><p>«&nbsp;${esc(ex)}&nbsp;»</p><p class="ref">${esc(d.v)}<b>${esc(d.r)}</b></p></div>
   <div class="pdday rev d3"><span class="eyebrow">✦ Pour votre journée</span><p><b>${esc(d.d)}</b></p><p>${esc(d.x)}</p></div>
@@ -804,10 +814,10 @@ function pdReveal(){const d=DAILY[pdIdx()];S.pdr=TODAY;save();track('pdreveal',{
  document.body.appendChild(u);setTimeout(()=>u.classList.add('open'),1150)}
 // Une fois par jour, à l'ouverture : pop-up qui invite à révéler la prière du jour
 function pdPopup(){if($('#pdpop')||$('#unlock'))return;const u=document.createElement('div');u.id='pdpop';u.className='scrim';
- u.innerHTML=`<div class="modal pdpop" role="dialog" aria-modal="true" aria-label="Votre prière du jour"><div class="pdc"><span class="pdseal"><b>✦</b></span></div>
-  <span class="eyebrow">Votre message du jour</span><h2>Votre prière du jour est prête</h2>
-  <p class="soft">Une prière a été choisie pour vous aujourd'hui, avec ce qu'elle signifie pour votre journée. Touchez le sceau pour la découvrir.</p>
-  <button class="btn gold" data-a="pdpopgo">Découvrir ma prière ✦</button><button class="linkbtn" data-a="pdpopno">Plus tard</button></div>`;
+ u.innerHTML=`<div class="modal pdpop" role="dialog" aria-modal="true" aria-label="Votre prière du jour"><span class="wax" style="margin-top:6px"><b>✦</b></span>
+  <span class="eyebrow">Un message scellé pour vous</span><h2>Votre prière du jour vous attend</h2>
+  <p>Une prière a été choisie pour vous aujourd'hui, avec ce qu'elle signifie pour votre journée.</p>
+  <button class="btn gold" data-a="pdpopgo">Ouvrir mon message ✦</button><button class="linkbtn" data-a="pdpopno">Plus tard</button></div>`;
  document.body.appendChild(u);track('pdpopup',{})}
 function pdMaybePopup(){if(!S.user||pdDone()||S.pdp===TODAY||V.day||V.menu||V.fm||V.tab!=='home'||$('#unlock')||$('#pdpop')||$('#welcome'))return;
  S.pdp=TODAY;save();setTimeout(pdPopup,700)}
