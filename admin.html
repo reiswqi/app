@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#0a1426">
-<title>Painel Admin · Temps d'Abondance</title>
+<title>Painel Admin · Prière Sacrée</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Lato:wght@400;700;900&display=swap">
 <style>
 :root{--bg:#0a1426;--ink:#fff;--soft:rgba(206,219,240,.78);--line:rgba(190,208,238,.18);--panel:rgba(30,51,82,.55);--card:#16294a;--accent:#dcc084;--ok:#74d3a0;--bad:#ff8f84;--display:"Cormorant Garamond",Georgia,serif;--body:"Lato",system-ui,-apple-system,"Segoe UI",sans-serif}
@@ -158,14 +158,14 @@ async function openClient(email){ST.detail={email,loading:true};draw();window.sc
 
 function draw(){const app=$('#app');
  if(API===null){app.innerHTML=`<div class="login"><h2>Painel no Railway</h2><p class="muted">O painel admin agora fica no servidor do Railway. Abra o endereço do seu serviço « app » no Railway seguido de <b>/admin</b>.</p></div>`;return}
- if(!TOKEN){app.innerHTML=`<form class="login" id="lf"><small style="font-size:11px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">Temps d'Abondance</small><h2>Painel Admin</h2>
+ if(!TOKEN){app.innerHTML=`<form class="login" id="lf"><small style="font-size:11px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">Prière Sacrée</small><h2>Painel Admin</h2>
   <input type="text" name="username" autocomplete="username" value="admin" hidden><input id="lp" type="password" autocomplete="current-password" placeholder="Senha do painel" required autofocus>
   <button class="btn gold" type="submit">Entrar</button><p class="err" id="lerr">${esc(ST.err)}</p></form>`;return}
  if(ST.detail)return drawClient();
  const C=ST.clients||[],now=Date.now(),act=h=>C.filter(c=>now-new Date(c.last_seen)<h*3600e3).length;
  const rf=C.filter(c=>c.refund).length,avg=C.length?C.reduce((a,c)=>a+(+c.secs||0),0)/C.length:0;
  let list=C.filter(c=>(!ST.q||(c.email+' '+(c.name||'')).toLowerCase().includes(ST.q.toLowerCase()))&&(ST.f==='all'||(ST.f==='refund'&&c.refund)||(ST.f==='7d'&&now-new Date(c.last_seen)<7*864e5)||(ST.f==='idle'&&now-new Date(c.last_seen)>=7*864e5)));
- app.innerHTML=`<div class="top"><h1><small>Temps d'Abondance</small>Painel Admin</h1><button class="btn" data-a="reload">↻ Atualizar</button><button class="btn" data-a="logout">Sair</button></div>
+ app.innerHTML=`<div class="top"><h1><small>Prière Sacrée</small>Painel Admin</h1><button class="btn" data-a="reload">↻ Atualizar</button><button class="btn" data-a="logout">Sair</button></div>
  <div class="kpis"><div class="kpi"><b>${C.length}</b><span>clientes que entraram</span></div><div class="kpi"><b>${act(24)}</b><span>ativos nas últimas 24 h</span></div>
   <div class="kpi"><b>${act(168)}</b><span>ativos nos últimos 7 dias</span></div><div class="kpi"><b>${dur(Math.round(avg))}</b><span>tempo médio no app</span></div><div class="kpi"><b style="color:var(--bad)">${rf}</b><span>pediram reembolso</span></div></div>
  <div class="tabs">${[['clients','Clientes'],['sales','Vendas'],['recent','Atividade recente'],['refunds','Reembolsos']].map(t=>`<button data-a="tab" data-t="${t[0]}" aria-current="${ST.tab===t[0]}">${t[1]}</button>`).join('')}</div>
@@ -224,7 +224,7 @@ function drawClient(){const D=ST.detail,app=$('#app');
  let day='',tl='';tlev.forEach(e=>{const d=fmtD(e.created_at);if(d!==day){day=d;tl+=`<div class="day">${new Date(e.created_at).toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>`}
   const [t,x]=label(e);tl+=`<div class="ev ${e.type==='refund'||e.type==='access_denied'||(e.type==='purchase'&&/refund|chargeback/.test(e.detail.event))?'bad':e.type==='purchase'?'imp':['login','video','priere','lecon'].includes(e.type)?'imp':''}"><time>${fmtT(e.created_at)}</time><span>${ICO[e.type]||'•'}</span><span><span class="t">${esc(t)}</span><br><span class="d">${esc(x)}${x?' · ':''}${e.type==='purchase'?'aviso assinado da KashPay':(e.ip?'IP '+esc(e.ip):'')+(e.country?' ('+esc(e.country)+')':'')+' · '+esc(uaName(e.ua))+(e.email?'':' · antes do login')}</span></span></div>`});
  app.innerHTML=top+`
- <div class="print-only"><h1>Dossiê de atividade do cliente</h1><p>Temps d'Abondance · gerado em ${fmtDT(new Date())} (fuso ${esc(TZ)}) · horários registrados pelo servidor</p></div>
+ <div class="print-only"><h1>Dossiê de atividade do cliente</h1><p>Prière Sacrée · gerado em ${fmtDT(new Date())} (fuso ${esc(TZ)}) · horários registrados pelo servidor</p></div>
  <div class="panel"><h3>${esc(name)} ${(D.pur||[]).some(x=>x.event==='order.chargeback')?'<span class="tag">CHARGEBACK</span>':(D.pur||[]).some(x=>x.event==='order.refunded')?'<span class="tag">reembolsado na KashPay</span>':ref.length?'<span class="tag">pediu reembolso pelo app</span>':'<span class="tag ok">sem reembolso</span>'}</h3>
   <div class="facts"><div><b>${fmtDT(first.created_at)}</b><span>primeiro acesso</span></div><div><b>${fmtDT(last.created_at)}</b><span>último acesso (${ago(last.created_at)})</span></div>
   <div><b>${logins.length}</b><span>logins</span></div><div><b>${sessions}</b><span>sessões (visitas)</span></div><div><b>${days}</b><span>dias diferentes com acesso</span></div>

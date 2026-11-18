@@ -1,6 +1,6 @@
 # Temps d'Abondance — contexte du projet (à lire d'abord)
 
-Lucas (Brésil, parle portugais avec Claude) reconstruit l'app française « Temps d'Abondance » : application web mobile premium, minimaliste, gamifiée. **Toute l'interface est en français** ; avec Lucas on parle en portugais (BR), ton chaleureux, réponses courtes, sans jargon.
+Lucas (Brésil, parle portugais avec Claude) reconstruit l'app française « Temps d'Abondance » — **le produit vendu s'appelle « Prière Sacrée »** : garder « Temps d'Abondance » à l'intérieur de l'app (ne rien renommer), mais utiliser « Prière Sacrée » dans l'admin, le dossier de chargeback et tout ce qui parle du produit vendu : application web mobile premium, minimaliste, gamifiée. **Toute l'interface est en français** ; avec Lucas on parle en portugais (BR), ton chaleureux, réponses courtes, sans jargon.
 
 ## Où est le code
 - Dépôt : `reiswqi/app` (public, GitHub Pages sur `main`). App en ligne : https://reiswqi.github.io/app/temps-abondance.html (le lien doit rester exactement celui-ci).
