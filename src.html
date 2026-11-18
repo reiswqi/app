@@ -327,6 +327,53 @@ button.mc.bonus:hover{border-color:var(--bo);box-shadow:0 0 32px rgba(111,227,19
 /* unlock celebration */
 #unlock{position:fixed;inset:0;z-index:42;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center;background:radial-gradient(90% 60% at 50% 35%,#12203d,#060b18 75%);animation:fadein .5s both;transition:opacity .5s;overflow:hidden}
 #unlock.out{opacity:0}
+.cv.d21{display:flex!important;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:0;background:radial-gradient(80% 50% at 50% 30%,rgba(243,217,143,.45),transparent 70%),repeating-conic-gradient(from 0deg at 50% 32%,rgba(243,217,143,.16) 0 5deg,transparent 5deg 15deg),linear-gradient(180deg,#3a1465,#1a0a33 70%,#0e0620)!important;border-color:rgba(236,210,138,.6)!important}
+.d21n{font-family:var(--display);font-weight:600;font-size:72px;line-height:.9;background:linear-gradient(180deg,#fff3c4,#e2b85a 55%,#a87b2c);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 10px rgba(243,217,143,.4))}
+.d21l{font-family:var(--display);font-style:italic;font-size:26px;color:#f3d98f;margin-top:-4px}
+.d21s{font-size:9px;font-weight:900;letter-spacing:.22em;text-transform:uppercase;color:#e9dcff;margin-top:8px}
+.mc.d21row{gap:14px;background:linear-gradient(135deg,#2c0f4d,#1b0831);border-color:rgba(236,210,138,.5)}
+.mc.d21row .cv.d21{flex:none;width:58px;height:78px;border-radius:8px;border:1px solid}
+.mc.d21row .d21n{font-size:30px}.mc.d21row .d21l{font-size:12px;margin-top:-2px}.mc.d21row .d21s{display:none}
+.mc.d21row .eyebrow{color:#f3d98f}
+.d21mini{display:block;height:4px;border-radius:99px;background:rgba(255,255,255,.14);margin-top:8px;overflow:hidden}
+.d21mini i{display:block;height:100%;background:linear-gradient(90deg,#b98f3c,#f3d98f)}
+.d21hero{border-radius:18px;overflow:hidden;border:1px solid rgba(236,210,138,.55);background:linear-gradient(180deg,#1a0a33,#0e0620);box-shadow:0 18px 44px rgba(10,2,24,.6)}
+.d21hero .cv.d21.big{display:flex;height:200px;border:0;border-radius:0}
+.d21hero .cv.d21.big .d21n{font-size:110px}.d21hero .cv.d21.big .d21l{font-size:34px}
+.d21in{display:flex;flex-direction:column;gap:12px;padding:18px 18px 20px}
+.d21in h1{font-size:34px;color:#fbf3df}.d21in .tsub{font-family:var(--display);font-style:italic;font-size:18px;color:#f3d98f}
+.d21stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.d21stats div{padding:10px 6px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(236,210,138,.25);text-align:center}
+.d21stats b{display:block;font-family:var(--display);font-size:28px;color:#f3d98f;line-height:1}.d21stats span{font-size:11px;color:var(--soft)}
+.d21wait{padding:13px;border-radius:10px;text-align:center;background:rgba(20,147,100,.16);border:1px solid rgba(116,211,160,.45);font-size:14px}
+.d21wk{display:flex;flex-direction:column;gap:8px}
+.d21wh{display:flex;align-items:center;gap:12px;margin-top:6px}
+.d21wi{flex:none;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:22px;background:rgba(236,210,138,.12);border:1px solid rgba(236,210,138,.4)}
+.d21wh h2{font-size:24px}.d21wc{flex:none;font-weight:900;font-size:13px;color:var(--soft)}.d21wc.ok{color:var(--ok)}
+.d21day{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border-radius:12px;background:var(--panel);border:1px solid var(--line);text-align:left}
+.d21day .t{display:block;font-weight:700;font-size:14px}.d21day .s{display:block;font-size:12px;color:var(--soft);margin-top:2px}
+.d21num{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:14px;border:1px solid var(--line);color:var(--soft)}
+.d21num svg.ic{width:17px;height:17px}
+.d21day.ok .d21num{background:var(--go1);border-color:var(--go1);color:#fff}.d21day.ok .s{color:var(--ok)}
+.d21day.now{border-color:var(--accent);background:linear-gradient(135deg,#2c0f4d,#1d3252);box-shadow:0 0 24px rgba(220,192,132,.18)}
+.d21day.now .d21num{background:linear-gradient(135deg,#f3d98f,#b98f3c);border:0;color:#2a1240}.d21day.now .s{color:var(--accent)}
+.d21day.lock{opacity:.6}
+.d21go{flex:none;padding:7px 12px;border-radius:999px;background:linear-gradient(90deg,#ecd28a,#b98f3c);color:var(--on-btn);font-size:11px;font-weight:900;letter-spacing:.1em;text-transform:uppercase}
+.d21sec{display:flex;flex-direction:column;gap:8px;padding:16px;border-radius:12px;background:var(--panel);border:1px solid var(--line);font-size:16px;line-height:1.55}
+.d21sec p{margin:0}.d21sec .eyebrow{font-size:11px}
+.d21sec.pray{background:linear-gradient(135deg,#2c0f4d,#1b0831);border-color:rgba(236,210,138,.4)}
+.d21pr{font-family:var(--display);font-size:21px;line-height:1.45;font-style:italic;color:#fbf3df}
+.d21sec textarea{width:100%;min-height:96px;padding:12px;border-radius:10px;border:1px solid var(--line);background:rgba(8,16,32,.6);font:inherit;font-size:15px;color:var(--ink)}
+.d21sec.decl{text-align:center;border-color:var(--accent);background:radial-gradient(100% 120% at 50% 0%,rgba(220,192,132,.18),transparent 70%),var(--panel)}
+.d21a{font-family:var(--display);font-size:22px;font-weight:600;color:#f3d98f;line-height:1.35}
+.d21dots{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;max-width:260px}
+.d21dots i{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.18)}.d21dots i.on{background:#f3d98f;box-shadow:0 0 8px rgba(243,217,143,.7)}
+.d21cert{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;padding:34px 22px 26px;border-radius:14px;color:#2a1d3d;background:radial-gradient(120% 80% at 50% 0%,#fffaf0,#f3e7cc 60%,#e7d5ad);box-shadow:0 18px 40px rgba(0,0,0,.55),inset 0 0 0 1px rgba(150,110,40,.35),inset 0 0 0 7px #f3e7cc,inset 0 0 0 9px rgba(150,110,40,.55)}
+.d21cert .eyebrow{color:#8a6420}.d21cert h1{font-size:38px;color:#2a1240}.d21cert p{margin:0;font-size:15px;line-height:1.5;color:#4a3a5a}
+.d21cv{font-family:var(--display);font-style:italic;font-size:18px!important;border-top:1px solid rgba(150,110,40,.35);padding-top:12px;margin-top:4px!important}
+.d21cv b{display:block;font-family:var(--body);font-style:normal;font-weight:900;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a6420;margin-top:4px}
+.d21seal{width:70px;height:70px;display:grid;place-items:center;margin-top:6px;background:radial-gradient(circle at 35% 30%,#a066e0,#5b1fa0 55%,#360e66);clip-path:polygon(50% 0,61% 4%,72% 2%,79% 10%,90% 13%,92% 25%,100% 34%,96% 46%,100% 58%,93% 68%,92% 81%,81% 86%,73% 97%,61% 95%,50% 100%,39% 95%,27% 97%,19% 86%,8% 81%,7% 68%,0 58%,4% 46%,0 34%,8% 25%,10% 13%,21% 10%,28% 2%,39% 4%)}
+.d21seal b{font-size:28px;color:#f3d98f}
 .pdc{position:relative;display:flex;flex-direction:column;align-items:center;width:100%;padding:28px 22px 22px;border-radius:14px;text-align:center;color:#2a1d3d;overflow:hidden;
  background:radial-gradient(120% 80% at 50% 0%,#fffaf0,#f3e7cc 60%,#e7d5ad);box-shadow:0 18px 40px rgba(0,0,0,.55),inset 0 0 0 1px rgba(150,110,40,.35),inset 0 0 0 6px #f3e7cc,inset 0 0 0 7px rgba(150,110,40,.45)}
 .pdc::before{content:"";position:absolute;left:0;right:0;top:0;height:84px;pointer-events:none;background:linear-gradient(160deg,transparent 49.5%,rgba(150,110,40,.28) 50%,transparent 51%),linear-gradient(200deg,transparent 49.5%,rgba(150,110,40,.28) 50%,transparent 51%)}
@@ -797,6 +844,165 @@ async function loginSubmit(){if(L.busy)return;const btn=$('#lbtn'),err=m=>{L.err
   if(r.status===200)return enterApp(L.name,L.mail,L.tok);
   return err(r.j.error||'Une erreur est survenue. Réessayez.')}}
 
+// ---------- Défi des 21 jours (« 21 Jours de Renouveau ») ----------
+// Un jour s'ouvre par jour : le suivant se débloque le lendemain de la validation du précédent (habitude quotidienne).
+// Chaque jour : méditation, verset, prière à dire, geste sacré, question pour le cœur (notée sur l'appareil), déclaration.
+const DF_WEEKS=[['🕊️','Purifier le temple','Laisser partir ce qui pèse'],['🌱','Semer la bonne graine','Paroles, vision et foi'],['🌾','Marcher vers la moisson','Agir, confier, recevoir']];
+const DF=[
+ {t:"Poser son intention devant Dieu",v:["Fais de l'Éternel tes délices, et il te donnera ce que ton cœur désire.","Psaume 37:4"],
+  m:"Dieu connaît votre cœur avant que vous parliez. Pourtant, il aime que vous lui confiiez vos désirs avec simplicité, comme un enfant à son père.",
+  p:"Seigneur, voici le désir de mon cœur. Je le dépose devant toi. Purifie-le, et que ta volonté soit faite dans ma vie. Amen.",
+  g:"Écrivez sur un papier ce que vous espérez voir changer dans les 21 prochains jours. Pliez-le et gardez-le dans votre Bible ou près de votre lit.",
+  q:"Si Dieu m'accordait aujourd'hui ce que je demande, serais-je prête ou prêt à le recevoir ?",a:"Je confie mes désirs à Dieu. Il connaît le chemin et il marche devant moi."},
+ {t:"Remplacer les mensonges par la vérité",v:["Vous connaîtrez la vérité, et la vérité vous affranchira.","Jean 8:32"],
+  m:"Nous portons parfois des phrases anciennes : « je ne mérite pas », « ce n'est pas pour moi ». Ces mensonges ferment des portes que Dieu veut ouvrir.",
+  p:"Père, montre-moi les mensonges que je crois sur moi-même. Remplace-les par ta vérité, qui libère. Amen.",
+  g:"Sur une feuille, écrivez à gauche : « Je pensais que… » et à droite : « Dieu dit que je suis… » (aimé, protégé, son enfant).",
+  q:"Quelle phrase sur moi-même ai-je répétée trop longtemps, et qui n'est pas la vérité de Dieu ?",a:"Je suis ce que Dieu dit que je suis : aimé, choisi et jamais abandonné."},
+ {t:"Mettre de l'ordre dans sa maison",v:["Que tout se fasse avec bienséance et avec ordre.","1 Corinthiens 14:40"],
+  m:"Votre maison est le lieu où Dieu vous rejoint chaque jour. Ranger avec un cœur paisible est une façon de lui dire : « Entre, tu es attendu ici. »",
+  p:"Seigneur, bénis ma maison. Que la paix y habite et que chaque pièce soit ouverte à ta présence. Amen.",
+  g:"Choisissez un seul tiroir, une étagère ou un coin de la maison. Rangez-le en priant, et donnez ce qui ne vous sert plus.",
+  q:"À quoi est-ce que je m'accroche par peur de manquer ?",a:"Je fais de la place. Ma maison est prête pour les bénédictions de Dieu."},
+ {t:"Le pardon qui libère",v:["Pardonnez, et il vous sera pardonné.","Luc 6:37"],
+  m:"Le pardon n'efface pas la blessure, mais il défait la chaîne qui vous y attache. Pardonner, c'est rendre à Dieu ce qui lui appartient : la justice.",
+  p:"Père, je te confie les personnes qui m'ont blessé. Je les libère, et je me libère aussi. Donne-moi ta paix. Amen.",
+  g:"Écrivez les prénoms des personnes à qui vous voulez pardonner, y compris vous-même. Priez pour chacune, puis déchirez la feuille.",
+  q:"Qui est-ce que je garde prisonnier dans mon cœur… et qui me garde prisonnier en retour ?",a:"Je pardonne et je suis libre. Mon cœur s'allège jour après jour."},
+ {t:"Rendre grâce avant de recevoir",v:["Rendez grâces en toutes choses.","1 Thessaloniciens 5:18"],
+  m:"La gratitude ouvre les yeux sur ce que Dieu fait déjà. Remercier avant de voir est l'un des plus beaux actes de foi.",
+  p:"Merci, Seigneur, pour tout ce que tu m'as déjà donné, et pour ce que tu prépares en secret. Amen.",
+  g:"Notez 7 bénédictions de votre vie, même toutes petites : un sourire, un repas, un réveil en bonne santé.",
+  q:"Quelle bénédiction ai-je reçue récemment sans prendre le temps d'en remercier Dieu ?",a:"Mon cœur est reconnaissant. Je vois la main de Dieu dans chaque jour."},
+ {t:"Le silence qui écoute",v:["Arrêtez, et sachez que je suis Dieu.","Psaume 46:10"],
+  m:"Dieu parle souvent dans le calme, comme un murmure doux. Aujourd'hui, nous ne demandons rien : nous écoutons.",
+  p:"Seigneur, je fais silence devant toi. Parle à mon cœur, je t'écoute. Amen.",
+  g:"Asseyez-vous 5 minutes sans téléphone ni télévision. Respirez lentement et répétez intérieurement : « Me voici, Seigneur. »",
+  q:"Qu'ai-je ressenti dans ce moment de silence ?",a:"Dans le calme, je reconnais la présence de Dieu à mes côtés."},
+ {t:"Le repos du septième jour",v:["Venez à moi, vous tous qui êtes fatigués et chargés, et je vous donnerai du repos.","Matthieu 11:28"],
+  m:"Dieu lui-même s'est reposé le septième jour. Se reposer n'est pas de la paresse : c'est faire confiance au fait que le monde ne repose pas sur vos épaules.",
+  p:"Jésus, je dépose mes fatigues à tes pieds. Donne-moi ton repos, celui qui restaure l'âme. Amen.",
+  g:"Offrez-vous un vrai moment de repos aujourd'hui : une promenade, une sieste, un thé en silence. Sans culpabilité.",
+  q:"De quoi mon âme est-elle fatiguée en ce moment ?",a:"Je me repose en Dieu. Il prend soin de ce que je ne peux pas porter."},
+ {t:"La puissance des paroles",v:["La mort et la vie sont au pouvoir de la langue.","Proverbes 18:21"],
+  m:"Vos paroles sont des graines. Ce que vous dites de vous-même et de votre avenir finit par prendre racine dans votre cœur.",
+  p:"Seigneur, mets une garde à mes lèvres. Que mes paroles bénissent au lieu de blesser, à commencer par moi-même. Amen.",
+  g:"Aujourd'hui, chaque fois qu'une plainte vous vient, remplacez-la par une bénédiction dite à voix haute.",
+  q:"Quelles paroles négatives est-ce que je prononce le plus souvent ?",a:"Mes paroles sèment la vie. Je bénis mon avenir au nom du Seigneur."},
+ {t:"Écrire la vision",v:["Écris la prophétie : grave-la sur des tables, afin qu'on la lise couramment.","Habacuc 2:2"],
+  m:"Dieu a demandé au prophète d'écrire la vision. Ce qui est écrit devient plus clair, et l'on peut prier avec précision.",
+  p:"Seigneur, donne-moi une vision claire de la vie que tu as préparée pour moi. Amen.",
+  g:"Écrivez une page « Ma vie dans un an », au présent, comme si c'était déjà vrai : votre paix, votre santé, votre famille, vos finances.",
+  q:"À quoi ressemble une journée parfaite dans la vie que Dieu me prépare ?",a:"Je vois avec clarté la vie que Dieu a préparée pour moi, et j'y marche."},
+ {t:"Voir avec les yeux de la foi",v:["La foi est une ferme assurance des choses qu'on espère.","Hébreux 11:1"],
+  m:"La foi voit avant que les yeux ne voient. Imaginer la réponse de Dieu, c'est déjà commencer à lui faire confiance.",
+  p:"Père, ouvre les yeux de mon cœur. Que je voie ta réponse avant même qu'elle n'arrive. Amen.",
+  g:"Fermez les yeux 3 minutes et imaginez le jour où votre prière est exaucée. Que ressentez-vous ? Remerciez Dieu pour ce moment.",
+  q:"Qu'est-ce que je ferais différemment si j'étais certain que Dieu m'a déjà entendu ?",a:"Je marche par la foi et non par la vue. Ce que j'espère est en chemin."},
+ {t:"Enfant du Roi",v:["Vous êtes une race élue, un sacerdoce royal.","1 Pierre 2:9"],
+  m:"Vous n'êtes pas un mendiant devant Dieu : vous êtes son enfant. Un enfant du Roi demande avec confiance, sans honte.",
+  p:"Père, merci de m'appeler ton enfant. Apprends-moi à vivre avec la dignité que tu m'as donnée. Amen.",
+  g:"Aujourd'hui, habillez-vous avec soin, tenez-vous droit, et parlez à Dieu comme à un Père qui vous attendait.",
+  q:"Dans quel domaine de ma vie est-ce que je me sens encore « indigne » ?",a:"Je suis l'enfant bien-aimé du Roi. Je reçois avec confiance."},
+ {t:"La foi des petites graines",v:["Si vous aviez de la foi comme un grain de sénevé… rien ne vous serait impossible.","Matthieu 17:20"],
+  m:"Dieu ne vous demande pas une foi immense, seulement une foi vraie. Les plus grands arbres viennent de graines minuscules.",
+  p:"Seigneur, voici ma petite foi. Fais-la grandir, comme tu fais grandir la graine dans la terre. Amen.",
+  g:"Plantez une graine, ou posez une plante près de votre fenêtre. Chaque fois que vous la verrez, priez pour votre demande.",
+  q:"Quel petit pas de foi puis-je faire dès aujourd'hui ?",a:"Ma foi grandit chaque jour. Avec Dieu, rien n'est impossible."},
+ {t:"Donner avec joie",v:["Dieu aime celui qui donne avec joie.","2 Corinthiens 9:7"],
+  m:"Donner ouvre les mains, et des mains ouvertes peuvent aussi recevoir. La générosité brise la peur du manque.",
+  p:"Seigneur, rends mon cœur généreux. Que ce que je donne aujourd'hui soit une semence de bénédiction. Amen.",
+  g:"Donnez quelque chose aujourd'hui : un peu de temps, un appel à une personne seule, un repas, ou un don.",
+  q:"Qu'est-ce que je retiens par peur, alors que je pourrais le partager ?",a:"Je donne avec joie et je reçois avec gratitude. L'abondance circule à travers moi."},
+ {t:"Se voir comme Dieu vous voit",v:["Je te loue de ce que je suis une créature si merveilleuse.","Psaume 139:14"],
+  m:"Dieu vous a formé avec amour. Vos rides, votre histoire, vos cicatrices : rien ne le détourne de vous.",
+  p:"Seigneur, apprends-moi à me regarder avec tes yeux, avec tendresse et respect. Amen.",
+  g:"Regardez-vous dans un miroir et dites lentement : « Dieu m'a fait avec amour. Je suis précieux à ses yeux. »",
+  q:"Qu'est-ce que Dieu aime en moi que j'ai du mal à voir ?",a:"Je suis une œuvre merveilleuse de Dieu. Je m'accueille avec douceur."},
+ {t:"Oser le premier pas",v:["Fortifie-toi et prends courage… car l'Éternel, ton Dieu, est avec toi.","Josué 1:9"],
+  m:"La mer s'est ouverte quand le peuple a avancé. Dieu bénit les pas que l'on ose faire avec lui.",
+  p:"Seigneur, donne-moi le courage de faire aujourd'hui le premier pas. Je sais que tu marches avec moi. Amen.",
+  g:"Faites aujourd'hui une petite action concrète vers votre désir : un appel, une démarche, un rendez-vous.",
+  q:"Quel pas est-ce que je repousse depuis trop longtemps ?",a:"Je suis fort et courageux, car le Seigneur est avec moi partout où je vais."},
+ {t:"Renouveler ses forces",v:["Ceux qui se confient en l'Éternel renouvellent leur force. Ils prennent le vol comme les aigles.","Ésaïe 40:31"],
+  m:"Quand vos forces diminuent, celles de Dieu demeurent. Il ne vous demande pas d'être fort seul, mais de vous appuyer sur lui.",
+  p:"Seigneur, renouvelle mes forces. Donne-moi l'énergie du corps et la joie de l'âme. Amen.",
+  g:"Marchez 10 minutes dehors en remerciant Dieu pour chaque chose que vous voyez.",
+  q:"Où ai-je besoin que Dieu renouvelle mes forces ?",a:"Ma force vient du Seigneur. Je m'élève au-dessus de la fatigue et du doute."},
+ {t:"Remettre le résultat à Dieu",v:["Recommande ton sort à l'Éternel, mets en lui ta confiance, et il agira.","Psaume 37:5"],
+  m:"Vous avez semé, prié, agi. Maintenant vient le plus beau : lâcher prise. Dieu agit souvent quand nous cessons de tout vouloir contrôler.",
+  p:"Père, je te remets le résultat. Fais à ta manière et à ton heure, car ton heure est parfaite. Amen.",
+  g:"Reprenez le papier du Jour 1. Relisez-le, puis dites : « Je te le confie entièrement, Seigneur. »",
+  q:"Qu'est-ce que j'essaie encore de contrôler au lieu de le confier à Dieu ?",a:"Je confie tout à Dieu. Je suis en paix, car il agit pour moi."},
+ {t:"La paix au milieu des vagues",v:["Je vous laisse la paix, je vous donne ma paix.","Jean 14:27"],
+  m:"Jésus dormait dans la barque pendant la tempête. La paix de Dieu ne dépend pas des circonstances : elle habite le cœur qui lui fait confiance.",
+  p:"Jésus, calme les vagues de mon cœur. Que ta paix garde mes pensées et mes nuits. Amen.",
+  g:"Ce soir, avant de dormir, posez la main sur votre cœur et répétez trois fois : « Jésus, j'ai confiance en toi. »",
+  q:"Quelle inquiétude puis-je déposer ce soir entre les mains de Dieu ?",a:"La paix du Christ garde mon cœur, quelles que soient les vagues autour de moi."},
+ {t:"Porter du fruit",v:["Celui qui demeure en moi et en qui je demeure porte beaucoup de fruit.","Jean 15:5"],
+  m:"Regardez en arrière : en 18 jours, quelque chose a déjà changé. Les fruits poussent souvent en silence, avant de se voir.",
+  p:"Seigneur, merci pour les fruits que tu fais déjà pousser en moi. Garde-moi attaché à toi. Amen.",
+  g:"Relisez vos notes des jours précédents. Soulignez un changement, même petit, que vous remarquez en vous.",
+  q:"Quel fruit est-ce que je vois déjà dans ma vie depuis le début de ce chemin ?",a:"Je demeure en Dieu, et ma vie porte du fruit en abondance."},
+ {t:"Devenir une bénédiction",v:["Je te bénirai… et tu seras une source de bénédiction.","Genèse 12:2"],
+  m:"Dieu ne bénit jamais une personne pour elle seule. Vos bénédictions sont destinées à couler vers les autres.",
+  p:"Seigneur, fais de moi un canal de ta bénédiction pour ma famille et pour ceux que je croise. Amen.",
+  g:"Bénissez aujourd'hui trois personnes : un message, une prière pour elles, un compliment sincère.",
+  q:"À qui Dieu me demande-t-il de faire du bien cette semaine ?",a:"Je suis béni pour être une bénédiction. Sa bonté coule à travers moi."},
+ {t:"Une créature nouvelle",v:["Voici, je vais faire une chose nouvelle, sur le point d'arriver.","Ésaïe 43:19"],
+  m:"Vous avez marché 21 jours avec Dieu. Vous avez purifié, semé, confié. Vous n'êtes plus tout à fait la même personne qu'au premier jour.",
+  p:"Père, merci pour ce chemin. Je reçois la vie nouvelle que tu as préparée. Que ma foi continue de grandir. Amen.",
+  g:"Écrivez une lettre de remerciement à Dieu pour ces 21 jours. Gardez-la avec le papier du Jour 1.",
+  q:"Qu'est-ce qui a changé en moi depuis le Jour 1 ?",a:"Je suis une créature nouvelle. Ce que Dieu commence, il l'achève."}];
+S.df=S.df||{start:'',done:[],last:'',notes:{}};
+const dfDone=()=>S.df.done.length,dfNext=()=>Math.min(dfDone()+1,21);
+const dfAvail=n=>n<=dfDone()||(n===dfDone()+1&&n<=21&&S.df.start&&S.df.last!==TODAY);   // le suivant s'ouvre le lendemain
+function dfCover(big){return `<span class="cv d21${big?' big':''}"><span class="d21n">21</span><span class="d21l">jours</span><span class="d21s">de renouveau</span></span>`}
+function dfState(n){if(S.df.done.includes(n))return 'ok';if(dfAvail(n))return 'now';return 'lock'}
+function vDefi(){const d=dfDone(),n=dfNext(),started=!!S.df.start,end=d>=21;
+ const lockTxt=n2=>n2===dfDone()+1&&S.df.last===TODAY?`S'ouvre dans ${pdLeft()}`:'Verrouillé';
+ return `${back('lib')}
+ <section class="d21hero">${dfCover(1)}<div class="d21in"><span class="tbadge">${ic('spark')}Défi de 21 jours</span>
+  <h1>21 Jours de Renouveau</h1><p class="tsub">Un pas avec Dieu chaque jour : purifier, semer, puis recevoir la moisson.</p>
+  <div class="d21stats"><div><b>${end?21:!started?1:dfAvail(n)?n:d}</b><span>Jour actuel</span></div><div><b>${d}</b><span>Accomplis</span></div><div><b>${21-d}</b><span>Restants</span></div></div>
+  <div class="tprog"><span class="bar"><i style="width:${d/21*100}%"></i></span><b>${Math.round(d/21*100)}%</b></div>
+  ${end?`<button class="btn gold" data-a="dfcert">${ic('spark')} Voir mon certificat</button>`
+   :!started?`<button class="btn gold" data-a="dfstart">${ic('play')} Commencer le Jour 1</button>`
+   :dfAvail(n)?`<button class="btn gold" data-a="dfday" data-n="${n}">${ic('play')} Vivre le Jour ${n}</button>`
+   :`<div class="d21wait">✓ Jour ${d} accompli aujourd'hui · Le Jour ${n} s'ouvre dans <b>${pdLeft()}</b></div>`}
+ </div></section>
+ <p class="tquote">Un seul pas par jour. Dieu fait le reste.</p>
+ ${DF_WEEKS.map((w,wi)=>{const ds=DF.slice(wi*7,wi*7+7),k=ds.filter((_,j)=>S.df.done.includes(wi*7+j+1)).length;
+  return `<div class="d21wk"><div class="d21wh"><span class="d21wi">${w[0]}</span><div class="grow"><span class="eyebrow">Semaine ${wi+1} · Jours ${wi*7+1}–${wi*7+7}</span><h2>${w[1]}</h2><span class="small soft">${w[2]}</span></div><span class="d21wc ${k===7?'ok':''}">${k}/7</span></div>
+  ${ds.map((x,j)=>{const m=wi*7+j+1,st=dfState(m);return `<button class="d21day ${st}" data-a="${st==='lock'?'dflock':'dfday'}" data-n="${m}"><span class="d21num">${st==='ok'?ic('check'):st==='lock'?ic('lock'):m}</span><span class="grow"><span class="t">Jour ${m} · ${esc(x.t)}</span><span class="s">${st==='ok'?'Accompli ✓':st==='now'?'Disponible aujourd\'hui':lockTxt(m)}</span></span>${st==='now'?`<span class="d21go">Ouvrir</span>`:''}</button>`}).join('')}</div>`}).join('')}`}
+function vDefiDay(){const n=V.dn,x=DF[n-1],w=DF_WEEKS[Math.floor((n-1)/7)],done=S.df.done.includes(n),note=S.df.notes[n]||'';
+ return `<button class="back" data-a="tab" data-t="defi">${ic('chev')}21 jours</button>
+ <div class="brand"><span class="eyebrow">Jour ${n} sur 21 · ${w[0]} ${esc(w[1])}</span><h1>${esc(x.t)}</h1><span class="rule"></span></div>
+ <section class="ivory"><p class="ref" style="border:0;padding:0">« ${esc(x.v[0])} »<b>${esc(x.v[1])}</b></p></section>
+ <div class="d21sec"><span class="eyebrow">✦ Méditation</span><p>${esc(x.m)}</p></div>
+ <div class="d21sec pray"><span class="eyebrow">🙏 Prière à dire à voix haute</span><p class="d21pr">${esc(x.p)}</p></div>
+ <div class="d21sec"><span class="eyebrow">🕯️ Geste sacré du jour</span><p>${esc(x.g)}</p></div>
+ <div class="d21sec"><span class="eyebrow">✍️ Question pour le cœur</span><p><b>${esc(x.q)}</b></p>
+  <textarea id="dfnote" rows="4" placeholder="Écrivez librement… (seulement pour vous)">${esc(note)}</textarea></div>
+ <div class="d21sec decl"><span class="eyebrow">👑 Déclaration du jour</span><p class="d21a">« ${esc(x.a)} »</p></div>
+ ${done?`<div class="tdone">${ic('check')}<h3>Jour ${n} accompli</h3><p class="small">Vous pouvez revenir le relire quand vous le souhaitez.</p></div><button class="btn line" data-a="dfsave" data-n="${n}">Enregistrer ma note</button>`
+  :`<button class="btn gold" data-a="dfok" data-n="${n}">${ic('check')} J'ai vécu le Jour ${n}</button>`}`}
+function dfBravo(n){const end=n===21,week=n%7===0&&!end,nx=n+1;$('#unlock')?.remove();const u=document.createElement('div');u.id='unlock';u.className='bravo';
+ const sparks=Array.from({length:14},(_,i)=>{const a=i/14*6.283,r=90+Math.random()*60;return `<span class="spark" style="--x:${Math.round(Math.cos(a)*r)}px;--y:${Math.round(Math.sin(a)*r)}px"></span>`}).join('');
+ u.innerHTML=`<div class="rays"></div><div style="position:relative"><div class="ulock">${end||week?`<span style="font-size:46px;line-height:1">${end?'👑':DF_WEEKS[n/7-1][0]}</span>`:ic('check')}</div>${sparks}</div>
+  <span class="eyebrow rev">✦ ${end?'Défi accompli':week?`Semaine ${n/7} terminée`:`Jour ${n} accompli`} ✦</span>
+  <h1 class="rev d2">${end?'Vous êtes une créature nouvelle':week?esc(DF_WEEKS[n/7-1][1]):'Un pas de plus avec Dieu'}</h1>
+  <p class="soft rev d3" style="max-width:320px">${end?'Vous avez marché 21 jours avec Dieu. Votre certificat vous attend.':week?`Bravo ! La semaine « ${esc(DF_WEEKS[n/7][1])} » commence demain.`:`Le Jour ${nx} « ${esc(DF[nx-1].t)} » s'ouvrira demain. Revenez le vivre !`}</p>
+  <div class="d21dots rev d3">${Array.from({length:21},(_,i)=>`<i class="${S.df.done.includes(i+1)?'on':''}"></i>`).join('')}</div>
+  <button class="btn gold rev d4" data-a="${end?'dfcert':'dfbravo'}" style="max-width:340px">${end?'Recevoir mon certificat':'Continuer'}</button>`;
+ document.body.appendChild(u);setTimeout(()=>u.classList.add('open'),120)}
+function vDefiCert(){const st=S.df.start?fdate(S.df.start):'',en=S.df.last?fdate(S.df.last):'';return `<button class="back" data-a="tab" data-t="defi">${ic('chev')}21 jours</button>
+ <div class="d21cert"><span class="eyebrow">✦ Certificat d'Alliance ✦</span><p class="small">Ce certificat est remis à</p><h1>${esc(S.user.name)}</h1>
+  <p>qui a marché <b>21 jours</b> dans la foi, la prière et la confiance, du ${esc(st)} au ${esc(en)}.</p>
+  <p class="d21cv">« Voici, je vais faire une chose nouvelle, sur le point d'arriver. »<b>Ésaïe 43:19</b></p>
+  <div class="d21seal"><b>✦</b></div><span class="small" style="color:#8a6420">Scellé dans la foi · Temps d'Abondance</span></div>
+ <p class="small soft center">Astuce : faites une capture d'écran pour garder votre certificat.</p>
+ <button class="btn line" data-a="dfagain">Recommencer le défi depuis le Jour 1</button>`}
 // Prière du jour « biscuit de la chance » : choisie pour chaque personne et chaque jour, révélée en touchant le sceau
 function pdIdx(){const k=((S.user&&S.user.email)||'')+'|'+TODAY;let h=2166136261;for(let i=0;i<k.length;i++){h^=k.charCodeAt(i);h=Math.imul(h,16777619)>>>0}return h%DAILY.length}
 const pdDone=()=>S.pdr===TODAY;
@@ -835,6 +1041,7 @@ function vHome(){const open=saOpen(),nx=SA.findIndex((x,j)=>j<open&&!S.saRead.in
    <span class="s">${nx<0?"Une nouvelle prière s'ouvre demain.":S.gift?"Ouverte pour vous aujourd'hui.":'Lisez-la pour débloquer de nouvelles leçons.'}</span></span>
   <span class="access">Ouvrir la prière ${ic('arrow')}</span></button>
  ${pdCard()}
+ <button class="mc d21row" data-a="tab" data-t="defi">${dfCover()}<span class="grow"><span class="eyebrow">Défi de 21 jours</span><span class="t">${dfDone()>=21?'Défi accompli 👑':!S.df.start?'21 Jours de Renouveau':dfAvail(dfNext())?`Le Jour ${dfNext()} vous attend`:`Jour ${dfDone()} accompli ✓`}</span><span class="s">${dfDone()>=21?'Votre certificat vous attend.':!S.df.start?'Un pas avec Dieu chaque jour. Commencez aujourd\'hui.':dfAvail(dfNext())?esc(DF[dfNext()-1].t):`Prochain jour dans ${pdLeft()}`}</span><span class="d21mini"><i style="width:${dfDone()/21*100}%"></i></span></span><span class="chev">${ic('chev')}</span></button>
  ${mc('data-a="tab" data-t="lib"',tile('book'),'Mes programmes','Accédez à ce qui est déjà débloqué pour vous.','gold')}
  ${LOCKS.map((l,i)=>`<button class="mc lockrow" data-a="lockgo" data-i="${i}">${l.tag?`<span class="tag">${esc(l.tag)}</span>`:''}${tile('lock')}<span class="grow"><span class="eyebrow">${esc(l.eb)}</span><span class="t">${esc(l.t)}</span><span class="s">${esc(l.s)}</span></span><span class="chev">${ic('lock')}</span></button>`).join('')}
  <button class="mc bhome" data-a="tab" data-t="shop"><span class="tile">${GIFT}</span><span class="grow"><span class="t">Bonus</span><span class="s">Du contenu en plus pour approfondir votre parcours.</span><span class="bprog">${Array.from({length:BONUS.length+1},(_,i)=>`<i class="${i<BONUS.length?'on':''}"></i>`).join('')}<span style="margin-left:4px">${BONUS.length} sur ${BONUS.length+1} débloqués</span></span></span><span class="chev">${ic('chev')}</span></button>
@@ -863,7 +1070,7 @@ function vLib(){
  ${V.fresh?`<p class="unlockline">✦ ${P.find(p=>p.gift).l.length} nouvelles leçons débloquées</p>`:''}
  ${rail('Mes programmes',progs)}
  ${rail('Prières de Saint Antoine',pray)}
- ${rail('Pratiques divines',[nmCard,fcCard])}
+ ${rail('Pratiques divines',[pcard('data-a="tab" data-t="defi"',dfCover(),'21 Jours de Renouveau',dfDone()>=21?'Défi accompli ✓':dfDone()?`${dfDone()} sur 21 jours`:'Un pas avec Dieu chaque jour',dfDone()>=21?`${ic('spark')} Certificat`:dfDone()?`${ic('play')} Continuer`:`${ic('play')} Commencer`,'',''),nmCard,fcCard])}
  ${more.length>1?rail('À découvrir',more):''}
  ${rail('Assistance',[`<button class="pc" data-a="tab" data-t="refund"><span class="cv rcv">${ic('support')}<b>Besoin d'être remboursé ?</b></span><span class="rtag">Assistance</span><h3>Demande de remboursement</h3><span class="small soft">Procédure officielle en 3 étapes · 5 min</span><span class="access red">${ic('play')} ${S.refund?'Voir ma demande':'Demander'}</span></button>`])}`}
 
@@ -1160,13 +1367,13 @@ function welcome(name,done){const w=document.createElement('div');w.id='welcome'
  setTimeout(()=>{done();w.classList.add('out');setTimeout(()=>w.remove(),650)},2400)}
 
 /* ---------- engine ---------- */
-function render(){
+function render(){S.df=S.df||{start:'',done:[],last:'',notes:{}};
  D=DAILY[pdIdx()];
  const app=$('#app');if(!S.user||(API_URL&&!S.tok&&!V.offline)){app.innerHTML=vLogin();logView.last=null;return}
  logView();
- const views={home:vHome,lib:vLib,prog:vProg,pray:vPray,sa:vSA,journal:vJournal,theme:vTheme,shop:vShop,offer:vOffer,script:vScript,guide:vGuide,refund:vRefund,num:vNum,focus:vFocus};
+ const views={defi:vDefi,defiday:vDefiDay,deficert:vDefiCert,home:vHome,lib:vLib,prog:vProg,pray:vPray,sa:vSA,journal:vJournal,theme:vTheme,shop:vShop,offer:vOffer,script:vScript,guide:vGuide,refund:vRefund,num:vNum,focus:vFocus};
  const tabs=[['home','Accueil','home'],['lib','Programmes','book'],['shop','Bonus','gift'],['guide','Père Michel','chat'],['refund','Rembourser','card']];
- const cur={pray:'home',prog:'lib',sa:V.saBack==='pray'?'home':V.saBack,journal:'home',theme:'shop',offer:V.offBack,script:'shop',num:'lib',focus:'lib'}[V.tab]||V.tab;
+ const cur={defi:'lib',defiday:'lib',deficert:'lib',pray:'home',prog:'lib',sa:V.saBack==='pray'?'home':V.saBack,journal:'home',theme:'shop',offer:V.offBack,script:'shop',num:'lib',focus:'lib'}[V.tab]||V.tab;
  const enter=render.last!==V.tab;render.last=V.tab;
  app.innerHTML=`<main class="gut ${V.tab==='guide'?'chat':''} ${enter?'enter':''}" id="view">${views[V.tab]()}</main>
   <nav class="tabs" aria-label="Navigation">${tabs.map(t=>`<button data-a="tab" data-t="${t[0]}" ${cur===t[0]?'aria-current="page"':''}>${ic(t[2])}<span>${t[1]}</span></button>`).join('')}</nav>
@@ -1191,7 +1398,7 @@ function watchGift(){clearInterval(giftTimer);if(V.tab!=='sa'||S.gift)return;let
   if(seen>=1500&&Date.now()-V.saT>=GIFT_MIN){clearInterval(giftTimer);showGift()}},500)}
 // Liens directs pour les e-mails : #saint-antoine, #priere, #programmes, #bonus, #guide, #remboursement
 function applyHash(){const h=location.hash.slice(1);if(!S.user||!h)return;
- if(h==='saint-antoine')openSA();else{const t={priere:'pray',programmes:'lib',bonus:'shop',guide:'guide',nombres:'num',focus:'focus',remboursement:'refund'}[h];if(t)V.tab=t}}
+ if(h==='saint-antoine')openSA();else{const t={priere:'pray',programmes:'lib',bonus:'shop',guide:'guide',nombres:'num',focus:'focus',remboursement:'refund',defi:'defi','21-jours':'defi'}[h];if(t)V.tab=t}}
 
 const GUIDE_RULES=`Tu es l'assistant virtuel du ${PERE}, dans l'application Temps d'Abondance (prières et vidéos de spiritualité chrétienne). Tu écris comme dans une messagerie : messages courts, chaleureux, simples, 60 mots maximum, sans titres ni listes.
 Tu es un assistant automatique : tu n'es ni un prêtre ni une personne. Ne prétends jamais être le ${PERE} lui-même ni un être humain, et si on te demande qui tu es, dis-le clairement. Tu ne donnes pas de sacrements, d'absolution ni de direction spirituelle personnelle.
@@ -1226,6 +1433,15 @@ document.addEventListener('click',e=>{
  if(a==='tab'){stopPlay();if(b.dataset.t!=='lib')V.fresh=false;V.tab=b.dataset.t;V.menu=false;V.rform=false}
  else if(a==='menu')V.menu=true;
  else if(a==='menuclose')V.menu=false;
+ else if(a==='dfstart'){if(!S.df.start)S.df.start=TODAY;save();V.dn=1;V.tab='defiday';track('defi',{ev:'debut'})}
+ else if(a==='dfday'){const n=+b.dataset.n;if(!dfAvail(n))return;V.dn=n;V.tab='defiday'}
+ else if(a==='dflock'){toast(S.df.last===TODAY&&+b.dataset.n===dfDone()+1?`Ce jour s'ouvre dans ${pdLeft()} ✦`:'Avancez un jour à la fois ✦');return}
+ else if(a==='dfok'||a==='dfsave'){const n=+b.dataset.n,t=($('#dfnote')||{}).value||'';S.df.notes[n]=t.slice(0,4000);
+   if(a==='dfsave'){save();toast('Note enregistrée ✓');return}
+   if(!S.df.done.includes(n)){S.df.done.push(n);S.df.last=TODAY}save();track('defi',{jour:n,note:t.length});V.tab='defi';render();$('#view').scrollTop=0;dfBravo(n);return}
+ else if(a==='dfbravo'){bravoClose();return}
+ else if(a==='dfcert'){$('#unlock')?.remove();V.tab='deficert'}
+ else if(a==='dfagain'){if(!confirm('Recommencer le défi depuis le Jour 1 ?'))return;S.df={start:TODAY,done:[],last:'',notes:{}};save();V.tab='defi'}
  else if(a==='pdopen'){if(!pdDone()){render();pdReveal();return}V.tab='pray'}
  else if(a==='pdread'){pdClose();V.tab='pray'}
  else if(a==='pdclose'){pdClose();render();return}
