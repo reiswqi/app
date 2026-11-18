@@ -181,7 +181,7 @@ function draw(){const app=$('#app');
  const f=$('#f');if(f)f.onchange=()=>{ST.f=f.value;draw()}}
 function mailPanel(){const m=ST.mail;if(!m)return '';const n=Math.min(m.pending,m.remainingToday);
  return `<div class="panel"><h3>E-mail de acesso aos compradores (Brevo)</h3>
-  ${m.ready?`<p>Remetente: <b>${esc(m.senderName)} &lt;${esc(m.sender)}&gt;</b> · respostas chegam em lr.bussine@gmail.com</p>`:'<p><span class="tag">falta configurar</span> Adicione no Railway (serviço app → Variables): <b>BREVO_API_KEY</b> e <b>BREVO_SENDER</b>.</p>'}
+  ${m.ready?`<p>Remetente: <b>${esc(m.senderName)} &lt;${esc(m.sender)}&gt;</b> · respostas dos clientes vão para contact@app-parcoursdefoi.online, que encaminha para o seu Gmail</p>`:'<p><span class="tag">falta configurar</span> Adicione no Railway (serviço app → Variables): <b>BREVO_API_KEY</b> e <b>BREVO_SENDER</b>.</p>'}
   <div class="facts" style="margin:10px 0"><div><b>${m.pending}</b><span>compradores esperando o e-mail (liberados, sem conta)</span></div><div><b>${m.sent}</b><span>já receberam</span></div>
    <div><b>${m.sentToday} / ${m.limit}</b><span>enviados nas últimas 24 h (limite diário)</span></div><div><b style="color:${m.failed?'var(--bad)':'inherit'}">${m.failed}</b><span>falharam</span></div></div>
   ${m.lastErrors&&m.lastErrors.length?`<p class="err" style="font-size:12px">Últimas falhas: ${m.lastErrors.map(e=>esc(e.email+' — '+e.error)).join(' · ')}</p>`:''}

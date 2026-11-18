@@ -3,7 +3,7 @@
 //                     BREVO_SENDER_NAME (défaut « Prière Sacrée »), EMAIL_DAILY_LIMIT (défaut 290 : plan gratuit = 300/jour).
 const BREVO_URL = process.env.BREVO_URL || 'https://api.brevo.com/v3/smtp/email';
 const APP_URL = process.env.APP_URL || 'https://app-parcoursdefoi.online';
-const SUPPORT = process.env.SUPPORT_EMAIL || 'lr.bussine@gmail.com';
+const SUPPORT = process.env.SUPPORT_EMAIL || 'contact@app-parcoursdefoi.online';   // « Répondre » des clients (redirigé vers le Gmail de Lucas)
 const cfg = () => ({ key: process.env.BREVO_API_KEY || '', sender: process.env.BREVO_SENDER || '', senderName: process.env.BREVO_SENDER_NAME || 'Prière Sacrée',
   limit: Math.max(1, +process.env.EMAIL_DAILY_LIMIT || 290) });
 
