@@ -23,6 +23,7 @@ Lucas (Brésil, parle portugais avec Claude) reconstruit l'app française « Tem
 Page de vente « Découvrez votre ange gardien » (https://reiswqi.github.io/a/, checkout Kiwify https://pay.kiwify.com/AL75ghK) ; la carte ange gardien de l'app y redirige ; banner Portail des Anges (généré dans ChatGPT, non téléchargé) ; Pratiques divines ; thème de novembre avec 5 vidéos natives (aula2–4 remplacées par les originaux de Lucas) et nouveau design de la page du thème.
 
 ## À faire / idées en attente
+- **Lucas utilise KashPay (Stripe), pas Kiwify.** Pas de doc publique des webhooks KashPay : attendre la capture de l'écran Webhooks/Postback du panneau KashPay avant d'intégrer (achat → création de compte autorisée ; remboursement/chargeback → accès bloqué ; achat dans le dossier). Les liens `pay.kiwify.com/AL75ghK` (page de vente /a et CTA vturb de la leçon 1 Michel) sont à remplacer par le checkout KashPay quand Lucas l'enverra.
 - Remplacer les vidéos du thème (Bonus) par vturb quand Lucas enverra les codes ; ajouter `vt` aux autres programmes (Chant, Fréquences…) quand il enverra leurs vidéos.
 - Carte verrouillée « Leçons à débloquer » (Programmes) : proposé de la remplacer par une couverture floutée + cadenas ; en attente de réponse de Lucas.
 - Railway en ligne (DATABASE_URL + PORT posés par Claude). Reste : Lucas ajoute lui-même `ADMIN_PASSWORD` (jamais à Claude). Un événement de test `test_deploy` (appareil claude-test) est resté dans la base (non effaçable). Penser à mentionner l'enregistrement d'activité dans les CGV / politique de confidentialité (RGPD).
