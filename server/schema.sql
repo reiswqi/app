@@ -113,3 +113,14 @@ create index if not exists email_log_email_idx on email_log (email, kind);
 create table if not exists settings (key text primary key, value text, updated_at timestamptz not null default now());
 alter table email_log add column if not exists slot text;
 create index if not exists email_log_kind_idx on email_log (kind);
+
+-- Liens « mot de passe oublié » (le jeton n'est jamais stocké en clair : seulement son empreinte), valables 1 heure, une seule fois
+create table if not exists password_resets (
+  id         bigint generated always as identity primary key,
+  email      text not null,
+  token_hash text not null unique,
+  created_at timestamptz not null default now(),
+  expires_at timestamptz not null,
+  used_at    timestamptz,
+  ip         text
+);

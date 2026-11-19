@@ -333,6 +333,34 @@ async function authRoute(req, res, url) {
     const acc = await accessOf(u.email); if (acc.blocked) return R(200, { ok: false, blocked: true, error: BLOCK_MSG(acc.reason) });
     return R(200, { ok: true });
   }
+  if (url.pathname === '/api/auth/forgot') {        // envoie un lien de réinitialisation par e-mail (réponse identique que le compte existe ou non)
+    if (limited('fg:' + ip, 6, 3600e3) || limited('fgm:' + email, 3, 3600e3)) return R(429, { error: 'Trop de demandes. Réessayez dans une heure.' });
+    if (!EMAIL_RE.test(email)) return R(400, { error: 'Adresse e-mail invalide.' });
+    const c = MAIL.cfg(); if (!c.key || !c.sender) return R(503, { error: "L'envoi d'e-mails n'est pas disponible. Écrivez-nous." });
+    const u = (await pool.query('select id, name from users where email = $1', [email])).rows[0];
+    if (u && !(await accessOf(email)).blocked) {
+      const token = crypto.randomBytes(24).toString('base64url');
+      await pool.query("insert into password_resets (email, token_hash, expires_at, ip) values ($1,$2, now() + interval '1 hour', $3)", [email, sha(token).toString('hex'), ip]);
+      try { const id = await MAIL.brevoSend(email, u.name, MAIL.resetEmail(email, u.name, token), 'reset');
+        await pool.query('insert into email_log (email, kind, status, message_id) values ($1,$2,$3,$4)', [email, 'reset', 'sent', id]); }
+      catch (e) { await pool.query('insert into email_log (email, kind, status, error) values ($1,$2,$3,$4)', [email, 'reset', 'failed', e.message]); return R(502, { error: "L'e-mail n'a pas pu être envoyé. Réessayez ou écrivez-nous." }); }
+      await serverEvent(req, 'reset_request', email, u.id, {}, { ...b, name: u.name });
+    }
+    return R(200, { ok: true });
+  }
+  if (url.pathname === '/api/auth/reset') {         // le lien de l'e-mail : nouveau mot de passe, puis connexion directe
+    if (limited('rs:' + ip, 15, 3600e3)) return R(429, { error: 'Trop de tentatives. Réessayez plus tard.' });
+    const token = String(b.token || '');
+    if (pw.length < 6 || pw.length > 200) return R(400, { error: 'Le mot de passe doit contenir au moins 6 caractères.' });
+    const r = await pool.query('update password_resets set used_at = now() where token_hash = $1 and used_at is null and expires_at > now() returning email', [sha(token).toString('hex')]);
+    if (!r.rowCount) return R(400, { error: 'Ce lien a expiré ou a déjà été utilisé. Demandez-en un nouveau.', expired: true });
+    const em = r.rows[0].email, u = (await pool.query("update users set pass_hash = $1, pass_by = 'client', pass_changed_at = now(), last_login_at = now() where email = $2 returning id, email, name", [await hashPass(pw), em])).rows[0];
+    if (!u) return R(400, { error: 'Compte introuvable.' });
+    if ((await accessOf(em)).blocked) return R(403, { error: BLOCK_MSG((await accessOf(em)).reason), blocked: true });
+    await pool.query('update password_resets set used_at = now() where email = $1 and used_at is null', [em]);   // les autres liens deviennent invalides
+    await serverEvent(req, 'reset_done', em, u.id, {}, { ...b, name: u.name });
+    return R(200, { tok: userTok(u.id), ...pub(u) });
+  }
   if (url.pathname === '/api/auth/password') {      // nouveau mot de passe (après un mot de passe temporaire)
     const uid = tokUid(b.tok); if (!uid) return R(401, { error: 'Session expirée, reconnectez-vous.' });
     if (pw.length < 6 || pw.length > 200) return R(400, { error: 'Le mot de passe doit contenir au moins 6 caractères.' });

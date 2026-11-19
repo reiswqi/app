@@ -88,4 +88,25 @@ async function brevoSend(to, name, msg, tag) {
   if (!r.ok) throw new Error((j.message || j.code || ('Brevo ' + r.status)).toString().slice(0, 300));
   return j.messageId || null;
 }
-module.exports = { cfg, accessEmail, brevoSend, APP_URL, firstName };
+// E-mail « mot de passe oublié » : un bouton qui ouvre l'app sur « Nouveau mot de passe » (valable 1 heure)
+function resetEmail(email, name, token) {
+  const p = firstName(name), link = APP_URL + '/?reset=' + encodeURIComponent(token) + '&e=' + encodeURIComponent(email);
+  const subject = 'Votre nouveau mot de passe Prière Sacrée';
+  const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${h(subject)}</title></head>
+<body style="margin:0;padding:0;background:#f4efe4;font-family:Georgia,'Times New Roman',serif;color:#1c2540">
+<div style="display:none;max-height:0;overflow:hidden">Touchez le bouton pour choisir un nouveau mot de passe.</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4efe4"><tr><td align="center" style="padding:24px 12px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:16px;border:1px solid #e3d6b8">
+<tr><td style="padding:28px 26px 4px;text-align:center"><div style="font-size:15px;letter-spacing:3px;color:#8a6a1e;font-family:Arial,sans-serif;font-weight:bold">✦ PRIÈRE SACRÉE ✦</div>
+ <h1 style="margin:16px 0 0;font-size:28px;line-height:1.25;font-weight:normal">${p ? 'Bonjour ' + h(p) + ',' : 'Bonjour,'}</h1></td></tr>
+<tr><td style="padding:10px 28px 0;font-size:20px;line-height:1.6;text-align:center">Vous avez demandé à changer votre mot de passe.<br>Touchez le bouton ci-dessous pour en choisir un nouveau.</td></tr>
+<tr><td align="center" style="padding:26px 26px 4px"><a href="${h(link)}" style="display:inline-block;background:#b98f3c;background-image:linear-gradient(90deg,#d9b866,#b98f3c);color:#ffffff;text-decoration:none;font-family:Arial,sans-serif;font-size:20px;font-weight:bold;letter-spacing:1px;padding:19px 30px;border-radius:12px">CHOISIR MON MOT DE PASSE</a></td></tr>
+<tr><td style="padding:16px 28px 0;text-align:center;font-family:Arial,sans-serif;font-size:16px;line-height:1.5;color:#5b5b5b">Ce lien fonctionne pendant <b>1 heure</b>, une seule fois.<br>Conseil : notez votre nouveau mot de passe sur un papier.</td></tr>
+<tr><td style="padding:18px 28px 0;text-align:center;font-family:Arial,sans-serif;font-size:15px;line-height:1.5;color:#7a7a7a">Vous n'avez rien demandé ? Ignorez simplement cet e-mail : votre mot de passe actuel reste valable.</td></tr>
+<tr><td style="padding:22px 26px 28px;font-size:19px;text-align:center;font-style:italic;color:#5b4a22">L'équipe Prière Sacrée</td></tr></table>
+<p style="max-width:560px;font-family:Arial,sans-serif;font-size:13px;line-height:1.5;color:#7a7a7a;margin:16px auto 0;text-align:center">Si le bouton ne fonctionne pas : <a href="${h(link)}" style="color:#8a6a1e;word-break:break-all">${h(link)}</a></p>
+</td></tr></table></body></html>`;
+  const text = `${p ? 'Bonjour ' + p + ',' : 'Bonjour,'}\n\nVous avez demandé à changer votre mot de passe. Ouvrez ce lien pour en choisir un nouveau (valable 1 heure, une seule fois) :\n${link}\n\nVous n'avez rien demandé ? Ignorez cet e-mail.\n\nL'équipe Prière Sacrée`;
+  return { subject, html, text };
+}
+module.exports = { cfg, accessEmail, resetEmail, brevoSend, APP_URL, firstName };
