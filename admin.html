@@ -157,7 +157,7 @@ const ST={tab:'clients',q:'',f:'all',clients:null,recent:null,refunds:null,sales
 async function load(){ST.err='';try{
  if(ST.tab==='recent'&&!ST.recent)ST.recent=await api('recent?limit=300');
  if(ST.tab==='refunds'&&!ST.refunds)ST.refunds=await api('recent?type=refund&limit=1000');
- if(ST.tab==='sales'&&!ST.sales){ST.sales=await api('sales?limit=1000');ST.cfg=await api('config');ST.mail=await api('mail/status').catch(()=>null);ST.fun=await api('funnel').catch(()=>null)}
+ if(ST.tab==='sales'&&!ST.sales){ST.sales=await api('sales?limit=1000');ST.cfg=await api('config');ST.mail=await api('mail/status').catch(()=>null);ST.fun=await api('funnel').catch(()=>null);ST.off=await api('offers').catch(()=>null)}
  if(!ST.clients)ST.clients=await api('clients');
 }catch(e){ST.err=e.message}draw()}
 async function openClient(email){ST.detail={email,loading:true};draw();window.scrollTo(0,0);try{
@@ -188,6 +188,14 @@ function draw(){const app=$('#app');
  const q=$('#q');if(q){q.oninput=()=>{ST.q=q.value;const p=q.selectionStart;draw();const n=$('#q');n.focus();n.setSelectionRange(p,p)}}
  const f=$('#f');if(f)f.onchange=()=>{ST.f=f.value;draw()}}
 const GOTXT={'':'Entrada do app','message':'Oração do dia (selo)','saint-antoine':'Grande Prière de Saint Antoine','defi':'Desafio 21 dias','prog-fond-1':'Fondements · aula 1','prog-fond-2':'Fondements · aula 2','prog-fond-3':'Fondements · aula 3','prog-freq-1':'7 Fréquences · introdução','prog-freq-2':'7 Fréquences · L\'Éveil','prog-freq-5':'7 Fréquences · Jéricho','prog-chant-1':'Chant Sacré · Michel','prog-chant-2':'Chant Sacré · Anjo da guarda','prog-chant-3':'Chant Sacré · Raphaël'};
+const OFFN={'offer:ange':'Découvrez votre ange gardien','lock:0':'Prière Secrète - Illimitée (cadeado)','lock:1':'Code du Royaume (cadeado)','later':'Les 10 Promesses (em breve)','upd':'Roi Salomon (2 de dezembro)'};
+function offersPanel(){const o=ST.off;if(!o)return '';const A=o.rows.find(x=>x.k==='offer:ange')||{clicks:0,people:0,d1:0,d7:0};
+ return `<div class="panel"><h3>Cliques nas ofertas</h3>
+  <div class="facts" style="margin:6px 0 12px"><div><b style="color:var(--accent)">${A.clicks}</b><span>cliques em « Découvrir » · Ange Gardien</span></div><div><b>${A.people}</b><span>pessoas diferentes</span></div><div><b>${A.d1}</b><span>últimas 24 h</span></div><div><b>${A.d7}</b><span>últimos 7 dias</span></div></div>
+  <div class="scroll"><table><tr><th>Oferta / cartão</th><th>Cliques</th><th>Pessoas</th><th>24 h</th><th>7 dias</th><th>Último</th></tr>
+  ${o.rows.length?o.rows.map(x=>`<tr><td><b>${esc(OFFN[x.k]||x.k.replace('offer:','Oferta '))}</b></td><td>${x.clicks}</td><td>${x.people}</td><td>${x.d1}</td><td>${x.d7}</td><td>${fmtDT(x.last)}</td></tr>`).join(''):'<tr><td colspan="6" class="muted">Nenhum clique ainda.</td></tr>'}</table></div>
+  ${o.who.filter(x=>x.id==='ange').length?`<p class="muted" style="margin:10px 0 0">Quem clicou no Ange Gardien: ${o.who.filter(x=>x.id==='ange').slice(0,40).map(x=>`<button data-a="client" data-e="${esc(x.email)}" style="color:var(--accent);font-weight:700">${esc(x.name||x.email)}</button>${x.n>1?' ('+x.n+'×)':''}`).join(' · ')}</p>`:''}
+  <p class="muted" style="margin:6px 0 0;font-size:12px">Contagem desde que o registro de atividade foi ligado no app. Compras dessa oferta acontecem na Kiwify e não aparecem aqui.</p></div>`}
 function funnelPanel(){const f=ST.fun;if(!f)return '';
  return `<div class="panel"><h3>Funil de reengajamento (quem comprou e nunca entrou)</h3>
   <p>${f.on?'<span class="tag ok">LIGADO</span> enviando automaticamente':'<span class="tag">DESLIGADO</span> nenhum e-mail é enviado'} · 3 e-mails por dia durante 5 dias, às <b>${f.slots.join(' · ')}</b> (horário de Paris) · para sozinho quando a pessoa entra no app.</p>
@@ -218,6 +226,7 @@ function salesTab(){if(!ST.sales)return '<p class="muted">Carregando…</p>';con
  <div class="panel"><h3>Liberar acesso manualmente</h3><p class="muted">Cole um ou vários e-mails (um por linha, ou separados por vírgula, ou a coluna inteira de uma planilha). Cada um poderá criar a conta no app com esse e-mail.</p>
   <textarea id="gl" rows="4" style="width:100%;padding:12px;border-radius:8px;border:1px solid var(--line);background:rgba(8,16,32,.6);font:inherit;color:inherit" placeholder="cliente1@exemplo.com&#10;cliente2@exemplo.com"></textarea>
   <p style="margin:10px 0 0"><button class="btn gold" data-a="grantmany">Liberar acesso</button> <span id="glr" class="muted"></span></p></div>
+ ${offersPanel()}
  ${funnelPanel()}
  ${mailPanel()}
  <div class="kpis"><div class="kpi"><b>${paid.length}</b><span>vendas aprovadas</span></div><div class="kpi"><b>${money(tot,cur)}</b><span>total aprovado</span></div>

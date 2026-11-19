@@ -413,6 +413,16 @@ async function adminGet(req, res, url) {
         from purchases p order by p.received_at desc limit $1`, [lim]);
       return send(res, 200, r.rows);
     }
+    if (url.pathname === '/api/admin/offers') {      // cliques sur les cartes d'offres (cross-sell) : « Découvrir », cadenas premium, « Bientôt »
+      const r = await pool.query(`select case when detail->>'a' in ('offer','buy') then 'offer:' || coalesce(detail->>'id','?') when detail->>'a' = 'lockgo' then 'lock:' || coalesce(detail->>'i','?') else detail->>'a' end as k,
+          count(*)::int as clicks, count(distinct coalesce(email, device))::int as people,
+          (count(*) filter (where created_at > now() - interval '24 hours'))::int as d1, (count(*) filter (where created_at > now() - interval '7 days'))::int as d7,
+          max(created_at) as last
+        from events where type = 'act' and detail->>'a' in ('offer','buy','lockgo','later','upd') group by 1 order by clicks desc`);
+      const who = await pool.query(`select coalesce(detail->>'id','') as id, email, (array_agg(name order by created_at desc) filter (where name is not null))[1] as name, count(*)::int n, max(created_at) as last
+        from events where type = 'act' and detail->>'a' in ('offer','buy') and email is not null group by 1, 2 order by max(created_at) desc limit 300`);
+      return send(res, 200, { rows: r.rows, who: who.rows });
+    }
     if (url.pathname === '/api/admin/config') return send(res, 200, { mode: ACCESS_MODE, webhookSecret: !!KP_SECRET, lastWebhook,
       webhookUrl: 'https://' + (req.headers['x-forwarded-host'] || req.headers.host) + '/api/webhooks/kashpay' });
     send(res, 404, { error: 'introuvable' });
