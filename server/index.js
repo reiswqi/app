@@ -145,7 +145,7 @@ async function mailPending() {
     where p.email is not null and p.event in ('order.paid','subscription.created','subscription.renewed','manual.grant')
       and p.email !~ '@example\\.(com|org|net)$' and coalesce(p.kp_id,'') not like 'test\\_%'
       and not exists (select 1 from users u where u.email = p.email)
-      and not exists (select 1 from email_log l where l.email = p.email and l.kind = 'acces' and l.status = 'sent')
+      and not exists (select 1 from email_log l where l.email = p.email and l.kind in ('acces','funnel1') and l.status = 'sent')
     group by p.email order by min(p.received_at)`);
   const out = []; for (const x of r.rows) if (!(await accessOf(x.email)).blocked) out.push(x); return out;
 }
@@ -156,6 +156,76 @@ async function mailOne(email, name, kind) {
   catch (e) { await pool.query('insert into email_log (email, kind, status, error) values ($1,$2,$3,$4)', [email, kind, 'failed', e.message]); return e.message; }
 }
 let mailBusy = false;
+// ---------- funnel de relance (acheteurs jamais entrés) ----------
+const FUN = require('./funnel');
+async function getSetting(k, d) { const r = await pool.query('select value from settings where key = $1', [k]); return r.rows[0] ? r.rows[0].value : d; }
+async function setSetting(k, v) { await pool.query('insert into settings (key, value) values ($1,$2) on conflict (key) do update set value = $2, updated_at = now()', [k, v]); }
+// acheteurs (KashPay ou libérés) qui ne sont jamais entrés : pas de compte, aucun événement avec leur e-mail
+async function funnelLeads() {
+  const r = await pool.query(`select p.email, (array_agg(p.name order by p.received_at desc) filter (where p.name is not null))[1] as name, min(p.received_at) as since,
+      (select count(*)::int from email_log l where l.email = p.email and l.kind like 'funnel%' and l.status = 'sent') as sent,
+      (select max(sent_at) from email_log l where l.email = p.email and l.kind like 'funnel%' and l.status = 'sent') as last_at,
+      exists(select 1 from email_log l where l.email = p.email and l.kind = 'acces' and l.status = 'sent') as got_access
+    from purchases p
+    where p.email is not null and p.event in ('order.paid','subscription.created','subscription.renewed','manual.grant')
+      and p.email !~ '@example\\.(com|org|net)$' and coalesce(p.kp_id,'') not like 'test\\_%'
+      and not exists (select 1 from users u where u.email = p.email)
+      and not exists (select 1 from events e where e.email = p.email)
+    group by p.email order by min(p.received_at)`);
+  const out = []; for (const x of r.rows) if (!(await accessOf(x.email)).blocked) out.push(x); return out;
+}
+let funnelBusy = false, funnelLast = null;
+async function funnelTick() {
+  if (funnelBusy) return; funnelBusy = true;
+  try {
+    const c = MAIL.cfg(); if (!c.key || !c.sender || (await getSetting('funnel', 'off')) !== 'on') return;
+    const slot = FUN.currentSlot(); if (!slot) return;
+    let room = Math.max(0, c.limit - await sentToday()), sent = 0;
+    for (const L of await funnelLeads()) {
+      if (!room) break;
+      if (Date.now() - new Date(L.since) < 20 * 60e3) continue;                 // laisser 20 min après l'achat
+      const done = await pool.query("select kind from email_log where email = $1 and kind like 'funnel%' and status = 'sent'", [L.email]);
+      const kinds = new Set(done.rows.map(x => x.kind));
+      if ((await pool.query("select 1 from email_log where email = $1 and slot = $2", [L.email, slot.key])).rowCount) continue; // déjà un e-mail dans ce créneau
+      let n = 0; while (n < FUN.STEPS.length && (kinds.has('funnel' + (n + 1)) || (n === 0 && L.got_access))) n++;
+      if (n >= FUN.STEPS.length) continue;
+      try { const id = await MAIL.brevoSend(L.email, L.name, FUN.funnelEmail(n, L.email, L.name, MAIL.APP_URL, MAIL.firstName), 'funnel');
+        await pool.query('insert into email_log (email, kind, status, message_id, slot) values ($1,$2,$3,$4,$5)', [L.email, 'funnel' + (n + 1), 'sent', id, slot.key]); sent++; room--; }
+      catch (e) { await pool.query('insert into email_log (email, kind, status, error, slot) values ($1,$2,$3,$4,$5)', [L.email, 'funnel' + (n + 1), 'failed', e.message, slot.key]); }
+    }
+    if (sent) { funnelLast = { at: new Date().toISOString(), slot: slot.key, sent }; console.log('Funnel', slot.key, sent, 'e-mail(s)'); }
+  } catch (e) { console.error('funnel', e.message); } finally { funnelBusy = false; }
+}
+setInterval(funnelTick, process.env.FUNNEL_FAKE_NOW ? 1500 : 5 * 60e3).unref(); setTimeout(funnelTick, 30e3).unref();
+async function adminFunnel(req, res, url) {
+  if (!okToken(req)) return send(res, 401, { error: 'Sessão expirada' });
+  if (req.method === 'GET' && url.pathname === '/api/admin/funnel') {
+    const leads = await funnelLeads();
+    const totals = await pool.query("select kind, count(*)::int n from email_log where kind like 'funnel%' and status = 'sent' group by kind");
+    const conv = await pool.query(`select count(distinct l.email)::int n from email_log l where l.kind like 'funnel%' and l.status = 'sent'
+      and (exists (select 1 from users u where u.email = l.email) or exists (select 1 from events e where e.email = l.email))`);
+    return send(res, 200, { on: (await getSetting('funnel', 'off')) === 'on', slots: FUN.SLOTS, last: funnelLast,
+      steps: FUN.STEPS.map((x, i) => ({ n: i + 1, day: Math.floor(i / 3) + 1, at: FUN.SLOTS[i % 3], subject: x.s.replace('{p}', '').replace(/^./, c => c.toUpperCase()), go: x.go,
+        sent: (totals.rows.find(t => t.kind === 'funnel' + (i + 1)) || {}).n || 0 })),
+      leads: leads.map(x => ({ email: x.email, name: x.name, since: x.since, sent: x.sent + (x.got_access && !x.sent ? 0 : 0), last_at: x.last_at, got_access: x.got_access })),
+      converted: conv.rows[0].n });
+  }
+  if (req.method === 'GET' && url.pathname === '/api/admin/funnel/preview') {
+    const n = Math.max(1, Math.min(FUN.STEPS.length, +url.searchParams.get('n') || 1)) - 1, m = FUN.funnelEmail(n, 'marie.dupont@gmail.com', 'Marie Dupont', MAIL.APP_URL, MAIL.firstName);
+    return send(res, 200, { subject: m.subject, html: m.html });
+  }
+  let b = {}; try { b = JSON.parse(await readBody(req, 4096)); } catch (e) {}
+  if (req.method === 'POST' && url.pathname === '/api/admin/funnel/toggle') { await setSetting('funnel', b.on ? 'on' : 'off'); if (b.on) setTimeout(funnelTick, 1000); return send(res, 200, { on: !!b.on }); }
+  if (req.method === 'POST' && url.pathname === '/api/admin/funnel/test') {
+    const c = MAIL.cfg(); if (!c.key || !c.sender) return send(res, 503, { error: 'Brevo não configurado.' });
+    const to = String(b.email || '').trim().toLowerCase(), n = Math.max(1, Math.min(FUN.STEPS.length, +b.n || 1)) - 1;
+    if (!EMAIL_RE.test(to)) return send(res, 400, { error: 'E-mail inválido.' });
+    try { await MAIL.brevoSend(to, 'Lucas', FUN.funnelEmail(n, to, 'Lucas', MAIL.APP_URL, MAIL.firstName), 'test');
+      await pool.query('insert into email_log (email, kind, status) values ($1,$2,$3)', [to, 'test', 'sent']); return send(res, 200, { ok: true }); }
+    catch (e) { return send(res, 502, { error: 'Brevo recusou: ' + e.message }); }
+  }
+  send(res, 404, { error: 'introuvable' });
+}
 async function adminMail(req, res, url) {
   if (!okToken(req)) return send(res, 401, { error: 'Sessão expirada' });
   const c = MAIL.cfg(), ready = !!(c.key && c.sender);
@@ -356,6 +426,7 @@ const server = http.createServer(async (req, res) => {
     if (url.pathname === '/api/events' && req.method === 'POST') return await postEvents(req, res);
     if (url.pathname === '/api/admin/login' && req.method === 'POST') return await adminLogin(req, res);
     if (url.pathname.startsWith('/api/admin/mail/')) return await adminMail(req, res, url);
+    if (url.pathname.startsWith('/api/admin/funnel')) return await adminFunnel(req, res, url);
     if (url.pathname.startsWith('/api/admin/') && req.method === 'GET') return await adminGet(req, res, url);
     if (url.pathname === '/api/admin/reset' && req.method === 'POST') {      // mot de passe temporaire pour un client qui l'a oublié
       if (!okToken(req)) return send(res, 401, { error: 'Sessão expirada' });

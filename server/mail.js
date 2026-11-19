@@ -88,4 +88,4 @@ async function brevoSend(to, name, msg, tag) {
   if (!r.ok) throw new Error((j.message || j.code || ('Brevo ' + r.status)).toString().slice(0, 300));
   return j.messageId || null;
 }
-module.exports = { cfg, accessEmail, brevoSend, APP_URL };
+module.exports = { cfg, accessEmail, brevoSend, APP_URL, firstName };

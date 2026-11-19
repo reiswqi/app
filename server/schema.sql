@@ -108,3 +108,8 @@ create table if not exists email_log (
   error      text
 );
 create index if not exists email_log_email_idx on email_log (email, kind);
+
+-- Réglages simples (ex. funnel = on/off) et créneau d'envoi du funnel
+create table if not exists settings (key text primary key, value text, updated_at timestamptz not null default now());
+alter table email_log add column if not exists slot text;
+create index if not exists email_log_kind_idx on email_log (kind);

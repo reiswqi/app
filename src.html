@@ -1437,6 +1437,11 @@ function watchGift(){clearInterval(giftTimer);if(V.tab!=='sa'||S.gift)return;let
   if(seen>=1500&&Date.now()-V.saT>=GIFT_MIN){clearInterval(giftTimer);showGift()}},500)}
 // Liens directs pour les e-mails : #saint-antoine, #priere, #programmes, #bonus, #guide, #remboursement
 function applyHash(){const h=location.hash.slice(1);if(!S.user||!h)return;
+ // liens des e-mails : #prog-<id>-<n> ouvre la leçon n ; #message ouvre la prière du jour scellée
+ const pm=h.match(/^prog-([a-z]+)-(\d+)$/);
+ if(pm||h==='message')V.day=false;
+ if(pm){const p=P.find(x=>x.id===pm[1]);if(p&&has(p)&&!p.upd){openProg(p.id);const n=Math.min(+pm[2],p.l.length)-1;if(p.vt){V.pop=n;V.cur=n;setTimeout(()=>$('#pl'+n)?.scrollIntoView({block:'start'}),300)}else V.cur=n}else if(p&&!has(p))openSA();track('lien_email',{h});history.replaceState(null,'',location.pathname);return}
+ if(h==='message'){V.tab='home';track('lien_email',{h});history.replaceState(null,'',location.pathname);setTimeout(()=>{if(!pdDone()){$('#pdpop')?.remove();pdReveal();render()}},900);return}
  if(h==='saint-antoine')openSA();else{const t={priere:'pray',programmes:'lib',bonus:'shop',guide:'guide',nombres:'num',focus:'focus',remboursement:'refund',defi:'defi','21-jours':'defi'}[h];if(t)V.tab=t}}
 
 const GUIDE_RULES=`Tu es l'assistant virtuel du ${PERE}, dans l'application Temps d'Abondance (prières et vidéos de spiritualité chrétienne). Tu écris comme dans une messagerie : messages courts, chaleureux, simples, 60 mots maximum, sans titres ni listes.

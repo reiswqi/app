@@ -157,7 +157,7 @@ const ST={tab:'clients',q:'',f:'all',clients:null,recent:null,refunds:null,sales
 async function load(){ST.err='';try{
  if(ST.tab==='recent'&&!ST.recent)ST.recent=await api('recent?limit=300');
  if(ST.tab==='refunds'&&!ST.refunds)ST.refunds=await api('recent?type=refund&limit=1000');
- if(ST.tab==='sales'&&!ST.sales){ST.sales=await api('sales?limit=1000');ST.cfg=await api('config');ST.mail=await api('mail/status').catch(()=>null)}
+ if(ST.tab==='sales'&&!ST.sales){ST.sales=await api('sales?limit=1000');ST.cfg=await api('config');ST.mail=await api('mail/status').catch(()=>null);ST.fun=await api('funnel').catch(()=>null)}
  if(!ST.clients)ST.clients=await api('clients');
 }catch(e){ST.err=e.message}draw()}
 async function openClient(email){ST.detail={email,loading:true};draw();window.scrollTo(0,0);try{
@@ -187,6 +187,16 @@ function draw(){const app=$('#app');
  ${ST.tab==='sales'?salesTab():''}`;
  const q=$('#q');if(q){q.oninput=()=>{ST.q=q.value;const p=q.selectionStart;draw();const n=$('#q');n.focus();n.setSelectionRange(p,p)}}
  const f=$('#f');if(f)f.onchange=()=>{ST.f=f.value;draw()}}
+const GOTXT={'':'Entrada do app','message':'Oração do dia (selo)','saint-antoine':'Grande Prière de Saint Antoine','defi':'Desafio 21 dias','prog-fond-1':'Fondements · aula 1','prog-fond-2':'Fondements · aula 2','prog-fond-3':'Fondements · aula 3','prog-freq-1':'7 Fréquences · introdução','prog-freq-2':'7 Fréquences · L\'Éveil','prog-freq-5':'7 Fréquences · Jéricho','prog-chant-1':'Chant Sacré · Michel','prog-chant-2':'Chant Sacré · Anjo da guarda','prog-chant-3':'Chant Sacré · Raphaël'};
+function funnelPanel(){const f=ST.fun;if(!f)return '';
+ return `<div class="panel"><h3>Funil de reengajamento (quem comprou e nunca entrou)</h3>
+  <p>${f.on?'<span class="tag ok">LIGADO</span> enviando automaticamente':'<span class="tag">DESLIGADO</span> nenhum e-mail é enviado'} · 3 e-mails por dia durante 5 dias, às <b>${f.slots.join(' · ')}</b> (horário de Paris) · para sozinho quando a pessoa entra no app.</p>
+  <p style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0"><button class="btn ${f.on?'':'gold'}" data-a="funtoggle" data-on="${f.on?0:1}">${f.on?'⏸️ Desligar o funil':'▶️ Ligar o funil'}</button></p>
+  <div class="facts" style="margin:10px 0"><div><b>${f.leads.length}</b><span>compraram e ainda não entraram</span></div><div><b>${f.leads.filter(x=>x.sent>0).length}</b><span>já estão recebendo o funil</span></div><div><b style="color:var(--ok)">${f.converted}</b><span>entraram depois de receber</span></div><div><b>${f.last?fmtDT(f.last.at):'—'}</b><span>último envio${f.last?' ('+f.last.sent+')':''}</span></div></div>
+  <div class="scroll"><table><tr><th>#</th><th>Quando</th><th>Assunto</th><th>Leva para</th><th>Enviados</th><th></th></tr>
+  ${f.steps.map(x=>`<tr><td>${x.n}</td><td>Dia ${x.day} · ${x.at}</td><td><b>${esc(x.subject)}</b></td><td>${esc(GOTXT[x.go]||x.go)}</td><td>${x.sent}</td><td style="white-space:nowrap"><button class="btn" style="padding:6px 10px" data-a="funprev" data-n="${x.n}">👁️</button> <button class="btn" style="padding:6px 10px" data-a="funtest" data-n="${x.n}">✉️</button></td></tr>`).join('')}</table></div>
+  ${f.leads.length?`<p class="muted" style="margin:10px 0 0">Na fila: ${f.leads.slice(0,30).map(x=>esc(x.name||x.email)+` (${x.sent}/15)`).join(' · ')}${f.leads.length>30?' …':''}</p>`:''}
+  <p id="fres" class="muted" style="margin:8px 0 0"></p><div id="funbox"></div></div>`}
 function mailPanel(){const m=ST.mail;if(!m)return '';const n=Math.min(m.pending,m.remainingToday);
  return `<div class="panel"><h3>E-mail de acesso aos compradores (Brevo)</h3>
   ${m.ready?`<p>Remetente: <b>${esc(m.senderName)} &lt;${esc(m.sender)}&gt;</b> · respostas dos clientes vão para contact@app-parcoursdefoi.online, que encaminha para o seu Gmail</p>`:'<p><span class="tag">falta configurar</span> Adicione no Railway (serviço app → Variables): <b>BREVO_API_KEY</b> e <b>BREVO_SENDER</b>.</p>'}
@@ -208,6 +218,7 @@ function salesTab(){if(!ST.sales)return '<p class="muted">Carregando…</p>';con
  <div class="panel"><h3>Liberar acesso manualmente</h3><p class="muted">Cole um ou vários e-mails (um por linha, ou separados por vírgula, ou a coluna inteira de uma planilha). Cada um poderá criar a conta no app com esse e-mail.</p>
   <textarea id="gl" rows="4" style="width:100%;padding:12px;border-radius:8px;border:1px solid var(--line);background:rgba(8,16,32,.6);font:inherit;color:inherit" placeholder="cliente1@exemplo.com&#10;cliente2@exemplo.com"></textarea>
   <p style="margin:10px 0 0"><button class="btn gold" data-a="grantmany">Liberar acesso</button> <span id="glr" class="muted"></span></p></div>
+ ${funnelPanel()}
  ${mailPanel()}
  <div class="kpis"><div class="kpi"><b>${paid.length}</b><span>vendas aprovadas</span></div><div class="kpi"><b>${money(tot,cur)}</b><span>total aprovado</span></div>
   <div class="kpi"><b style="color:var(--bad)">${never.length}</b><span>compraram e nunca entraram no app</span></div>
@@ -298,6 +309,12 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b
   fetch(API+'/api/admin/grant',{method:'POST',headers:{Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'},body:JSON.stringify({emails:v})})
    .then(r=>r.json().then(j=>({ok:r.ok,j}))).then(({ok,j})=>{b.disabled=false;b.textContent='Liberar acesso';if(!ok)return alert(j.error||'Erro');
     $('#gl').value='';$('#glr').textContent=`✓ ${j.added} liberado(s)`+(j.already?` · ${j.already} já tinham acesso`:'');ST.clients=null;const keep=$('#glr').textContent;ST.sales=null;load().then(()=>{const e=$('#glr');if(e)e.textContent=keep})})}
+ else if(a==='funtoggle'){const on=b.dataset.on==='1';if(on&&!confirm('Ligar o funil? Os compradores que nunca entraram vão começar a receber os e-mails no próximo horário (08:15, 12:30 ou 19:45 de Paris).'))return;
+  fetch(API+'/api/admin/funnel/toggle',{method:'POST',headers:{Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'},body:JSON.stringify({on})}).then(()=>api('funnel')).then(j=>{ST.fun=j;draw()})}
+ else if(a==='funprev'){api('funnel/preview?n='+b.dataset.n).then(j=>{const box=$('#funbox');box.innerHTML=`<p style="margin:12px 0 6px"><b>E-mail ${b.dataset.n} · Assunto:</b> ${esc(j.subject)} <span class="muted">(exemplo com cliente fictícia)</span></p><iframe style="width:100%;height:860px;border:1px solid var(--line);border-radius:10px;background:#fff"></iframe>`;box.querySelector('iframe').srcdoc=j.html;box.scrollIntoView({behavior:'smooth'})})}
+ else if(a==='funtest'){const to=prompt('Enviar o e-mail '+b.dataset.n+' de teste para qual endereço?','lr.bussine@gmail.com');if(!to)return;
+  fetch(API+'/api/admin/funnel/test',{method:'POST',headers:{Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'},body:JSON.stringify({email:to,n:+b.dataset.n})})
+   .then(r=>r.json().then(j=>({ok:r.ok,j}))).then(({ok,j})=>{$('#fres').textContent=ok?'✓ E-mail '+b.dataset.n+' enviado para '+to:'✗ '+(j.error||'Erro')})}
  else if(a==='mprev'){api('mail/preview').then(j=>{const box=$('#mprevbox');box.innerHTML=`<p style="margin:12px 0 6px"><b>Assunto:</b> ${esc(j.subject)} <span class="muted">(exemplo com uma cliente fictícia)</span></p><iframe style="width:100%;height:900px;border:1px solid var(--line);border-radius:10px;background:#fff"></iframe>`;box.querySelector('iframe').srcdoc=j.html})}
  else if(a==='mtest'){const to=prompt('Enviar o e-mail de teste para qual endereço?','lr.bussine@gmail.com');if(!to)return;b.disabled=true;
   fetch(API+'/api/admin/mail/test',{method:'POST',headers:{Authorization:'Bearer '+TOKEN,'Content-Type':'application/json'},body:JSON.stringify({email:to})})
