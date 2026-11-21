@@ -199,12 +199,14 @@ async function funnelTick() {
 // MAIL_OUTBOX (variable Railway, JSON [{id,to,name,subject,text}]) : réponses ponctuelles aux clients, envoyées une seule fois (email_log kind = avulso:id)
 async function outboxTick() {
   let list; try { list = JSON.parse(process.env.MAIL_OUTBOX || '[]'); } catch (e) { return console.log('MAIL_OUTBOX illisible'); }
-  if (!Array.isArray(list) || !MAIL.cfg().key || !MAIL.cfg().sender) return;
+  if (!Array.isArray(list) || !list.length) return;
+  if (!MAIL.cfg().key || !MAIL.cfg().sender) return console.log('MAIL_OUTBOX : Brevo non configuré');
+  console.log('MAIL_OUTBOX :', list.length, 'message(s)');
   for (const m of list) {
     if (!m || !m.id || !m.to || !m.subject || !m.text) continue;
     const kind = 'avulso:' + String(m.id).slice(0, 60), to = String(m.to).trim().toLowerCase();
     const { rows } = await pool.query("select 1 from email_log where email=$1 and kind=$2 and status='sent' limit 1", [to, kind]);
-    if (rows.length) continue;
+    if (rows.length) { console.log('E-mail avulso déjà envoyé', kind); continue; }
     try { const id = await MAIL.brevoSend(to, m.name, MAIL.customEmail(m.subject, m.text), 'avulso');
       await pool.query('insert into email_log (email, kind, status, message_id) values ($1,$2,$3,$4)', [to, kind, 'sent', id]); console.log('E-mail avulso envoyé', kind); }
     catch (e) { await pool.query('insert into email_log (email, kind, status, error) values ($1,$2,$3,$4)', [to, kind, 'failed', e.message]); console.log('E-mail avulso échec', kind, e.message); }
