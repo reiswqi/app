@@ -41,7 +41,7 @@ const strip = s => String(s).replace(/<br>/g, '\n').replace(/<[^>]+>/g, '');
 function funnelEmail(n, email, name, appUrl, firstName) {
   const st = STEPS[n], p = firstName(name);
   const subject = st.s.replace('{p}', p ? p + ', ' : '').replace(/^./, c => c.toUpperCase());
-  const link = appUrl + '/?e=' + encodeURIComponent(email) + (st.go ? '#' + st.go : '');
+  const link = appUrl.replace(/\/$/, '') + (/\.html?$/.test(appUrl) ? '' : '/') + '?e=' + encodeURIComponent(email) + (st.go ? '#' + st.go : '');
   const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${h(subject)}</title></head>
 <body style="margin:0;padding:0;background:#f4efe4;font-family:Georgia,'Times New Roman',serif;color:#1c2540">
 <div style="display:none;max-height:0;overflow:hidden">${h(st.pre)}</div>

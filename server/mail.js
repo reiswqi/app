@@ -3,6 +3,8 @@
 //                     BREVO_SENDER_NAME (défaut « Prière Sacrée »), EMAIL_DAILY_LIMIT (défaut 290 : plan gratuit = 300/jour).
 const BREVO_URL = process.env.BREVO_URL || 'https://api.brevo.com/v3/smtp/email';
 const APP_URL = process.env.APP_URL || 'https://app-parcoursdefoi.online';
+// APP_URL peut être un domaine (https://x.fr) ou une page (https://reiswqi.github.io/app/temps-abondance.html)
+const appLink = q => APP_URL.replace(/\/$/, '') + (/\.html?$/.test(APP_URL) ? '' : '/') + q;
 const SUPPORT = process.env.SUPPORT_EMAIL || 'contact@app-parcoursdefoi.online';   // « Répondre » des clients (redirigé vers le Gmail de Lucas)
 const cfg = () => ({ key: process.env.BREVO_API_KEY || '', sender: process.env.BREVO_SENDER || '', senderName: process.env.BREVO_SENDER_NAME || 'Prière Sacrée',
   limit: Math.max(1, +process.env.EMAIL_DAILY_LIMIT || 290) });
@@ -15,7 +17,7 @@ function firstName(name) {
 }
 // E-mail d'annonce du nouvel accès : gros caractères, fond clair, un seul bouton (public 50 ans et +)
 function accessEmail(email, name) {
-  const p = firstName(name), link = APP_URL + '/?e=' + encodeURIComponent(email);
+  const p = firstName(name), link = appLink('?e=' + encodeURIComponent(email));
   const subject = p ? `${p}, votre accès à Prière Sacrée est prêt` : 'Votre accès à Prière Sacrée est prêt';
   const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${h(subject)}</title></head>
 <body style="margin:0;padding:0;background:#f4efe4;font-family:Georgia,'Times New Roman',serif;color:#1c2540">
@@ -90,7 +92,7 @@ async function brevoSend(to, name, msg, tag) {
 }
 // E-mail « mot de passe oublié » : un bouton qui ouvre l'app sur « Nouveau mot de passe » (valable 1 heure)
 function resetEmail(email, name, token) {
-  const p = firstName(name), link = APP_URL + '/?reset=' + encodeURIComponent(token) + '&e=' + encodeURIComponent(email);
+  const p = firstName(name), link = appLink('?reset=' + encodeURIComponent(token) + '&e=' + encodeURIComponent(email));
   const subject = 'Votre nouveau mot de passe Prière Sacrée';
   const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${h(subject)}</title></head>
 <body style="margin:0;padding:0;background:#f4efe4;font-family:Georgia,'Times New Roman',serif;color:#1c2540">
@@ -109,4 +111,4 @@ function resetEmail(email, name, token) {
   const text = `${p ? 'Bonjour ' + p + ',' : 'Bonjour,'}\n\nVous avez demandé à changer votre mot de passe. Ouvrez ce lien pour en choisir un nouveau (valable 1 heure, une seule fois) :\n${link}\n\nVous n'avez rien demandé ? Ignorez cet e-mail.\n\nL'équipe Prière Sacrée`;
   return { subject, html, text };
 }
-module.exports = { cfg, accessEmail, resetEmail, brevoSend, APP_URL, firstName };
+module.exports = { appLink, cfg, accessEmail, resetEmail, brevoSend, APP_URL, firstName };
