@@ -111,4 +111,18 @@ function resetEmail(email, name, token) {
   const text = `${p ? 'Bonjour ' + p + ',' : 'Bonjour,'}\n\nVous avez demandé à changer votre mot de passe. Ouvrez ce lien pour en choisir un nouveau (valable 1 heure, une seule fois) :\n${link}\n\nVous n'avez rien demandé ? Ignorez cet e-mail.\n\nL'équipe Prière Sacrée`;
   return { subject, html, text };
 }
-module.exports = { appLink, cfg, accessEmail, resetEmail, brevoSend, APP_URL, firstName };
+
+// E-mail avulso (réponse à un client) : texte simple mis en page comme les autres e-mails
+function customEmail(subject, text) {
+  const para = String(text).trim().split(/\n\s*\n/).map(b => {
+    const t = h(b).replace(/\n/g, '<br>').replace(/(https?:\/\/[^\s<]+)/g, u => `<a href="${u}" style="color:#8a6a1e;font-weight:bold">${u}</a>`);
+    return `<p style="margin:0 0 16px">${t}</p>`; }).join('');
+  const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${h(subject)}</title></head>
+<body style="margin:0;padding:0;background:#f4efe4;font-family:Georgia,'Times New Roman',serif;color:#1c2540">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4efe4"><tr><td align="center" style="padding:24px 12px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:16px;border:1px solid #e3d6b8">
+<tr><td style="padding:28px 26px 8px;text-align:center"><div style="font-size:15px;letter-spacing:3px;color:#8a6a1e;font-family:Arial,sans-serif;font-weight:bold">✦ PRIÈRE SACRÉE ✦</div></td></tr>
+<tr><td style="padding:14px 28px 14px;font-size:19px;line-height:1.6">${para}</td></tr></table></td></tr></table></body></html>`;
+  return { subject, html, text: String(text).trim() };
+}
+module.exports = { customEmail, appLink, cfg, accessEmail, resetEmail, brevoSend, APP_URL, firstName };

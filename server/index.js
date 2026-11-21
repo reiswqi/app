@@ -196,6 +196,22 @@ async function funnelTick() {
     if (sent) { funnelLast = { at: new Date().toISOString(), slot: slot.key, sent }; console.log('Funnel', slot.key, sent, 'e-mail(s)'); }
   } catch (e) { console.error('funnel', e.message); } finally { funnelBusy = false; }
 }
+// MAIL_OUTBOX (variable Railway, JSON [{id,to,name,subject,text}]) : réponses ponctuelles aux clients, envoyées une seule fois (email_log kind = avulso:id)
+async function outboxTick() {
+  let list; try { list = JSON.parse(process.env.MAIL_OUTBOX || '[]'); } catch (e) { return console.log('MAIL_OUTBOX illisible'); }
+  if (!Array.isArray(list) || !MAIL.cfg().key || !MAIL.cfg().sender) return;
+  for (const m of list) {
+    if (!m || !m.id || !m.to || !m.subject || !m.text) continue;
+    const kind = 'avulso:' + String(m.id).slice(0, 60), to = String(m.to).trim().toLowerCase();
+    const { rows } = await pool.query("select 1 from email_log where email=$1 and kind=$2 and status='sent' limit 1", [to, kind]);
+    if (rows.length) continue;
+    try { const id = await MAIL.brevoSend(to, m.name, MAIL.customEmail(m.subject, m.text), 'avulso');
+      await pool.query('insert into email_log (email, kind, status, message_id) values ($1,$2,$3,$4)', [to, kind, 'sent', id]); console.log('E-mail avulso envoyé', kind); }
+    catch (e) { await pool.query('insert into email_log (email, kind, status, error) values ($1,$2,$3,$4)', [to, kind, 'failed', e.message]); console.log('E-mail avulso échec', kind, e.message); }
+  }
+}
+setTimeout(() => outboxTick().catch(e => console.log('outbox', e.message)), 20e3).unref();
+setInterval(() => outboxTick().catch(e => console.log('outbox', e.message)), 10 * 60e3).unref();
 setInterval(funnelTick, process.env.FUNNEL_FAKE_NOW ? 1500 : 5 * 60e3).unref(); setTimeout(funnelTick, 30e3).unref();
 async function adminFunnel(req, res, url) {
   if (!okToken(req)) return send(res, 401, { error: 'Sessão expirada' });
